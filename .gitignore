@@ -5,3 +5,11 @@
 *.bin
 *.o
 */.venv/*
+*.jou
+*.log
+__pycache__/
+console_hw/.Xil/
+obj/
+clockInfo.txt
+sim_build/
+
