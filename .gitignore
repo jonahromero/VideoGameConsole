@@ -1,0 +1,7 @@
+
+*.asm
+*.out
+*.elf
+*.bin
+*.o
+*/.venv/*
