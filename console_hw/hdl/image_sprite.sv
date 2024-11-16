@@ -75,9 +75,4 @@ module image_sprite #(
 
 endmodule
 
-
-
-
-
-
 `default_nettype none
