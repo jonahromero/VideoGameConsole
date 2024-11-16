@@ -21,23 +21,30 @@ if {[llength $files] != 0} {
     puts "$outputDir is empty"
 }
 
-proc get_sv_files {dir} {
-    set files [list]
+proc get_files {dir extension} {
+    set files [dict create]  ; # Use a dictionary to prevent duplicates
+    puts "Searching in directory: $dir"
     foreach item [glob -directory $dir *] {
         if {[file isdirectory $item]} {
-            lappend files {*}[get_sv_files $item]
-        } elseif {[string match *.sv [file tail $item]]} {
-            lappend files $item
+            puts "Found subdirectory: $item"
+            set sub_files [get_files $item $extension]
+            if {[dict size $sub_files] > 0} {
+                set files [dict merge $files $sub_files]
+            }
+        } elseif {[string match *.$extension [file tail $item]]} {
+            puts "Found file: $item"
+            dict set files $item 1
         }
     }
     return $files
 }
 
-set sources_sv [get_sv_files ./hdl]
-read_verilog -sv $sources_sv
+set sources_sv [dict keys [get_files ./hdl sv]]
+set sources_v [dict keys [get_files ./hdl v]]
 
+# readsystem verilog files
+read_verilog -sv $sources_sv
 # read in all (if any) verilog files:
-set sources_v [ glob -nocomplain ./hdl/*.v ]
 if {[llength $sources_v] > 0 } {
     read_verilog $sources_v
 }
