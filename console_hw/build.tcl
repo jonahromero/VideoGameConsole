@@ -21,8 +21,19 @@ if {[llength $files] != 0} {
     puts "$outputDir is empty"
 }
 
-# read in all system verilog files:
-set sources_sv [ glob ./hdl/*.sv ]
+proc get_sv_files {dir} {
+    set files [list]
+    foreach item [glob -directory $dir *] {
+        if {[file isdirectory $item]} {
+            lappend files {*}[get_sv_files $item]
+        } elseif {[string match *.sv [file tail $item]]} {
+            lappend files $item
+        }
+    }
+    return $files
+}
+
+set sources_sv [get_sv_files ./hdl]
 read_verilog -sv $sources_sv
 
 # read in all (if any) verilog files:
