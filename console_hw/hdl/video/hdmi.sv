@@ -6,7 +6,10 @@ module hdmi(
 
    output logic [2:0]  hdmi_tx_p, //hdmi output signals (positives) (blue, green, red)
    output logic [2:0]  hdmi_tx_n, //hdmi output signals (negatives) (blue, green, red)
-   output logic        hdmi_clk_p, hdmi_clk_n //differential hdmi clock
+   output logic        hdmi_clk_p, hdmi_clk_n, //differential hdmi clock
+
+   output logic signal_clk,
+   frame_buffer_bus bus
 );
   // Clock and Reset Signals
   logic          clk_pixel;
@@ -43,6 +46,17 @@ module hdmi(
 
   // rgb output values
   logic [7:0]          red,green,blue;
+
+   // read bus values
+   always_comb begin
+      red = bus.red; 
+      green = bus.green; 
+      blue = bus.blue; 
+      bus.vcount = vcount_hdmi;
+      bus.hcount = hcount_hdmi;
+      bus.read_clk = clk_pixel;
+   end
+
 
   logic[7:0] fb_red_pipe, fb_green_pipe, fb_blue_pipe;
   pipeline #(.STAGES(3), .WIDTH(8)) ps1_1(.clk_in(clk_pixel), .sig_in(red), .sig_out(fb_red_pipe));

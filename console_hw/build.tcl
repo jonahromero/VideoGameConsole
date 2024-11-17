@@ -24,7 +24,7 @@ if {[llength $files] != 0} {
 proc get_files {dir extension} {
     set files [dict create]  ; # Use a dictionary to prevent duplicates
     puts "Searching in directory: $dir"
-    foreach item [glob -directory $dir *] {
+    foreach item [glob -nocomplain -directory $dir *] {
         if {[file isdirectory $item]} {
             puts "Found subdirectory: $item"
             set sub_files [get_files $item $extension]
