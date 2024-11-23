@@ -1,3 +1,4 @@
+
 module spi_con
      #(parameter DATA_WIDTH = 8,
        parameter DATA_CLK_PERIOD = 100

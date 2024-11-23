@@ -11,12 +11,20 @@ module hdmi(
    output logic signal_clk,
    frame_buffer_bus bus
 );
+  // buffer the clk_100mhz
+  logic clk_100mhz_buf;
+  IBUF clk_ibuf (
+    .I(clk_100mhz),      // External input clock
+    .O(clk_100mhz_buf)   // Buffered input clock
+  );
+  
+
   // Clock and Reset Signals
   logic          clk_pixel;
   logic          clk_5x;
 
   cw_hdmi_clk_wiz wizard_hdmi
-    (.sysclk(clk_100mhz),
+    (.sysclk(clk_100mhz_buf),
      .clk_pixel(clk_pixel),
      .clk_tmds(clk_5x),
      .reset(0));

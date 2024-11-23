@@ -21,12 +21,25 @@ module top_level
    output logic        hdmi_clk_p, hdmi_clk_n //differential hdmi clock
 );
   logic sys_rst;
-  assign sys_rst = btn[0];
-  // shut up those RGBs
   assign rgb0 = 0;
   assign rgb1 = 0;
-  
+
+  // define high level busses
+  memory_bus mem_bus();
   frame_buffer_bus fb_bus();
+  sys_io_bus io_bus();
+  program_memory_bus program_mem_bus();
+  rom_io_bus rom_io(
+    .latch(), .addr(), .data()
+  );
+
+  program_memory program_mem(
+    .clk_in(clk_100mhz),
+    .rst_in(btn[0]),
+    .sys_rst_out(sys_rst),
+    .rom_io(rom_io),
+    .program_mem_bus(program_mem_bus.PROGRAM_MEMORY_BUS)
+  );
   frame_buffer m_frame_buffer(
     .rst_in(sys_rst),
     .bus(fb_bus.FRAME_BUFFER)
@@ -42,8 +55,17 @@ module top_level
   );
   memory_system ms(
     .rst_in(sys_rst), .clk_in(clk_100mhz),
-    .fb_bus(fb_bus.WRITE)
+    .mem_bus(mem_bus.MEMORY_SYSTEM),
+    .fb_bus(fb_bus.WRITE),
+    .io_bus(io_bus.CONSUMER)
   );
+  /* TODO -- Add CPU
+  cpu m_cpu(
+    .rst_in(sys_rst), .clk_in(clk_100mhz),
+    .mem_bus(mem_bus.CONSUMER),
+    .program_mem_bus(program_mem_bus.CONSUMER)
+  );
+  */
 endmodule // top_level
 
 

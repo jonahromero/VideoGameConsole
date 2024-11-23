@@ -82,15 +82,15 @@ module frame_buffer
     // 2 cycles
     generate
         for (genvar i = 0; i < 2; i++) begin
-            blk_mem_gen_0 frame_buffer (
-                .clka(dummy_write_clk),
+            blk_mem_gen_0 frame_buffer(
+                .clka(bus.write_clk),
                 .addra(bus.write_addr), //pixels are stored using this math
                 .wea(blk_we[i]),
                 .dina(bus.write_data),
                 .ena(1'b1),
                 .douta(), //never read from this side
 
-                .clkb(dummy_read_clk),
+                .clkb(bus.read_clk),
                 .addrb(read_addr),//transformed lookup pixel
                 .dinb(16'b0),
                 .web(1'b0),

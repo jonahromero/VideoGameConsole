@@ -21,8 +21,6 @@ void loop() {
     SPI.transfer(is_button_pressed((button_type)i));
   }
   SPI.transfer(joystick_y(JOYSTICK_LEFT));
-  SPI.transfer(joystick_y(JOYSTICK_RIGHT));
   SPI.transfer(joystick_x(JOYSTICK_LEFT));
-  SPI.transfer(joystick_x(JOYSTICK_RIGHT));
   delay(20);
 }
