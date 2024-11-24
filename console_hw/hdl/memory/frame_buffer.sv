@@ -28,7 +28,7 @@ interface frame_buffer_bus# (
         output vcount, hcount, read_clk
     ); 
     modport WRITE (
-        output write_data, write_addr, write_enable, write_clk
+        output write_data, write_addr, write_enable, write_clk, swap_buffer
     );
     modport FRAME_BUFFER (
         input write_data, write_addr, write_enable, vcount, hcount, swap_buffer, write_clk, read_clk,

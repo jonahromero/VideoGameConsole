@@ -20,17 +20,21 @@ endinterface
 
 module mmio_mappings(
     input logic[31:0] addr,
+
     output logic ram_enable,
     output logic frame_buffer_enable,
     output logic io_enable,
-    output logic[7:0] io_offset
+    output logic[15:0] real_addr
 );
+    logic[1:0] mem_sel;
     always_comb begin
-        io_offset = addr[7:0];
-        io_enable = addr[31:8] == 24'hFF_FF_FF;
-        // ram is only 64kb
-        frame_buffer_enable = addr[31:16] == 8'h00_00;
-        ram_enable = !io_enable && !frame_buffer_enable;
+        mem_sel = addr[17:16];
+        real_addr = addr[15:0];
+
+        io_enable = mem_sel == 0;
+        ram_enable = mem_sel == 1;
+        frame_buffer_enable = mem_sel == 2;
+
     end
 endmodule
 
@@ -48,10 +52,11 @@ module memory_system (
     logic[7:0] counter;
     logic we;
     // write enables
-    logic[7:0] io_offset;
+    logic[15:0] real_addr;
     logic is_io_addr, is_frame_buffer_addr, is_ram_addr;
     mmio_mappings mmio(
         .addr(addr_latched),
+        .real_addr(real_addr),
         .ram_enable(is_ram_addr),
         .frame_buffer_enable(is_frame_buffer_addr),
         .io_enable(is_io_addr)
@@ -76,7 +81,7 @@ module memory_system (
             case (state)
             READ_MEM: begin
                 if (is_io_addr) begin
-                    case (io_offset)
+                    case (real_addr)
                         0: mem_bus.read_data <= io_bus.controller.joystick_x;
                         1: mem_bus.read_data <= io_bus.controller.joystick_y;
                         2: mem_bus.read_data <= io_bus.controller.buttons;
@@ -90,6 +95,7 @@ module memory_system (
                 end
                 else if (is_ram_addr) begin
                     if (counter + 1 == 2) begin // wait 2 cycles
+                        mem_bus.read_data <= ram_data_out;
                         state <= WAITING;
                     end
                     counter <= counter + 1;
@@ -97,15 +103,7 @@ module memory_system (
             end
             WRITE_MEM: begin
                 // all of these are 1 cycle.
-                if (is_io_addr) begin // cant write to io
-                    state <= WAITING;
-                end
-                else if (is_frame_buffer_addr) begin
-                    state <= WAITING;
-                end
-                else if (is_ram_addr) begin
-                    state <= WAITING;
-                end
+                state <= WAITING;
             end
             WAITING: begin
                 counter <= 0;
@@ -125,11 +123,14 @@ module memory_system (
 
     // THE REST OF THIS IS INTERACTING WITH THE MEMORY
     // frame buffer. 1 cycle write
+    parameter FB_SWAP_ADDR = 8'hFF_FF;
     always_comb begin
         fb_bus.write_clk = clk_in;
-        fb_bus.write_addr = addr_latched;
+        fb_bus.write_addr = real_addr;
         fb_bus.write_data = data_latched;
-        fb_bus.write_enable = we && is_frame_buffer_addr;
+
+        fb_bus.write_enable = we && is_frame_buffer_addr && (real_addr != FB_SWAP_ADDR);
+        fb_bus.swap_buffer = we && (real_addr == FB_SWAP_ADDR);
     end
 
     // internal ram. 2 cycle read, 1 cycle write
@@ -138,7 +139,7 @@ module memory_system (
         .RAM_DEPTH(64*1024),                      // Specify RAM depth (number of entries)
         .RAM_PERFORMANCE("HIGH_PERFORMANCE"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     ) ram (
-        .addra(addr_latched),     // Address bus, width determined from RAM_DEPTH
+        .addra(real_addr),        // Address bus, width determined from RAM_DEPTH
         .dina(data_latched),      // RAM input data, width determined from RAM_WIDTH
         .wea(we && is_ram_addr),  // Write enable
         .douta(ram_data_out)      // RAM output data, width determined from RAM_WIDTH
