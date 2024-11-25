@@ -1,12 +1,12 @@
 
 interface memory_bus();
-    logic[31:0] addr,
-    logic[7:0] write_data,
-    logic dispatch_write,
-    logic dispatch_read,
+    logic[31:0] addr;
+    logic[7:0] write_data;
+    logic dispatch_write;
+    logic dispatch_read;
     
-    logic[7:0] read_data,
-    logic busy,
+    logic[7:0] read_data;
+    logic busy;
 
     modport MEMORY_SYSTEM (
         input addr, write_data, dispatch_read, dispatch_write,
@@ -42,7 +42,7 @@ module memory_system (
     input wire clk_in,
     input wire rst_in,
 
-    memory_bus mem_bus,
+    memory_bus bus,
     frame_buffer_bus fb_bus,
     sys_io_bus io_bus
 );
@@ -62,14 +62,14 @@ module memory_system (
         .io_enable(is_io_addr)
     );
 
-    typedef enum {
+    enum {
         WAITING, READ_MEM, WRITE_MEM
-    } mem_sys_state state;
+    } state;
 
-    assign mem_bus.busy = (state != WAITING);
+    assign bus.busy = (state != WAITING);
     always_ff @ (posedge clk_in) begin
         if (rst_in) begin
-            data_out <= 0;
+            bus.read_data <= 0;
             counter <= 0;
             we <= 0;
             state <= WAITING;
@@ -82,20 +82,20 @@ module memory_system (
             READ_MEM: begin
                 if (is_io_addr) begin
                     case (real_addr)
-                        0: mem_bus.read_data <= io_bus.controller.joystick_x;
-                        1: mem_bus.read_data <= io_bus.controller.joystick_y;
-                        2: mem_bus.read_data <= io_bus.controller.buttons;
-                        default: mem_bus.read_data <= 0;
+                        0: bus.read_data <= io_bus.controller.joystick_x;
+                        1: bus.read_data <= io_bus.controller.joystick_y;
+                        2: bus.read_data <= io_bus.controller.buttons;
+                        default: bus.read_data <= 0;
                     endcase
                     state <= WAITING;
                 end
                 else if (is_frame_buffer_addr) begin
-                    mem_bus.read_data <= 0;
+                    bus.read_data <= 0;
                     state <= WAITING;
                 end
                 else if (is_ram_addr) begin
                     if (counter + 1 == 2) begin // wait 2 cycles
-                        mem_bus.read_data <= ram_data_out;
+                        bus.read_data <= ram_data_out;
                         state <= WAITING;
                     end
                     counter <= counter + 1;
@@ -107,12 +107,12 @@ module memory_system (
             end
             WAITING: begin
                 counter <= 0;
-                addr_latched <= addr;
-                data_latched <= data_in;
-                if (dispatch_read) begin
+                addr_latched <= bus.addr;
+                data_latched <= bus.write_data;
+                if (bus.dispatch_read) begin
                     state <= READ_MEM;
                 end
-                else if (dispatch_write) begin
+                else if (bus.dispatch_write) begin
                     state <= WRITE_MEM;
                     we <= 1;
                 end
@@ -123,7 +123,7 @@ module memory_system (
 
     // THE REST OF THIS IS INTERACTING WITH THE MEMORY
     // frame buffer. 1 cycle write
-    parameter FB_SWAP_ADDR = 8'hFF_FF;
+    parameter FB_SWAP_ADDR = 16'hFF_FF;
     always_comb begin
         fb_bus.write_clk = clk_in;
         fb_bus.write_addr = real_addr;
@@ -137,17 +137,17 @@ module memory_system (
     xilinx_single_port_ram_read_first #(
         .RAM_WIDTH(8),                      // Specify RAM data width
         .RAM_DEPTH(64*1024),                      // Specify RAM depth (number of entries)
-        .RAM_PERFORMANCE("HIGH_PERFORMANCE"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
+        .RAM_PERFORMANCE("HIGH_PERFORMANCE") // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     ) ram (
         .addra(real_addr),        // Address bus, width determined from RAM_DEPTH
         .dina(data_latched),      // RAM input data, width determined from RAM_WIDTH
         .wea(we && is_ram_addr),  // Write enable
-        .douta(ram_data_out)      // RAM output data, width determined from RAM_WIDTH
+        .douta(ram_data_out),      // RAM output data, width determined from RAM_WIDTH
 
         .clka(clk_in),       // Clock
         .ena(1),         // RAM Enable, for additional power savings, disable port when not in use
         .rsta(rst_in),       // Output reset (does not affect memory contents)
-        .regcea(1),   // Output register enable
+        .regcea(1)   // Output register enable
     );
 
 endmodule

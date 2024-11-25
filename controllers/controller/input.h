@@ -15,6 +15,7 @@ enum joystick_type {
 uint8_t joystick_y(enum joystick_type);
 uint8_t joystick_x(enum joystick_type);
 uint8_t is_button_pressed(enum button_type);
+const char* button_name(enum button_type);
 
 void init_input();
 void update_input();

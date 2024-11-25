@@ -23,11 +23,11 @@ module spi_con
         .clk_in, .rst_in, .in(chip_clk_raw), .out(chip_clk)
     );
 
-    logic clk_prev, falling_edge;
+    logic clk_prev, rising_edge;
     logic[7:0] data_bits_read;
 
-    assign data_valid_out = data_bits_read 
-    assign falling_edge = (clk_prev && !chip_clk);
+    assign data_valid_out = data_bits_read;
+    assign rising_edge = (!clk_prev && chip_clk);
     always_ff @( posedge clk_in) begin
         if (rst_in) begin
             data_out <= 0;
@@ -38,8 +38,8 @@ module spi_con
             if (data_valid_out) begin
                 data_valid_out <= 0;
             end
-            if (falling_edge) begin
-                data_out <= {data_out[DATA_WIDTH-2:0] chip_data};
+            if (rising_edge) begin
+                data_out <= {data_out[DATA_WIDTH-2:0], chip_data};
                 if (data_bits_read + 1 == DATA_WIDTH) begin
                     data_bits_read <= 0;
                     data_valid_out <= 1;

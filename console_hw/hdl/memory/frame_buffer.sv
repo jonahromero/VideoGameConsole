@@ -50,7 +50,7 @@ module frame_buffer
 )
 (
     input wire rst_in,
-    frame_buffer_bus.FRAME_BUFFER bus
+    frame_buffer_bus bus
 );
     logic buffer_flag; // flip flops depending on which buffer is reading/writing
     logic blk_we[1:0];

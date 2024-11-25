@@ -4,6 +4,7 @@ module hdmi(
    input wire clk_100mhz,
    input wire rst_in,
 
+   output logic new_clk_100mhz,
    output logic [2:0]  hdmi_tx_p, //hdmi output signals (positives) (blue, green, red)
    output logic [2:0]  hdmi_tx_n, //hdmi output signals (negatives) (blue, green, red)
    output logic        hdmi_clk_p, hdmi_clk_n, //differential hdmi clock
@@ -12,19 +13,22 @@ module hdmi(
    frame_buffer_bus bus
 );
   // buffer the clk_100mhz
-  logic clk_100mhz_buf;
-  IBUF clk_ibuf (
-    .I(clk_100mhz),      // External input clock
-    .O(clk_100mhz_buf)   // Buffered input clock
+  logic clk_100mhz_buf[3];
+  assign new_clk_100mhz = clk_100mhz_buf[1];
+  clk_wiz_buffer_clk_wiz clk_ibuf (
+    .clk_in1(clk_100mhz),      // External input clock
+    .clk_out1(clk_100mhz_buf[0]),
+    .clk_out2(clk_100mhz_buf[1]),
+    .clk_out3(),
+    .reset(0)
   );
-  
 
   // Clock and Reset Signals
   logic          clk_pixel;
   logic          clk_5x;
 
   cw_hdmi_clk_wiz wizard_hdmi
-    (.sysclk(clk_100mhz_buf),
+    (.sysclk(clk_100mhz_buf[0]),
      .clk_pixel(clk_pixel),
      .clk_tmds(clk_5x),
      .reset(0));
@@ -67,9 +71,9 @@ module hdmi(
 
 
   logic[7:0] fb_red_pipe, fb_green_pipe, fb_blue_pipe;
-  pipeline #(.STAGES(3), .WIDTH(8)) ps1_1(.clk_in(clk_pixel), .sig_in(red), .sig_out(fb_red_pipe));
-  pipeline #(.STAGES(3), .WIDTH(8)) ps1_2(.clk_in(clk_pixel), .sig_in(green), .sig_out(fb_green_pipe));
-  pipeline #(.STAGES(3), .WIDTH(8)) ps1_3(.clk_in(clk_pixel), .sig_in(blue), .sig_out(fb_blue_pipe));
+  pipeline #(.STAGES(3), .WIDTH(8)) ps1_1(.clk_in(clk_pixel), .in(red), .out(fb_red_pipe));
+  pipeline #(.STAGES(3), .WIDTH(8)) ps1_2(.clk_in(clk_pixel), .in(green), .out(fb_green_pipe));
+  pipeline #(.STAGES(3), .WIDTH(8)) ps1_3(.clk_in(clk_pixel), .in(blue), .out(fb_blue_pipe));
 
   // ENDPOINT 2
   logic [$clog2(1700)-1:0] hcount_pipe;
@@ -78,12 +82,12 @@ module hdmi(
   logic hs_pipe; //horizontal sync out
   logic ad_pipe;
   logic nf_pipe; //single cycle enable signal
-  pipeline #(.STAGES(8), .WIDTH($clog2(1700))) ps3_1(.clk_in(clk_pixel), .sig_in(hcount_hdmi), .sig_out(hcount_pipe));
-  pipeline #(.STAGES(8), .WIDTH($clog2(755))) ps3_2(.clk_in(clk_pixel), .sig_in(vcount_hdmi), .sig_out(vcount_pipe));
-  pipeline #(.STAGES(8), .WIDTH(1)) ps3_3(.clk_in(clk_pixel), .sig_in(vsync_hdmi), .sig_out(vs_pipe));
-  pipeline #(.STAGES(8), .WIDTH(1)) ps3_4(.clk_in(clk_pixel), .sig_in(hsync_hdmi), .sig_out(hs_pipe));
-  pipeline #(.STAGES(8), .WIDTH(1)) ps3_5(.clk_in(clk_pixel), .sig_in(active_draw_hdmi), .sig_out(ad_pipe));
-  pipeline #(.STAGES(8), .WIDTH(1)) ps3_6(.clk_in(clk_pixel), .sig_in(nf_hdmi), .sig_out(nf_pipe));
+  pipeline #(.STAGES(8), .WIDTH($clog2(1700))) ps3_1(.clk_in(clk_pixel), .in(hcount_hdmi), .out(hcount_pipe));
+  pipeline #(.STAGES(8), .WIDTH($clog2(755))) ps3_2(.clk_in(clk_pixel), .in(vcount_hdmi), .out(vcount_pipe));
+  pipeline #(.STAGES(8), .WIDTH(1)) ps3_3(.clk_in(clk_pixel), .in(vsync_hdmi), .out(vs_pipe));
+  pipeline #(.STAGES(8), .WIDTH(1)) ps3_4(.clk_in(clk_pixel), .in(hsync_hdmi), .out(hs_pipe));
+  pipeline #(.STAGES(8), .WIDTH(1)) ps3_5(.clk_in(clk_pixel), .in(active_draw_hdmi), .out(ad_pipe));
+  pipeline #(.STAGES(8), .WIDTH(1)) ps3_6(.clk_in(clk_pixel), .in(nf_hdmi), .out(nf_pipe));
 
    // HDMI Output: just like before!
    logic [9:0] tmds_10b [0:2]; //output of each TMDS encoder!

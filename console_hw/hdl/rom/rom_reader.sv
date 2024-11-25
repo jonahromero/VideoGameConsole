@@ -3,11 +3,13 @@
 `define MAX(a, b) ((a)>(b)?(a):(b)) 
 
 interface rom_io_bus(
-    logic[7:0] addr, data,
-    logic latch
+    logic[7:0] data
 );
-    modport READ(
-        input latch, addr, data
+    logic [7:0] addr;
+    logic latcher;
+    modport READER ( 
+        input data,
+        output latcher, addr
     );
 endinterface
 
@@ -28,7 +30,7 @@ module rom_reader#(parameter PERIOD_NS = 10, parameter TOTAL_ADDRESSES)(
     localparam SETUP_TIME_CYCLES       = ((SETUP_TIME + PERIOD_NS - 1) / PERIOD_NS);
     localparam HOLD_TIME_CYCLES        = ((HOLD_TIME + PERIOD_NS - 1) / PERIOD_NS);
     localparam ROM_OUTPUT_DELAY_CYCLES = ((ROM_OUTPUT_DELAY + PERIOD_NS - 1) / PERIOD_NS);
-    localparam MAX_CYCLES_WAITING      = MAX(MAX(SETUP_TIME_CYCLES + HOLD_TIME_CYCLES), ROM_OUTPUT_DELAY_CYCLES);
+    localparam MAX_CYCLES_WAITING      = `MAX(SETUP_TIME_CYCLES + HOLD_TIME_CYCLES, ROM_OUTPUT_DELAY_CYCLES);
 
     typedef enum { LATCH_LOW, SETUP_LATCH, HOLD_LATCH, LATCH_HIGH, WAIT_FOR_DATA, FINISHED } rom_reader_state;
     logic[15:0] addr;
@@ -39,7 +41,7 @@ module rom_reader#(parameter PERIOD_NS = 10, parameter TOTAL_ADDRESSES)(
     always_ff @(posedge clk_in) begin
         if (rst_in) begin
             addr <= 0;
-            rom_io.latch <= 0;
+            rom_io.latcher <= 0;
             data_out <= 0;
             data_valid_out <= 0;
             state <= LATCH_LOW;
@@ -56,14 +58,14 @@ module rom_reader#(parameter PERIOD_NS = 10, parameter TOTAL_ADDRESSES)(
                 end
                 SETUP_LATCH: begin
                     if (counter + 1 == SETUP_TIME_CYCLES) begin
-                        rom_io.latch <= 1;
+                        rom_io.latcher <= 1;
                         state <= HOLD_LATCH;
                         counter <= 0;
                     end
                     counter <= counter + 1;
                 end
                 HOLD_LATCH: begin
-                    rom_io.latch <= 0;
+                    rom_io.latcher <= 0;
                     if (counter + 1 == HOLD_TIME_CYCLES) begin
                         state <= LATCH_HIGH;
                         counter <= 0;

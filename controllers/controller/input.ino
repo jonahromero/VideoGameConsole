@@ -10,6 +10,10 @@ const char* button_names[NBUTTONS] = {
   "BUTTON_LB", "BUTTON_RB", "BUTTON_BACK", "BUTTON_START"
 };
 
+const char* button_name(enum button_type b) {
+  return *(button_names + (int)b);  
+}
+
 uint8_t is_button_pressed_raw[NBUTTONS] = {};
 
 uint8_t left_xaxis, left_yaxis;

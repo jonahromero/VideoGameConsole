@@ -15,4 +15,4 @@ module cpu(
         mem_bus.dispatch_read = 0; 
         mem_bus.dispatch_write = 0;
     end
-endmodule;
+endmodule

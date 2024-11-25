@@ -27,8 +27,8 @@ module program_memory(
     logic data_valid_in;
     logic[7:0] data_in;
     logic finished_reading;
-    rom_reader reader(
-        .clk_in, .rst_in, .rom_io,
+    rom_reader #(.TOTAL_ADDRESSES(8*1024)) reader(
+        .clk_in, .rst_in, .rom_io(rom_io),
         .data_valid_out(data_valid_in),
         .data_out(data_in), .finished(finished_reading)
     );
@@ -73,16 +73,16 @@ module program_memory(
     xilinx_single_port_ram_read_first #(
         .RAM_WIDTH(32),                       // Specify RAM data width
         .RAM_DEPTH((64*1024) / 32),           // Specify RAM depth (number of entries)
-        .RAM_PERFORMANCE("HIGH_PERFORMANCE"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
+        .RAM_PERFORMANCE("HIGH_PERFORMANCE") // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     ) icache (
         .addra(state == INITIALIZING ? icache_addr : bus.addr),        // Address bus, width determined from RAM_DEPTH
         .dina(data_in),                                                // RAM input data, width determined from RAM_WIDTH
         .wea(data_valid_in),                                           // Write enable
-        .douta(icache_data_out)                                        // RAM output data, width determined from RAM_WIDTH
+        .douta(icache_data_out),                                       // RAM output data, width determined from RAM_WIDTH
 
         .clka(clk_in),       // Clock
         .ena(1),         // RAM Enable, for additional power savings, disable port when not in use
         .rsta(rst_in),       // Output reset (does not affect memory contents)
-        .regcea(1),   // Output register enable
+        .regcea(1)   // Output register enable
     );
 endmodule

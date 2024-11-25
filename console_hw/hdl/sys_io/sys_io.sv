@@ -22,14 +22,13 @@ endinterface
 module sys_io(
     input logic clk_in,
     input logic rst_in,
-    sys_io_bus io_bus,
+    sys_io_bus io_bus
 );
     logic[7:0] spi_recv;
     logic spi_recv_valid;
 
     spi_con #(.DATA_CLK_PERIOD(100)) spi(
         .clk_in, .rst_in, 
-        .data_in(0), .trigger_in(0),
         .data_out(spi_recv), .data_valid_out(spi_recv_valid),
         .chip_data_raw(io_bus.chip_data_raw), 
         .chip_clk_raw(io_bus.chip_clk_raw)
@@ -40,14 +39,15 @@ module sys_io(
     // we need to store the buttons, but want to atomically update bus, so we 
     // create a temporary storage until were ready to commit.
     logic[7:0] buttons_temp; 
-    enum {WAITING, RECEIVING_BUTTONS, RECEIVING_JOYSTICK } state;
-    
+    typedef enum {WAITING, RECEIVING_BUTTONS, RECEIVING_JOYSTICK } sys_io_state;
+    sys_io_state state;
+
     always_ff@(posedge clk_in) begin
         if (rst_in) begin
             state <= WAITING;
         end
         else if (spi_recv_valid) begin
-            case state
+            case (state)
             WAITING: begin
                 if (START_CHAR == spi_recv) begin
                     counter <= 0;
@@ -64,7 +64,7 @@ module sys_io(
                 counter <= counter + 1; 
             end
             RECEIVING_JOYSTICK: begin
-                case counter
+                case (counter)
                 0: io_bus.controller.joystick_y <= spi_recv;
                 1: io_bus.controller.joystick_x <= spi_recv;
                 default: state <= WAITING;
