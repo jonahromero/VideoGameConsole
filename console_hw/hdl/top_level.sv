@@ -66,13 +66,11 @@ module top_level
     .fb_bus(fb_bus.WRITE),
     .io_bus(io_bus.CONSUMER)
   );
-  /* TODO -- Add CPU
   cpu m_cpu(
     .rst_in(sys_rst), .clk_in(clk_100mhz),
     .mem_bus(mem_bus.CONSUMER),
     .program_mem_bus(program_mem_bus.CONSUMER)
   );
-  */
 endmodule // top_level
 
 
