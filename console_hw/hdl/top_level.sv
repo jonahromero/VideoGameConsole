@@ -27,12 +27,19 @@ module top_level
   // define high level busses
   memory_bus mem_bus();
   frame_buffer_bus fb_bus();
-  sys_io_bus io_bus();
+  sys_io_bus io_bus(
+    .chip_data_raw(),
+    .chip_clk_raw()
+  );
   program_memory_bus program_mem_bus();
   rom_io_bus rom_io(
     .latch(), .addr(), .data()
   );
 
+  sys_io system_io(
+    .clk_in(clk_100mhz), .rst_in(sys_rst),
+    .io_bus(io_bus.SYS_IO)
+  );
   program_memory program_mem(
     .clk_in(clk_100mhz),
     .rst_in(btn[0]),
