@@ -2,7 +2,7 @@
 #include "input.h"
 
 int button_pins[NBUTTONS] = {
-  19, 20, 18, 21, 5, 22, 16, 17
+  20,19,21,18, 5, 22, 16, 17
 };
 
 const char* button_names[NBUTTONS] = {
@@ -30,6 +30,7 @@ uint8_t is_button_pressed(enum button_type b) {
 }
 
 void init_input() {
+  analogReadResolution(4);
   for (int i=0; i< NBUTTONS; i++) {
     pinMode(button_pins[i], INPUT_PULLUP);
   }
