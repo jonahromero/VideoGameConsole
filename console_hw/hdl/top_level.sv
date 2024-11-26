@@ -118,6 +118,7 @@ module top_level
   cpu m_cpu(
     .rst_in(sys_rst), .clk_in(clk_in),
     .mem_bus(mem_bus.CONSUMER),
+    .debug_buttons(btn[3:2]),
     .program_mem_bus(program_mem_bus.CONSUMER)
   );
 endmodule // top_level

@@ -4,13 +4,20 @@ interface program_memory_bus;
     logic[31:0] addr, instr;
     logic read_request, data_valid;
 
+    logic[31:0] addr_b, instr_b;
+    logic read_request_b, data_valid_b;
+
     modport PROGRAM_MEMORY_BUS (
         input addr, read_request,
         output instr, data_valid
     );
-    modport CONSUMER (
+    modport CONSUMER_A (
         output addr, read_request,
         input instr, data_valid
+    );
+    modport CONSUMER_B (
+        output addr_b, read_request_b,
+        input instr_b, data_valid_b
     );
 endinterface
 
@@ -90,21 +97,36 @@ module program_memory(
     pipeline #(.STAGES(2), .WIDTH(1)) valid_pipe(
         .clk_in, .rst_in, .in(bus.read_request), .out(bus.data_valid)
     );
+    pipeline #(.STAGES(2), .WIDTH(1)) valid_pipe(
+        .clk_in, .rst_in, .in(bus.read_request_b), .out(bus.data_valid_b)
+    );
+
 
     // 2 cycle read
-    xilinx_single_port_ram_read_first #(
+    xilinx_true_dual_port_read_first_2_clock_ram #(
         .RAM_WIDTH(32),                       // Specify RAM data width
         .RAM_DEPTH((64*1024) / 32),           // Specify RAM depth (number of entries)
         .RAM_PERFORMANCE("HIGH_PERFORMANCE") // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     ) icache (
-        .addra(actual_addr),        // Address bus, width determined from RAM_DEPTH
-        .dina(rom_instr_big_endian),                                                // RAM input data, width determined from RAM_WIDTH
-        .wea(rom_instr_we),                                           // Write enable
-        .douta(bus.instr),                                       // RAM output data, width determined from RAM_WIDTH
+        .addra(actual_addr),
+        .dina(rom_instr_big_endian),
+        .wea(rom_instr_we),
+        .douta(bus.instr),
 
-        .clka(clk_in),       // Clock
-        .ena(1),         // RAM Enable, for additional power savings, disable port when not in use
-        .rsta(rst_in),       // Output reset (does not affect memory contents)
-        .regcea(1)   // Output register enable
+        .clka(clk_in),
+        .ena(1),
+        .rsta(rst_in),
+        .regcea(1),
+
+        // second read port
+        .addrb(bus.addr_b >> 2),
+        .dinb(0),
+        .web(0),
+        .doutb(bus.instr_b),
+
+        .clkb(clk_in),
+        .enb(1),
+        .rstb(rst_in),
+        .regceb(1)
     );
 endmodule
