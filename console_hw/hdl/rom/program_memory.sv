@@ -19,41 +19,51 @@ module program_memory(
     input logic rst_in,
     output logic sys_rst_out, // program memory will reset system when its ready
 
+    output logic[31:0] display,
+
     rom_io_bus rom_io,
     program_memory_bus bus
 );
-    
+    //assign display = {7'h0, rom_data_is_valid, rom_io.data, rom_addr};
     // external rom stuff
-    logic data_valid_in;
-    logic[7:0] data_in;
+    logic rom_data_is_valid;
+    logic[7:0] rom_data;
+    logic[15:0] rom_addr;
     logic finished_reading;
     rom_reader #(.TOTAL_ADDRESSES(8*1024)) reader(
         .clk_in, .rst_in, .rom_io(rom_io),
-        .data_valid_out(data_valid_in),
-        .data_out(data_in), .finished(finished_reading)
+        .data_valid_out(rom_data_is_valid),
+        .data_out(rom_data), .finished(finished_reading),
+        .addr_out(rom_addr)
     );
-
     
-    logic[31:0] icache_addr;
-    logic[31:0] icache_data_out;
     enum { INITIALIZING, WAITING } state;
-
-    assign bus.instr = icache_data_out;
-    pipeline #(.STAGES(2), .WIDTH(1)) valid_pipe(
-        .clk_in, .rst_in, .in(bus.read_request), .out(bus.data_valid)
-    );
+    logic[31:0] rom_instr;
+    logic rom_instr_we;
+    logic[3:0] counter;
 
     always_ff @(posedge clk_in) begin
         if (rst_in) begin
+            counter <= 0;
+            rom_instr_we <= 0;
             state <= INITIALIZING;
-            icache_addr <= 0;
         end
         else begin
+            if (rom_instr_we) begin
+                rom_instr_we <= 0;
+            end
+            if (sys_rst_out) begin
+                sys_rst_out <= 0;
+            end
             case (state)
             INITIALIZING: begin
-                if (data_valid_in) begin
-                    // do something with data_in
-                    icache_addr <= icache_addr + 1;
+                if (rom_data_is_valid) begin
+                    rom_instr <= {rom_data, rom_instr[31:8]};
+                    counter <= counter + 1;
+                    if (counter + 1 == 4) begin
+                        rom_instr_we <= 1;
+                        counter <= 0;
+                    end
                 end
                 if (finished_reading) begin
                     sys_rst_out <= 1;
@@ -63,11 +73,16 @@ module program_memory(
             WAITING: begin
             end
             endcase
-            if (sys_rst_out) begin
-                sys_rst_out <= 0;
-            end
         end
     end
+
+    // reading/writing to memory
+    logic[15:0] actual_addr;
+    assign actual_addr = (state == INITIALIZING ? rom_addr : bus.addr) >> 2;
+
+    pipeline #(.STAGES(2), .WIDTH(1)) valid_pipe(
+        .clk_in, .rst_in, .in(bus.read_request), .out(bus.data_valid)
+    );
 
     // 2 cycle read
     xilinx_single_port_ram_read_first #(
@@ -75,10 +90,10 @@ module program_memory(
         .RAM_DEPTH((64*1024) / 32),           // Specify RAM depth (number of entries)
         .RAM_PERFORMANCE("HIGH_PERFORMANCE") // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     ) icache (
-        .addra(state == INITIALIZING ? icache_addr : bus.addr),        // Address bus, width determined from RAM_DEPTH
-        .dina(data_in),                                                // RAM input data, width determined from RAM_WIDTH
-        .wea(data_valid_in),                                           // Write enable
-        .douta(icache_data_out),                                       // RAM output data, width determined from RAM_WIDTH
+        .addra(actual_addr),        // Address bus, width determined from RAM_DEPTH
+        .dina(rom_instr),                                                // RAM input data, width determined from RAM_WIDTH
+        .wea(rom_instr_we),                                           // Write enable
+        .douta(bus.instr),                                       // RAM output data, width determined from RAM_WIDTH
 
         .clka(clk_in),       // Clock
         .ena(1),         // RAM Enable, for additional power savings, disable port when not in use

@@ -7,8 +7,8 @@ module cpu(
 );
     always_comb begin
         // program memory
-        program_mem_bus.addr = 0;
-        program_mem_bus.read_request = 0;
+        //program_mem_bus.addr = 0;
+        //program_mem_bus.read_request = 0;
         // memory
         mem_bus.addr = 0;
         mem_bus.write_data = 0;

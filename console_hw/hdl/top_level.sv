@@ -16,7 +16,10 @@ module top_level
    output logic [6:0]  ss0_c, //cathode controls for the segments of upper four digits
    output logic [6:0]  ss1_c, //cathod controls for the segments of lower four digits
    // gpio
-   input wire [7:0] pmodb, pmoda,
+   output logic [7:0] pmoda,
+   input  wire  [7:0] pmodb,
+   input  wire  [2:0] jab_in,
+   output logic [2:0] jab_out,
 
    // hdmi port
    output logic [2:0]  hdmi_tx_p, //hdmi output signals (positives) (blue, green, red)
@@ -28,10 +31,32 @@ module top_level
   assign rgb1 = 0;
   logic clk_in;
 
-  // debug numbers
+  // DEBUGGING
+  // DEBUGGING SPI
   logic [31:0] val_to_display; //either the spi data or the btn_count data (default)
-  // assign val_to_display = {};
-  assign val_to_display = 32'hFF_FF_FF_FA;
+  /*logic[7:0] last_spi_byte;
+  always_ff @(posedge clk_in) begin
+    if (sw[0]) begin
+      last_spi_byte <= io_bus.last_raw_byte;
+    end
+  end
+  assign val_to_display = {io_bus.controller.buttons, io_bus.controller.joystick_x, io_bus.controller.joystick_y, last_spi_byte};*/
+  //assign val_to_display = 32'hFF_FF_FF_FA;
+  assign val_to_display = program_mem_bus.instr;
+  assign program_mem_bus.addr = sw;
+  assign program_mem_bus.read_request = 1;
+  
+  logic was_reset;
+  always_ff @ (posedge clk_in) begin
+    if (btn[0]) begin
+      was_reset <= 0;
+    end
+    if (sys_rst) begin
+      was_reset <= 1;
+    end
+  end
+  assign led[0] = 1;
+  assign led[1] = was_reset;
   logic [6:0] ss_c;
   seven_segment_controller mssc(.clk_in(clk_in),
                                 .rst_in(sys_rst),
@@ -40,22 +65,29 @@ module top_level
                                 .an_out({ss0_an, ss1_an}));
   assign ss0_c = ss_c;
   assign ss1_c = ss_c;
+  // DEBUGGING END
 
   // define high level busses
   memory_bus mem_bus();
   frame_buffer_bus fb_bus();
   sys_io_bus io_bus(
-    .chip_data_raw(pmoda[2]),
-    .chip_clk_raw(pmoda[3])
+    .chip_data_raw(jab_in[1]),
+    .chip_clk_raw(jab_in[2])
   );
   program_memory_bus program_mem_bus();
-  rom_io_bus rom_io(.data(0));
+ 
+  // DEBUGGING ROM
+  rom_io_bus rom_io(.data(pmodb), .debug_button(btn[2]));
+  // DEBUGGING END
+  assign pmoda = rom_io.addr;
+  assign jab_out[0] = rom_io.latcher;
 
   sys_io system_io(
     .clk_in(clk_in), .rst_in(sys_rst),
     .io_bus(io_bus.SYS_IO)
   );
   program_memory program_mem(
+    .display(val_to_display),
     .clk_in(clk_in),
     .rst_in(btn[0]),
     .sys_rst_out(sys_rst),

@@ -9,9 +9,10 @@ interface sys_io_bus(
     wire chip_clk_raw
 );
     controller_t controller;
+    logic[7:0] last_raw_byte; // debug spi
 
     modport SYS_IO (
-        output controller, 
+        output controller, last_raw_byte,
       	input chip_data_raw, chip_clk_raw
     );
     modport CONSUMER (
@@ -27,14 +28,14 @@ module sys_io(
     logic[7:0] spi_recv;
     logic spi_recv_valid;
 
-    spi_con #(.DATA_CLK_PERIOD(100)) spi(
+    spi_con spi(
         .clk_in, .rst_in, 
         .data_out(spi_recv), .data_valid_out(spi_recv_valid),
         .chip_data_raw(io_bus.chip_data_raw), 
         .chip_clk_raw(io_bus.chip_clk_raw)
     );
 
-    localparam START_CHAR = 83;
+    localparam START_CHAR = 8'hFF;
     logic[3:0] counter;
     // we need to store the buttons, but want to atomically update bus, so we 
     // create a temporary storage until were ready to commit.
@@ -47,6 +48,7 @@ module sys_io(
             state <= WAITING;
         end
         else if (spi_recv_valid) begin
+            io_bus.last_raw_byte <= spi_recv;
             case (state)
             WAITING: begin
                 if (START_CHAR == spi_recv) begin
@@ -61,7 +63,9 @@ module sys_io(
                     io_bus.controller.buttons <= buttons_temp;
                     counter <= 0;
                 end
-                counter <= counter + 1; 
+                else begin
+                    counter <= counter + 1; 
+                end
             end
             RECEIVING_JOYSTICK: begin
                 case (counter)
