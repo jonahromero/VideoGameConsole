@@ -10,7 +10,7 @@ def binary_string_to_file(binary_string, filename):
 
 def create_bin():
     result = ""
-    for i in range((2**13)):
+    for i in range((2**11)):
         result += bin(i)[2:].zfill(32)
     return result
 
