@@ -79,6 +79,13 @@ module program_memory(
     // reading/writing to memory
     logic[15:0] actual_addr;
     assign actual_addr = (state == INITIALIZING ? rom_addr : bus.addr) >> 2;
+    logic[31:0] rom_instr_big_endian;
+    always_comb begin
+        rom_instr_big_endian[7:0]   = rom_instr[31:24];
+        rom_instr_big_endian[15:8]  = rom_instr[23:16];
+        rom_instr_big_endian[23:16] = rom_instr[15:8];
+        rom_instr_big_endian[31:24] = rom_instr[7:0];
+    end
 
     pipeline #(.STAGES(2), .WIDTH(1)) valid_pipe(
         .clk_in, .rst_in, .in(bus.read_request), .out(bus.data_valid)
@@ -91,7 +98,7 @@ module program_memory(
         .RAM_PERFORMANCE("HIGH_PERFORMANCE") // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     ) icache (
         .addra(actual_addr),        // Address bus, width determined from RAM_DEPTH
-        .dina(rom_instr),                                                // RAM input data, width determined from RAM_WIDTH
+        .dina(rom_instr_big_endian),                                                // RAM input data, width determined from RAM_WIDTH
         .wea(rom_instr_we),                                           // Write enable
         .douta(bus.instr),                                       // RAM output data, width determined from RAM_WIDTH
 

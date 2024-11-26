@@ -26,8 +26,8 @@ module rom_reader#(parameter PERIOD_NS = 10, parameter TOTAL_ADDRESSES)(
     output logic[15:0] addr_out,
     output logic finished
 );
-    localparam SETUP_TIME              = 50; // ns
-    localparam HOLD_TIME               = 5;//5; // ns
+    localparam SETUP_TIME              = 250; //50; // ns
+    localparam HOLD_TIME               = 250; //5;//5; // ns
     localparam ROM_OUTPUT_DELAY        = 250; //500_000_000; //250; // ns
     localparam SETUP_TIME_CYCLES       = ((SETUP_TIME + PERIOD_NS - 1) / PERIOD_NS);
     localparam HOLD_TIME_CYCLES        = ((HOLD_TIME + PERIOD_NS - 1) / PERIOD_NS);
@@ -67,9 +67,10 @@ module rom_reader#(parameter PERIOD_NS = 10, parameter TOTAL_ADDRESSES)(
                     end
                 end
                 HOLD_LATCH: begin
-                    rom_io.latcher <= 0;
+                    //rom_io.latcher <= 0;
                     counter <= counter + 1;
                     if (counter + 1 == HOLD_TIME_CYCLES) begin
+                        rom_io.latcher <= 0;
                         state <= LATCH_LOW;
                         counter <= 0;
                     end

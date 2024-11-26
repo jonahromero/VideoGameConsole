@@ -34,7 +34,6 @@ module mmio_mappings(
         io_enable = mem_sel == 0;
         ram_enable = mem_sel == 1;
         frame_buffer_enable = mem_sel == 2;
-
     end
 endmodule
 

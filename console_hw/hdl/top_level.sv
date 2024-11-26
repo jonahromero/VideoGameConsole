@@ -41,11 +41,12 @@ module top_level
     end
   end
   assign val_to_display = {io_bus.controller.buttons, io_bus.controller.joystick_x, io_bus.controller.joystick_y, last_spi_byte};*/
-  //assign val_to_display = 32'hFF_FF_FF_FA;
-  assign val_to_display = program_mem_bus.instr;
+  // DEBUGGING ROM
+  /*assign val_to_display = program_mem_bus.instr;
   assign program_mem_bus.addr = sw;
-  assign program_mem_bus.read_request = 1;
-  
+  assign program_mem_bus.read_request = 1;*/
+
+  // DEBUGGING SYS_RST
   logic was_reset;
   always_ff @ (posedge clk_in) begin
     if (btn[0]) begin
@@ -57,6 +58,7 @@ module top_level
   end
   assign led[0] = 1;
   assign led[1] = was_reset;
+
   logic [6:0] ss_c;
   seven_segment_controller mssc(.clk_in(clk_in),
                                 .rst_in(sys_rst),
@@ -75,10 +77,9 @@ module top_level
     .chip_clk_raw(jab_in[2])
   );
   program_memory_bus program_mem_bus();
- 
-  // DEBUGGING ROM
-  rom_io_bus rom_io(.data(pmodb), .debug_button(btn[2]));
-  // DEBUGGING END
+
+  // connect rom io to in/out ports
+  rom_io_bus rom_io(.data(pmodb), .debug_button(btn[1]));
   assign pmoda = rom_io.addr;
   assign jab_out[0] = rom_io.latcher;
 
