@@ -14,6 +14,22 @@ def create_bin():
         result += bin(i*4)[2:].zfill(32)
     return result
 
+def create_img():
+    result = ""
+    def get_bin_digits(i, d):
+        raw = bin(i)[2:]
+        if len(raw) < d:
+            return raw.zfill(d)
+        else:
+            return raw[-d:]
+    for i in range((2**12)):
+        r = 177
+        g = 3
+        b = 252
+        rgb = get_bin_digits(r, 5) + get_bin_digits(g, 6) + get_bin_digits(b, 5)
+        result += rgb
+    return result
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", '--in-file')
@@ -22,7 +38,7 @@ def main():
     args = parser.parse_args()
 
     if args.t:
-        binary_string_to_file(create_bin(), "test_binary.bin")
+        binary_string_to_file(create_img(), "test_img.bin")
         return
 
     IntelHex = importlib.import_module("intelhex").IntelHex
