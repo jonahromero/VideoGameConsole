@@ -23,7 +23,7 @@ endinterface
 module sys_io(
     input logic clk_in,
     input logic rst_in,
-    sys_io_bus io_bus
+    sys_io_bus.SYS_IO io_bus
 );
     logic[7:0] spi_recv;
     logic spi_recv_valid;

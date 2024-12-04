@@ -1,5 +1,4 @@
 
-
 interface program_memory_bus;
     logic[31:0] addr, instr;
     logic read_request, data_valid;
@@ -9,7 +8,10 @@ interface program_memory_bus;
 
     modport PROGRAM_MEMORY_BUS (
         input addr, read_request,
-        output instr, data_valid
+        output instr, data_valid,
+        
+        input addr_b, read_request_b,
+        output instr_b, data_valid_b
     );
     modport CONSUMER_A (
         output addr, read_request,
@@ -22,14 +24,14 @@ interface program_memory_bus;
 endinterface
 
 module program_memory(
-    input logic clk_in,
-    input logic rst_in,
+    wire logic clk_in,
+    wire logic rst_in,
     output logic sys_rst_out, // program memory will reset system when its ready
 
     output logic[31:0] display,
 
-    rom_io_bus rom_io,
-    program_memory_bus bus
+    rom_io_bus.READER rom_io,
+    program_memory_bus.PROGRAM_MEMORY_BUS bus
 );
     //assign display = {7'h0, rom_data_is_valid, rom_io.data, rom_addr};
     // external rom stuff
@@ -97,7 +99,7 @@ module program_memory(
     pipeline #(.STAGES(2), .WIDTH(1)) valid_pipe(
         .clk_in, .rst_in, .in(bus.read_request), .out(bus.data_valid)
     );
-    pipeline #(.STAGES(2), .WIDTH(1)) valid_pipe(
+    pipeline #(.STAGES(2), .WIDTH(1)) valid_pipe2(
         .clk_in, .rst_in, .in(bus.read_request_b), .out(bus.data_valid_b)
     );
 
@@ -105,7 +107,7 @@ module program_memory(
     // 2 cycle read
     xilinx_true_dual_port_read_first_2_clock_ram #(
         .RAM_WIDTH(32),                       // Specify RAM data width
-        .RAM_DEPTH((64*1024) / 32),           // Specify RAM depth (number of entries)
+        .RAM_DEPTH((8*1024) / 4),           // Specify RAM depth (number of entries)
         .RAM_PERFORMANCE("HIGH_PERFORMANCE") // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     ) icache (
         .addra(actual_addr),

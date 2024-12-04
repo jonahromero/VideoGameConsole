@@ -12,4 +12,4 @@ console_hw/.Xil/
 obj/
 clockInfo.txt
 sim_build/
-
+.vscode/

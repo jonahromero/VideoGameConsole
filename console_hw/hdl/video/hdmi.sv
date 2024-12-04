@@ -1,5 +1,7 @@
 
 
+`default_nettype none
+
 module hdmi(
    input wire clk_100mhz,
    input wire rst_in,
@@ -10,10 +12,10 @@ module hdmi(
    output logic        hdmi_clk_p, hdmi_clk_n, //differential hdmi clock
 
    output logic signal_clk,
-   frame_buffer_bus bus
+   frame_buffer_bus.READ bus
 );
   // buffer the clk_100mhz
-  logic clk_100mhz_buf[3];
+  /*logic clk_100mhz_buf[3];
   assign new_clk_100mhz = clk_100mhz_buf[1];
   clk_wiz_buffer_clk_wiz clk_ibuf (
     .clk_in1(clk_100mhz),      // External input clock
@@ -21,14 +23,14 @@ module hdmi(
     .clk_out2(clk_100mhz_buf[1]),
     .clk_out3(),
     .reset(0)
-  );
+  );*/
+  assign new_clk_100mhz = clk_pixel;
 
-  // Clock and Reset Signals
   logic          clk_pixel;
   logic          clk_5x;
 
   cw_hdmi_clk_wiz wizard_hdmi
-    (.sysclk(clk_100mhz_buf[0]),
+    (.sysclk(clk_100mhz),
      .clk_pixel(clk_pixel),
      .clk_tmds(clk_5x),
      .reset(0));
@@ -46,7 +48,7 @@ module hdmi(
   // HDMI video signal generator
    video_sig_gen vsg(
       .pixel_clk_in(clk_pixel),
-      .rst_in(sys_rst_pixel),
+      .rst_in(rst_in),
       .hcount_out(hcount_hdmi),
       .vcount_out(vcount_hdmi),
       .vs_out(vsync_hdmi),
@@ -64,30 +66,30 @@ module hdmi(
       red = bus.red; 
       green = bus.green; 
       blue = bus.blue; 
-      bus.vcount = vcount_hdmi;
+      bus.vcount = vcount_hdmi; // TODO- REMOVE indexes
       bus.hcount = hcount_hdmi;
       bus.read_clk = clk_pixel;
    end
 
 
-  logic[7:0] fb_red_pipe, fb_green_pipe, fb_blue_pipe;
-  pipeline #(.STAGES(3), .WIDTH(8)) ps1_1(.clk_in(clk_pixel), .in(red), .out(fb_red_pipe));
-  pipeline #(.STAGES(3), .WIDTH(8)) ps1_2(.clk_in(clk_pixel), .in(green), .out(fb_green_pipe));
-  pipeline #(.STAGES(3), .WIDTH(8)) ps1_3(.clk_in(clk_pixel), .in(blue), .out(fb_blue_pipe));
+  //logic[7:0] fb_red_pipe, fb_green_pipe, fb_blue_pipe;
+  //pipeline #(.STAGES(2), .WIDTH(8)) ps1_1(.clk_in(clk_pixel), .in(red), .out(fb_red_pipe));
+  //pipeline #(.STAGES(2), .WIDTH(8)) ps1_2(.clk_in(clk_pixel), .in(green), .out(fb_green_pipe));
+  //pipeline #(.STAGES(2), .WIDTH(8)) ps1_3(.clk_in(clk_pixel), .in(blue), .out(fb_blue_pipe));
 
   // ENDPOINT 2
-  logic [$clog2(1700)-1:0] hcount_pipe;
-  logic [$clog2(755)-1:0] vcount_pipe;
+  //logic [$clog2(1700)-1:0] hcount_pipe;
+  //logic [$clog2(755)-1:0] vcount_pipe;
   logic vs_pipe; //vertical sync out
   logic hs_pipe; //horizontal sync out
-  logic ad_pipe;
+  logic ad_pipe; //actice draw pipe
   logic nf_pipe; //single cycle enable signal
-  pipeline #(.STAGES(8), .WIDTH($clog2(1700))) ps3_1(.clk_in(clk_pixel), .in(hcount_hdmi), .out(hcount_pipe));
-  pipeline #(.STAGES(8), .WIDTH($clog2(755))) ps3_2(.clk_in(clk_pixel), .in(vcount_hdmi), .out(vcount_pipe));
-  pipeline #(.STAGES(8), .WIDTH(1)) ps3_3(.clk_in(clk_pixel), .in(vsync_hdmi), .out(vs_pipe));
-  pipeline #(.STAGES(8), .WIDTH(1)) ps3_4(.clk_in(clk_pixel), .in(hsync_hdmi), .out(hs_pipe));
-  pipeline #(.STAGES(8), .WIDTH(1)) ps3_5(.clk_in(clk_pixel), .in(active_draw_hdmi), .out(ad_pipe));
-  pipeline #(.STAGES(8), .WIDTH(1)) ps3_6(.clk_in(clk_pixel), .in(nf_hdmi), .out(nf_pipe));
+  //pipeline #(.STAGES(8), .WIDTH($clog2(1700))) ps3_1(.clk_in(clk_pixel), .in(hcount_hdmi), .out(hcount_pipe));
+  //pipeline #(.STAGES(8), .WIDTH($clog2(755))) ps3_2(.clk_in(clk_pixel), .in(vcount_hdmi), .out(vcount_pipe));
+  pipeline #(.STAGES(2), .WIDTH(1)) ps3_3(.clk_in(clk_pixel), .in(vsync_hdmi), .out(vs_pipe));
+  pipeline #(.STAGES(2), .WIDTH(1)) ps3_4(.clk_in(clk_pixel), .in(hsync_hdmi), .out(hs_pipe));
+  pipeline #(.STAGES(2), .WIDTH(1)) ps3_5(.clk_in(clk_pixel), .in(active_draw_hdmi), .out(ad_pipe));
+  pipeline #(.STAGES(2), .WIDTH(1)) ps3_6(.clk_in(clk_pixel), .in(nf_hdmi), .out(nf_pipe));
 
    // HDMI Output: just like before!
    logic [9:0] tmds_10b [0:2]; //output of each TMDS encoder!
@@ -100,7 +102,7 @@ module hdmi(
    //  * control_in[1] = vertical sync signal
    tmds_encoder tmds_red(
        .clk_in(clk_pixel),
-       .rst_in(sys_rst_pixel),
+       .rst_in(rst_in),
        .data_in(red),
        .control_in(2'b0),
        .ve_in(ad_pipe),
@@ -108,7 +110,7 @@ module hdmi(
 
    tmds_encoder tmds_green(
          .clk_in(clk_pixel),
-         .rst_in(sys_rst_pixel),
+         .rst_in(rst_in),
          .data_in(green),
          .control_in(2'b0),
          .ve_in(ad_pipe),
@@ -116,7 +118,7 @@ module hdmi(
 
    tmds_encoder tmds_blue(
         .clk_in(clk_pixel),
-        .rst_in(sys_rst_pixel),
+        .rst_in(rst_in),
         .data_in(blue),
         .control_in({vs_pipe,hs_pipe}),
         .ve_in(ad_pipe),
@@ -127,19 +129,19 @@ module hdmi(
    tmds_serializer red_ser(
          .clk_pixel_in(clk_pixel),
          .clk_5x_in(clk_5x),
-         .rst_in(sys_rst_pixel),
+         .rst_in(rst_in),
          .tmds_in(tmds_10b[2]),
          .tmds_out(tmds_signal[2]));
    tmds_serializer green_ser(
          .clk_pixel_in(clk_pixel),
          .clk_5x_in(clk_5x),
-         .rst_in(sys_rst_pixel),
+         .rst_in(rst_in),
          .tmds_in(tmds_10b[1]),
          .tmds_out(tmds_signal[1]));
    tmds_serializer blue_ser(
          .clk_pixel_in(clk_pixel),
          .clk_5x_in(clk_5x),
-         .rst_in(sys_rst_pixel),
+         .rst_in(rst_in),
          .tmds_in(tmds_10b[0]),
          .tmds_out(tmds_signal[0]));
 
@@ -155,3 +157,6 @@ module hdmi(
    OBUFDS OBUFDS_clock(.I(clk_pixel), .O(hdmi_clk_p), .OB(hdmi_clk_n));
 
 endmodule
+
+
+`default_nettype wire

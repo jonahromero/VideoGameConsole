@@ -1,152 +1,291 @@
 
+`default_nettype none
+
+package mem;
+    typedef enum {
+        BYTE = 0, WORD = 1, DWORD = 2
+    } mem_width_t;
+
+    typedef enum {
+        IO, FB, RAM, ROM, UNKNOWN
+    } addr_type_t;
+endpackage
+
 interface memory_bus();
     logic[31:0] addr;
-    logic[7:0] write_data;
+    logic[31:0] write_data;
     logic dispatch_write;
     logic dispatch_read;
+    mem::mem_width_t mem_width;
     
-    logic[7:0] read_data;
+    logic[31:0] read_data;
     logic busy;
 
     modport MEMORY_SYSTEM (
-        input addr, write_data, dispatch_read, dispatch_write,
+        input addr, write_data, dispatch_read, dispatch_write, mem_width,
         output read_data, busy
     );
     modport CONSUMER (
-        output addr, write_data, dispatch_read, dispatch_write,
+        output addr, write_data, dispatch_read, dispatch_write, mem_width,
         input read_data, busy
     );
-endinterface
+endinterface : memory_bus
 
 module mmio_mappings(
-    input logic[31:0] addr,
-
-    output logic ram_enable,
-    output logic frame_buffer_enable,
-    output logic io_enable,
+    input wire[31:0] addr,
+    output mem::addr_type_t addr_type,
     output logic[15:0] real_addr
 );
     logic[1:0] mem_sel;
     always_comb begin
         mem_sel = addr[17:16];
         real_addr = addr[15:0];
-
-        io_enable = mem_sel == 0;
-        ram_enable = mem_sel == 1;
-        frame_buffer_enable = mem_sel == 2;
+        case (mem_sel) 
+            0: addr_type = mem::ROM;
+            1: addr_type = mem::RAM;
+            2: addr_type = mem::FB;
+            3: addr_type = mem::IO;
+            default: addr_type = mem::UNKNOWN; 
+        endcase
     end
-endmodule
+endmodule : mmio_mappings
 
 module memory_system (
     input wire clk_in,
     input wire rst_in,
 
-    memory_bus bus,
-    frame_buffer_bus fb_bus,
-    sys_io_bus io_bus
+    output logic[12:0] debug_led,
+
+    memory_bus.MEMORY_SYSTEM bus,
+    frame_buffer_bus.WRITE fb_bus,
+    sys_io_bus.CONSUMER io_bus,
+    program_memory_bus.CONSUMER_B program_mem_bus
 );
-    logic[31:0] addr_latched;
-    logic[7:0] data_latched;
-    logic[7:0] ram_data_out;
-    logic[7:0] counter;
-    logic we;
-    // write enables
-    logic[15:0] real_addr;
-    logic is_io_addr, is_frame_buffer_addr, is_ram_addr;
-    mmio_mappings mmio(
-        .addr(addr_latched),
-        .real_addr(real_addr),
-        .ram_enable(is_ram_addr),
-        .frame_buffer_enable(is_frame_buffer_addr),
-        .io_enable(is_io_addr)
+
+    ila_0 debugger (
+        .clk(clk_in), // input wire clk
+
+        .trig_in(rst_in),// input wire trig_in 
+        .trig_in_ack(),// output wire trig_in_ack 
+        .probe0(addr_type), // input wire [7:0]  probe0  
+        .probe1(counter), // input wire [7:0]  probe1 
+        .probe2({7'd0, ram_data_out}), // input wire [15:0]  probe2 
+        .probe3(bus.read_data), // input wire [31:0]  probe3 
+        .probe4(bus.write_data), // input wire [31:0]  probe4 
+        .probe5(data_latched), // input wire [31:0]  probe5 
+        .probe6(addr_latched), // input wire [31:0]  probe6 
+        .probe7(bus.addr[30:0]), // input wire [31:0]  probe7 // fucked up this is 30:0
+
+        .probe8(bus.busy), // input wire [0:0]  probe8 
+        .probe9(we), // input wire [0:0]  probe9 
+        .probe10(fb_we), // input wire [0:0]  probe10 
+        .probe11(ram_we), // input wire [0:0]  probe11 
+        .probe12(rst_in), // input wire [0:0]  probe12 
+        .probe13(bus.dispatch_write), // input wire [0:0]  probe13 
+        .probe14(bus.dispatch_read), // input wire [0:0]  probe14 
+        .probe15(ram_read_buffer) // input wire [0:0]  probe15
     );
 
     enum {
-        WAITING, READ_MEM, WRITE_MEM
+        WAITING = 1, READ_MEM = 2, WRITE_MEM = 4, SEND_WE = 8
     } state;
 
-    assign bus.busy = (state != WAITING);
-    always_ff @ (posedge clk_in) begin
+    // info gathered during WAITING state
+    logic[31:0] addr_latched;
+    logic[31:0] data_latched;
+    logic[2:0] mem_width_latched;
+    logic[2:0] bytes_to_send;
+
+    // MMIO outputs. These are derived from addr_latched and can be used however.
+    logic[15:0] real_addr; // Lower byte of addr_latched, but used in all sub-memory-systems since theyre <64kb
+    mem::addr_type_t addr_type;
+
+    mmio_mappings mmio(
+        .addr(addr_latched),
+        .addr_type(addr_type),
+        .real_addr(real_addr)
+    );
+    
+    // io bus helpers
+    logic[31:0] io_read_data;
+    assign io_read_data = real_addr < 4 ? {
+        8'h00,
+        io_bus.controller.joystick_x,
+        io_bus.controller.joystick_y,
+        io_bus.controller.buttons
+    } >> 8 * (real_addr) /*adjust for addr offset*/ : 32'hF0F055F0;
+
+    // Write enables for memory sub-systems
+    logic we, ram_we, fb_we;
+    always_comb begin
+        ram_we = we && (addr_type == mem::RAM);
+        fb_we =  we && (addr_type == mem::FB);
+    end
+
+    // Helper for counting cycles
+    logic[7:0] counter;
+    logic[31:0] ram_read_buffer;
+
+    assign bus.busy = (state != WAITING) || bus.dispatch_read || bus.dispatch_write;
+    always_ff @(posedge clk_in) begin
         if (rst_in) begin
-            bus.read_data <= 0;
-            counter <= 0;
-            we <= 0;
             state <= WAITING;
+            debug_led <= 0;
+            bus.read_data <= 0;
         end
         else begin
-            if (we) begin
-                we <= 0;
-            end
             case (state)
-            READ_MEM: begin
-                if (is_io_addr) begin
-                    case (real_addr)
-                        0: bus.read_data <= io_bus.controller.joystick_x;
-                        1: bus.read_data <= io_bus.controller.joystick_y;
-                        2: bus.read_data <= io_bus.controller.buttons;
-                        default: bus.read_data <= 0;
-                    endcase
-                    state <= WAITING;
-                end
-                else if (is_frame_buffer_addr) begin
-                    bus.read_data <= 0;
-                    state <= WAITING;
-                end
-                else if (is_ram_addr) begin
-                    if (counter + 1 == 2) begin // wait 2 cycles
-                        bus.read_data <= ram_data_out;
-                        state <= WAITING;
-                    end
-                    counter <= counter + 1;
-                end
-            end
-            WRITE_MEM: begin
-                // all of these are 1 cycle.
-                state <= WAITING;
-            end
             WAITING: begin
-                counter <= 0;
-                addr_latched <= bus.addr;
-                data_latched <= bus.write_data;
+                if (bus.dispatch_read || bus.dispatch_write) begin
+                    addr_latched <= bus.addr;
+                    data_latched <= bus.write_data;
+                    ram_read_buffer <= 0;
+                    case (bus.mem_width)
+                        mem::BYTE: mem_width_latched <= 1;
+                        mem::WORD: mem_width_latched <= 2;
+                        mem::DWORD: mem_width_latched <= 4;
+                    endcase
+                    case (bus.mem_width)
+                        mem::BYTE: bytes_to_send <= 1;
+                        mem::WORD: bytes_to_send <= 2;
+                        mem::DWORD: bytes_to_send <= 4;
+                    endcase
+                    counter <= 0;
+                end
                 if (bus.dispatch_read) begin
                     state <= READ_MEM;
                 end
                 else if (bus.dispatch_write) begin
-                    state <= WRITE_MEM;
-                    we <= 1;
+                    state <= SEND_WE;
                 end
             end
+            READ_MEM: begin
+                counter <= counter + 1;
+                case (addr_type)
+                    mem::IO : begin
+                        bus.read_data <= io_read_data;
+                        state <= WAITING;
+                    end
+                    mem::FB : begin
+                        if (counter + 1 == 4) begin // wait 4 cycles
+                            bus.read_data <= fb_bus.debug_read;
+                            state <= WAITING;
+                        end
+                    end
+                    mem::RAM : begin
+                        if (counter + 1 == 4) begin // wait 2 cycles
+                            counter <= 0;
+                            if (bytes_to_send != 1) begin
+                                bytes_to_send <= bytes_to_send - 1;
+                            end
+                            else begin
+                                bus.read_data <= ({ram_data_out, ram_read_buffer[31:8] } >> (4 - mem_width_latched));
+                                state <= WAITING;
+                            end
+
+                            ram_read_buffer <= {ram_data_out, ram_read_buffer[31:8] };
+                            addr_latched <= addr_latched + 1;
+                        end
+                    end
+                    mem::ROM : begin
+                        if (counter + 1 == 4) begin // wait 2 cycles
+                            // the program instruction ram reads 4 byte instructions,
+                            // ignoring the bottom 2 bits, so we offset based on address
+                            // we also dont have to worry about partials, since riscv requires aligned access
+                            bus.read_data <= (program_mem_bus.instr_b >> (8 * real_addr[1:0]));
+                            //bus.read_data <= real_addr + 256;
+                            //bus.read_data <= 32'hFF_FF;
+                            //debug_led <= real_addr;
+                            // if (real_addr < 64) begin
+                            //     bus.read_data <= 32'h00_1F;
+                            // end
+                            // else begin
+                            //     bus.read_data <= 32'hF8_00; //(program_mem_bus.instr_b >> (8 * real_addr[1:0]));
+                            // end
+                            state <= WAITING;
+                        end
+                    end
+                    mem::UNKNOWN : begin
+                        bus.read_data <= 16'hF8_00;
+                        state <= WAITING;
+                    end
+                    default: begin
+                        bus.read_data <= 16'hFF_FF;
+                        state <= WAITING;
+                    end
+                endcase
+            end
+            SEND_WE : begin
+                we <= 1;
+                state <= WRITE_MEM;
+            end
+            WRITE_MEM: begin
+                counter <= counter + 1;
+                case (addr_type)
+                    mem::RAM: begin
+                        if (counter == 3) begin // wait 2 cycles
+                            counter <= 0;
+                            if (bytes_to_send != 1) begin
+                                bytes_to_send <= bytes_to_send - 1;
+                                data_latched  <= (data_latched >> 8);
+                                addr_latched <= addr_latched + 1;
+                                state <= SEND_WE;
+                            end
+                            else begin
+                                state <= WAITING;
+                            end
+                        end
+                    end
+                    mem::IO:      state <= WAITING;
+                    mem::FB:      state <= WAITING;
+                    mem::ROM:     state <= WAITING;
+                    mem::UNKNOWN: state <= WAITING;
+                endcase
+            end
             endcase
+            if (we) begin
+                we <= 0;
+            end
         end
     end
+    
+    //// The following code, utilizes the several busses it manages, to forward correct data
+    // Program Memory
+    always_comb begin
+        program_mem_bus.addr_b = real_addr;
+    end
 
-    // THE REST OF THIS IS INTERACTING WITH THE MEMORY
-    // frame buffer. 1 cycle write
+    // Frame Buffer. Two-cycle read and one-cycle write
     parameter FB_SWAP_ADDR = 16'hFF_FF;
     always_comb begin
         fb_bus.write_clk = clk_in;
         fb_bus.write_addr = real_addr;
-        fb_bus.write_data = data_latched;
+        // mem width implicitly word size
+        fb_bus.write_data = data_latched[15:0];
 
-        fb_bus.write_enable = we && is_frame_buffer_addr && (real_addr != FB_SWAP_ADDR);
-        fb_bus.swap_buffer = we && (real_addr == FB_SWAP_ADDR);
+        fb_bus.write_enable = fb_we && (real_addr != FB_SWAP_ADDR);
+        fb_bus.swap_buffer  = fb_we && (real_addr == FB_SWAP_ADDR);
     end
 
-    // internal ram. 2 cycle read, 1 cycle write
+    // Internal RAM. Two-cycle read and one-cycle write.
+    logic[7:0] ram_data_out;
     xilinx_single_port_ram_read_first #(
-        .RAM_WIDTH(8),                      // Specify RAM data width
-        .RAM_DEPTH(64*1024),                      // Specify RAM depth (number of entries)
-        .RAM_PERFORMANCE("HIGH_PERFORMANCE") // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
+        .RAM_WIDTH(8),
+        .RAM_DEPTH(64*1024),
+        .RAM_PERFORMANCE("HIGH_PERFORMANCE")
     ) ram (
-        .addra(real_addr),        // Address bus, width determined from RAM_DEPTH
-        .dina(data_latched),      // RAM input data, width determined from RAM_WIDTH
-        .wea(we && is_ram_addr),  // Write enable
-        .douta(ram_data_out),      // RAM output data, width determined from RAM_WIDTH
+        .addra(real_addr),
+        .dina(data_latched[7:0]),
+        .wea(ram_we),
+        .douta(ram_data_out),
 
-        .clka(clk_in),       // Clock
-        .ena(1),         // RAM Enable, for additional power savings, disable port when not in use
-        .rsta(rst_in),       // Output reset (does not affect memory contents)
-        .regcea(1)   // Output register enable
+        .clka(clk_in),
+        .rsta(rst_in),
+        .ena(1),
+        .regcea(1)
     );
 
-endmodule
+endmodule : memory_system
+
+
+`default_nettype wire
