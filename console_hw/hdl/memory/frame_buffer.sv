@@ -1,5 +1,7 @@
 
 
+`default_nettype none
+
 interface frame_buffer_bus# (
     parameter VCOUNT_WIDTH = 1280,
     parameter VCOUNT_HEIGHT = 720,
@@ -15,10 +17,11 @@ interface frame_buffer_bus# (
     logic[15:0] write_data; // 565 format rgb input
     logic[FB_SIZE-1:0] write_addr; // an address within 320x180
     logic write_enable; // single pulse write
+    logic [15:0] debug_read;
 
     // reading to frame buffer
-    logic[$clog2(VCOUNT_WIDTH)-1:0] vcount;
-    logic[$clog2(VCOUNT_HEIGHT)-1:0] hcount;
+    logic[$clog2(VCOUNT_HEIGHT)-1:0] vcount;
+    logic[$clog2(VCOUNT_WIDTH)-1:0] hcount;
     logic [7:0] red, green, blue;
 
     logic swap_buffer; // single pulse signal that tells us to swap frame buffers
@@ -28,11 +31,12 @@ interface frame_buffer_bus# (
         output vcount, hcount, read_clk
     ); 
     modport WRITE (
-        output write_data, write_addr, write_enable, write_clk, swap_buffer
+        output write_data, write_addr, write_enable, write_clk, swap_buffer,
+        input debug_read
     );
     modport FRAME_BUFFER (
         input write_data, write_addr, write_enable, vcount, hcount, swap_buffer, write_clk, read_clk,
-        output red, green, blue
+        output red, green, blue, debug_read
     );
 endinterface
 
@@ -50,11 +54,12 @@ module frame_buffer
 )
 (
     input wire rst_in,
-    frame_buffer_bus bus
+    frame_buffer_bus.FRAME_BUFFER bus
 );
     logic buffer_flag; // flip flops depending on which buffer is reading/writing
     logic blk_we[1:0];
     logic[15:0] blk_data_out[1:0];
+    logic[15:0] blk_data_debug_out[1:0];
     logic[15:0] frame_buff_raw;
     logic [FB_SIZE-1:0] read_addr;
 
@@ -70,10 +75,20 @@ module frame_buffer
     end
 
     always_comb begin
-        read_addr = ((FB_WIDTH-1)-(bus.hcount>>2)) + FB_WIDTH*(bus.vcount>>2);
-        blk_we = {!buffer_flag, buffer_flag};
-        frame_buff_raw = buffer_flag ? blk_data_out[0] : blk_data_out[1];
-            
+        read_addr = ((bus.hcount>>2)) + FB_WIDTH*(bus.vcount>>2); // TODO - Violate timing?
+        blk_we[0] = bus.write_enable;//buffer_flag && bus.write_enable;
+        //blk_we[1] = !buffer_flag  && bus.write_enable;
+
+        //frame_buff_raw = bus.hcount[2:0] < 4 ? 16'h6690 : 16'hFFFF;
+
+        if (buffer_flag) begin
+            frame_buff_raw = blk_data_out[0]; // TODO- this should be 1, but have them write and read same one for testing
+            bus.debug_read =  blk_data_debug_out[0];
+        end
+        else begin
+            frame_buff_raw = blk_data_out[0];
+            bus.debug_read =  blk_data_debug_out[0];
+        end
         bus.red   = { frame_buff_raw[15:11], 3'b0 };
         bus.green = { frame_buff_raw[10:5],  2'b0 };
         bus.blue  = { frame_buff_raw[4:0],   3'b0 };
@@ -81,14 +96,14 @@ module frame_buffer
 
     // 2 cycles
     generate
-        for (genvar i = 0; i < 2; i++) begin
+        for (genvar i = 0; i < 1; i++) begin
             blk_mem_gen_0 frame_buffer(
                 .clka(bus.write_clk),
-                .addra(bus.write_addr), //pixels are stored using this math
+                .addra(bus.write_addr >> 1), //pixels are stored using this math
                 .wea(blk_we[i]),
                 .dina(bus.write_data),
                 .ena(1'b1),
-                .douta(), //never read from this side
+                .douta(blk_data_debug_out[i]), //never read from this side
 
                 .clkb(bus.read_clk),
                 .addrb(read_addr),//transformed lookup pixel
@@ -101,3 +116,6 @@ module frame_buffer
     endgenerate
 
 endmodule
+
+
+`default_nettype wire

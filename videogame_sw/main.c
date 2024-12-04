@@ -72,7 +72,7 @@ void render(game_t * game) {
     (pos_t) { game->cursor.x + 1, game->cursor.y },
     (pos_t) { game->cursor.x - 1, game->cursor.y },
   };
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 4; i++) {
     draw_pixel(game->color_pallette[WHITE], cursor_adj[i]);
   }
   swap_frame_buffer();

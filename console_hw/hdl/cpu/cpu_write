@@ -1,0 +1,78 @@
+
+// helpful addresses:
+// rom:   0x0FFFF - 0x00000
+// ram:   0x1FFFF - 0x10000
+// frame: 0x2FFFF - 0x20000
+// io:    0x3FFFF - 0x30000
+
+// FB SWAP: 0x2FFFF
+// 
+
+//test cpu
+module cpu(
+    input logic rst_in,
+    input logic clk_in,
+    // debug
+    input logic[1:0] debug_btns,
+    input logic[15:0] debug_sw,
+    input logic[31:0] debug_display,
+
+    memory_bus mem_bus,
+    program_memory_bus program_mem_bus
+);
+    parameter SWITCH_FB_ADDR = 32'h2FFFF;
+    parameter FRAME_BUFFER_ADDR = 32'h20000;
+
+    enum {WRITE_ADDR, WAITING} state;
+    logic[31:0] offset;
+
+    assign debug_display = mem_bus.read_data;
+    always_ff @ (posedge clk_in) begin
+        if (rst_in) begin
+            offset <= 0;
+            state <= WRITE_ADDR;
+        end
+        else begin
+            case (state)
+            WAITING: begin
+                if (debug_btns[0]) begin
+                    if (!mem_bus.busy) begin
+                        mem_bus.mem_width <= mem::BYTE;
+                        mem_bus.addr <= SWITCH_FB_ADDR;
+                        mem_bus.dispatch_write <= 1;
+                        mem_bus.write_data <= 1;
+                    end
+                end
+                else begin
+                    if (!mem_bus.busy) begin
+                        mem_bus.mem_width <= mem::DWORD;
+                        mem_bus.addr <= {debug_sw, 2'b00};
+                        mem_bus.dispatch_read <= 1;
+                    end
+                end
+            end
+            WRITE_ADDR: begin
+                if (!mem_bus.busy) begin
+                    mem_bus.write_data <= mem_bus.read_data;
+                    mem_bus.mem_width <= mem::WORD;
+                    mem_bus.addr <= FRAME_BUFFER_ADDR + offset;
+                    mem_bus.dispatch_write <= 1;
+                    if (offset + 2 == 8192) begin
+                        state <= WAITING;
+                    end
+                    else begin
+                        offset <= offset + 2;
+                    end
+                end
+            end
+            endcase
+            // single pulses
+            if (mem_bus.dispatch_read) begin
+                mem_bus.dispatch_read <= 0;
+            end
+            if (mem_bus.dispatch_write) begin
+                mem_bus.dispatch_write <= 0;
+            end
+        end
+    end
+endmodule

@@ -1,0 +1,45 @@
++=========================+=========================+=====================================+
+| Launch Setup Clock      | Launch Hold Clock       | Pin                                 |
++=========================+=========================+=====================================+
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tmds_out_reg[4]/D   |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[7]/D |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tmds_out_reg[3]/D   |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tmds_out_reg[5]/D   |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[7]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[6]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[4]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tally_reg[3]/D    |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tally_reg[2]/D    |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tally_reg[4]/D      |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tally_reg[4]/D    |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tally_reg[3]/D      |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tally_reg[1]/D    |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tmds_out_reg[6]/D   |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tally_reg[1]/D      |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[3]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tmds_out_reg[7]/D   |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tally_reg[2]/D      |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tally_reg[3]/D     |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tally_reg[2]/D     |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[5]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tally_reg[1]/D     |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tally_reg[4]/D     |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tmds_out_reg[1]/D   |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[2]/D |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[6]/D |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tmds_out_reg[0]/D   |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[3]/D |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[1]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[4]/D |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[0]/D |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[2]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[1]/D |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tmds_out_reg[2]/D   |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[5]/D |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[9]/D |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[9]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[0]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_blue/tmds_out_reg[8]/D  |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_red/tmds_out_reg[8]/D   |
+| clk_out2_clk_wiz_buffer | clk_out2_clk_wiz_buffer | m_hdmi/tmds_green/tmds_out_reg[8]/D |
++-------------------------+-------------------------+-------------------------------------+

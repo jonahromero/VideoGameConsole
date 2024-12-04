@@ -2,7 +2,7 @@
 #set limits (don't change unless you're running local):
 #if running remote, increasing threads will potentially cause your code to submission to get bounced
 #due to a process watchdog.
-set_param general.maxThreads 2
+set_param general.maxThreads 8
 #Define target part and create output directory
 # The Urbana Spartan 7 uses this chip:
 # xc7s50 refers to the fact that it is a Spartan-7-50 FPGA
@@ -79,6 +79,7 @@ report_timing_summary -file $outputDir/post_synth_timing_summary.rpt
 report_utilization -file $outputDir/post_synth_util.rpt -hierarchical -hierarchical_depth 4
 report_timing -file $outputDir/post_synth_timing.rpt
 
+write_debug_probes -force debug_probes.ltx
 #run optimization
 opt_design
 place_design
@@ -104,5 +105,9 @@ report_drc -file $outputDir/post_imp_drc.rpt
 #set_property SEVERITY {Warning} [get_drc_checks NSTD-1]
 #write_verilog -force $outputDir/cpu_impl_netlist.v -mode timesim -sdf_anno true
 write_bitstream -force $outputDir/final.bit
+
+
+
+# NO OPTIMIZED
 
 
