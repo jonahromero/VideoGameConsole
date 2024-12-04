@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
+import ProcTypes::*;
+
 function logic [31:0] barrel_rshift(
     input [31:0] data_in,
     input  [4:0] sftSz,
@@ -335,14 +337,14 @@ function logic [31:0] addSub(
 endfunction
 
 function logic [31:0] alu(
-    input [31:0] val1,
-    input [31:0] val2,
-    input [3:0] alufunc
+    input logic [31:0] val1,
+    input logic [31:0] val2,
+    input AluFunc alufunc
 );
     logic isSub, isSigned, lt32Val;
-    logic [1:0] shiftType;
+    ShiftType shiftType;
     logic [4:0] sftSz;
-    logic [31:0] sft32Val,data_out;
+    logic [31:0] data_out;
     
     if ((alufunc == Add) || (alufunc == Sub)) begin
         if (alufunc == Sub) isSub = 1;
@@ -363,8 +365,9 @@ function logic [31:0] alu(
         if (alufunc == Srl) shiftType = LogicalRightShift;
         else if (alufunc == Sra) shiftType = ArithemticRightShift;
         else shiftType = LeftShift;
-        data_out = sft32(val1,shiftType,sftSz);
+        data_out = sft32(val1,sftSz,shiftType);
     end
+
 
     return data_out;
 

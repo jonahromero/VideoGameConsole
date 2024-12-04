@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-// import ProcTypes::*;
+import ProcTypes::*;
 
 
 function logic aluBr(logic [31:0] a, logic [31:0] b, BrFunc brfunc);
@@ -20,7 +20,7 @@ endfunction
 
 function ExecInst execute(DecodedInst dInst, logic[31:0] r_val1,logic [31:0] r_val2, logic [31:0] pc);
     logic [31:0] imm, alu_val2,data, nextPc, addr;
-    ExecInst ret;
+    // ExecInst ret;
 
     imm = dInst.imm;
     alu_val2 = (dInst.iType == OPIMM)? imm : r_val2;
@@ -43,16 +43,16 @@ function ExecInst execute(DecodedInst dInst, logic[31:0] r_val1,logic [31:0] r_v
 
     addr = r_val1 + imm;
 
-    // return '{ dInst.iType,  dInst.dst,  data,  addr, nextPc, dInst.memFunc};
+    return '{dInst.iType, dInst.memFunc,dInst.dst, data, addr, nextPc};
 
-    ret.iType = dInst.iType;
-    ret.memFunc = dInst.memFunc;
-    ret.dst = dInst.dst;
-    ret.data = data;
-    ret.addr = addr;
-    ret.nextPC = nextPc;
+    // ret.iType = dInst.iType;
+    // ret.memFunc = dInst.memFunc;
+    // ret.dst = dInst.dst;
+    // ret.data = data;
+    // ret.addr = addr;
+    // ret.nextPC = nextPc;
 
-    return ret;
+    // return ret;
 endfunction
 
 `default_nettype wire
