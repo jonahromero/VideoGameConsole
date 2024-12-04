@@ -118,13 +118,12 @@ module top_level
     .program_mem_bus(program_mem_bus.CONSUMER_B)
   );
   cpu m_cpu(
-    .rst_in(sys_rst), .clk_in(clk_in),
+    .rst_in(sys_rst), 
+    .clk_in(clk_in),
     .mem_bus(mem_bus.CONSUMER),
-    .debug_display(val_to_display),
-    .debug_sw(sw),
-    .debug_btns(btn[3:2]),
     .program_mem_bus(program_mem_bus.CONSUMER_A)
   );
+
 endmodule // top_level
 
 

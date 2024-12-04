@@ -1,13 +1,13 @@
 
 package ProcTypes;
     // Alu function enumeration
-    typedef enum {Add, Sub, And, Or, Xor, Slt, Sltu, Sll, Srl, Sra} AluFunc;
+    typedef enum {Add, Sub, And, Or, Xor, Slt, Sltu, Sll, Srl, Sra, NopA} AluFunc;
 
     // Branch function enumeration
-    typedef enum { Eq,Neq,Lt,Ltu,Ge,GeU} BrFunc;
+    typedef enum { Eq,Neq,Lt,Ltu,Ge,GeU,NopB} BrFunc;
 
     // Mem function enumeration
-    typedef enum { Lw, Lh, Lhu, Lb, Lbu, Sw, Sh, Sb } MemFunc;
+    typedef enum { Lw, Lh, Lhu, Lb, Lbu, Sw, Sh, Sb, NopM} MemFunc;
 
     // AUIPC added for this lab - Add Upper Immediate to PC
     typedef enum {OP, OPIMM, BRANCH, LUI, JAL, JALR, LOAD, STORE, AUIPC, PMUL, Unsupported} IType;

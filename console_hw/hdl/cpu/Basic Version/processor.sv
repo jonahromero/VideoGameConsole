@@ -10,18 +10,18 @@ typedef enum {
     Redirect  // Redirect fetch to another PC, annulling any fetched instructions
 } FetchAction;
 
-typedef struct packed{
+typedef struct {
     FetchAction fetchAction;
     logic [31:0] redirectPC;  // PC to fetch from, used only if fetchAction is Redirect
 } FetchInput;
 
-typedef struct packed{
+typedef struct {
     logic [16:0] pc;
     logic [31:0] inst;
     logic isValid;
 } F2D;
 
-typedef struct packed{
+typedef struct {
     logic [31:0] pc;
     DecodedInst dInst;
     logic [31:0] rVal1;
@@ -30,7 +30,7 @@ typedef struct packed{
     // Add anything you need
 } D2E;
 
-typedef struct packed{
+typedef struct {
     logic[31:0] pc;
     IType iType;
     logic[4:0] dst;
@@ -40,7 +40,7 @@ typedef struct packed{
     // Add anything you need
 } E2W;
 
-typedef struct packed{
+typedef struct {
     logic [31:0] data;
     logic isValid;
 } Maybe;
@@ -55,22 +55,19 @@ module fetch (
 );
 
     logic [31:0] fetch_pc,f2d_tp, f2d_tp1;
+    FetchAction fetch_action;
 
     always_comb begin
         fetch_action = f_in.fetchAction;
         program_mem_bus.addr = fetch_pc;
+        program_mem_bus.read_request = 1;
         case (fetch_action)
-            REDIRECT: begin
-                // f2d = '{pc: 'x, inst: 'x, isValid:1'b0}; // Invalid Instruction
-                f2d.pc = 'x;
-                f2d.inst = 'x;
-                f2d.isValid = 1'b0;
+            Redirect: begin
+                f2d = '{pc: 'x, inst: 'x, isValid:1'b0}; // Invalid Instruction
             end
             default: begin
-            // f2d = '{pc: f2d_tp1, inst:program_mem_bus.write_data, isValid:1'b1};
-                f2d.pc = f2d_tp1;
-                f2d.inst = program_mem_bus.write_data;
-                f2d.isValid = 1'b1;
+                if (program_mem_bus.data_valid) f2d = '{pc: f2d_tp1, inst:program_mem_bus.instr, isValid:1'b1};
+                else f2d = '{pc: 'x, inst: 'x, isValid:1'b0};
             end
         endcase
     end
@@ -83,19 +80,19 @@ module fetch (
         end
         else begin
             case (fetch_action)
-                REDIRECT: begin                    
-                    fetch_pc <= f_in.redirectPC << 3;
+                Redirect: begin                    
+                    fetch_pc <= f_in.redirectPC;
                     f2d_tp <= 32'hFFFF_FFFF;
                     f2d_tp1 <= 32'hFFFF_FFFF;
                 end
-                STALL: begin                    
+                Stall: begin                    
                     f2d_tp1 <= f2d_tp;
                     f2d_tp <= fetch_pc;
                 end
-                DEQUEUE: begin                 
-                    f2d_tp <= fetch_pc + 6'd32;
+                Dequeue: begin                 
+                    f2d_tp <= fetch_pc + 32'd32;
                     f2d_tp1 <= f2d_tp;
-                    fetch_pc <= fetch_pc + 6'd32;
+                    fetch_pc <= fetch_pc + 32'd32;
                 end
                 default: begin
                     f2d_tp <= fetch_pc;
@@ -155,6 +152,7 @@ module cpu(
 
     // Variables associated with the Fetch Stage
     FetchInput f_in;
+    DecodedInst dInst;
 
     // Register File
     logic [5:0][31:0] rf;
@@ -211,26 +209,14 @@ module cpu(
         dReqStall = 1'b0;
 
         if ((d2e.isValid) & (!dDataStall)) begin
-            eInst = execute(d2e.dInst, d2e.r_val1, d2e.r_val2, d2e.pc);
+            eInst = execute(d2e.dInst, d2e.rVal1, d2e.rVal2, d2e.pc);
 
             if (eInst.iType == LOAD || eInst.iType == STORE) begin
                 if(eInst.iType == LOAD) begin
-                    // e2w_tp = '{pc: d2e.pc, iType: eInst.iType, dst: eInst.dst, eInst: eInst, data: 'x, isValid:1'b1}; 
-                    e2w_tp.pc = d2e.pc;
-                    e2w_tp.iType = eInst.iType;
-                    e2w_tp.dst = eInst.dst;
-                    e2w_tp.memFunc = eInst.memFunc;
-                    e2w_tp.data = 'x;
-                    e2w_tp.isValid = 1'b1;
+                    e2w_tp = '{pc: d2e.pc, iType: eInst.iType, dst: eInst.dst, memFunc: eInst.memFunc, data: 'x, isValid:1'b1}; 
                 end
                 else if (eInst.iType == STORE) begin
-                    // e2w_tp = '{pc: d2e.pc, iType: eInst.iType, dst: 5'b0,eInst: eInst, data:'x, isValid:1'b1};
-                    e2w_tp.pc = d2e.pc;
-                    e2w_tp.iType = eInst.iType;
-                    e2w_tp.dst = 5'd0;
-                    e2w_tp.memFunc = eInst.memFunc;
-                    e2w_tp.data = 'x;
-                    e2w_tp.isValid = 1'b1;
+                    e2w_tp = '{pc: d2e.pc, iType: eInst.iType, dst: 5'b0, memFunc: eInst.memFunc, data:'x, isValid:1'b1};
                 end
                 if (mem_bus.busy) dReqStall = 1'b1;
                 else begin
@@ -246,13 +232,7 @@ module cpu(
                     end
                 end
             end else begin
-                // e2w_tp = '{pc: d2e_v.pc, iType: eInst.iType, dst: eInst.dst,eInst: eInst, data: eInst.data, isValid:1'b1};
-                e2w_tp.pc = d2e.pc;
-                e2w_tp.iType = eInst.iType;
-                e2w_tp.dst = eInst.dst;
-                e2w_tp.memFunc = eInst.memFunc;
-                e2w_tp.data = eInst.data;
-                e2w_tp.isValid = 1'b1;
+                e2w_tp = '{pc: d2e.pc, iType: eInst.iType, dst: eInst.dst, memFunc: eInst.memFunc, data: eInst.data, isValid:1'b1};
             end
 
             // Optional PMUL Code here
@@ -264,7 +244,7 @@ module cpu(
                      dataE.data = eInst.data;
                      dataE.isValid = 1'b1;
                 end
-                if(eInst.nextPc != (d2e_v.pc + 32'd4)) begin
+                if(eInst.nextPc != (d2e.pc + 32'd4)) begin
                     annul = 1'b1;
                     redirectPC = eInst.nextPc;
                 end
@@ -284,8 +264,8 @@ module cpu(
 
             if ((dstE != 0) && dataE.isValid) begin
                 if (dstE == dInst.src1) r_val1 = dataE.data; //Bypassing dataE into rd1
-                if (dst == dInst.src2) r_val2 = dataE.data; //Bypassing dataE into rd2
-            end else if ((dst != 0) && (!dataE.isValid)) hazardStall = 1'b1;
+                if (dstE == dInst.src2) r_val2 = dataE.data; //Bypassing dataE into rd2
+            end else if ((dstE != 0) && (!dataE.isValid)) hazardStall = 1'b1;
 
             if ((dstW != 0) && (dstW != dstE)) begin
                 if (dstW == dInst.src1) r_val1 = dataW;
@@ -293,12 +273,7 @@ module cpu(
             end
 
             if ((!annul) && (!hazardStall)) begin
-                //  d2e_tp = '{pc: f2d.pc, dInst: dInst, rVal1: r_val1, rVal2: r_val2, isValid: 1'b1};
-                d2e_tp.pc = f2d.pc;
-                d2e_tp.dInst = dInst;
-                d2e_tp.rVal1 = r_val1;
-                d2e_tp.rVal2 = r_val2;
-                d2e_tp.isValid = 1'b1;
+                 d2e_tp = '{pc: f2d.pc, dInst: dInst, rVal1: r_val1, rVal2: r_val2, isValid: 1'b1};
             end
         end
 
@@ -345,11 +320,10 @@ module cpu(
 
             if (annul) d2e.isValid <= 1'b0;
             else if(hazardStall) d2e.isValid <= 1'b0;
-            else begin
-                d2e <= d2e_tp;
-            end
+            else if ((!dDataStall) && (!dReqStall)) d2e.isValid <= 1'b0;
+            else d2e <= d2e_tp;
 
-            if ((!dDataStall) && (!dReqStall)) d2e.isValid <= 1'b0;
+
 
             ///////////////////////
             // Drive fetch stage //
