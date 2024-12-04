@@ -5,7 +5,7 @@ CPP := riscv32-unknown-elf-g++
 OBJ_COPY := riscv32-unknown-elf-objcopy
 OBJ_DUMP := riscv32-unknown-elf-objdump
 LD := riscv32-unknown-elf-ld
-PYTHON := ./.venv/bin/python3
+#PYTHON := ./.venv/bin/python3
 
 # parameters for our program
 OBJS := \
@@ -31,7 +31,7 @@ program: $(OBJS) $(LINKER_SCRIPT)
 	$(LD) -T $(LINKER_SCRIPT) -o program.elf $(OBJS)
 	$(OBJ_COPY) -j .text -j .rodata -O binary program.elf program.bin
 	$(OBJ_DUMP) -D -s -z -m riscv:rv32 program.elf > program.asm
-	$(PYTHON) ./bintohex.py -i=./program.bin -o=./program.hex
+#$(PYTHON) ./bintohex.py -i=./program.bin -o=./program.hex
 #$(OBJ_DUMP) -b binary -D -m riscv:rv32 program > program.asm
 
 %.o: %.c
