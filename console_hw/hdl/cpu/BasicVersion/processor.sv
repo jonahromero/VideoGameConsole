@@ -5,9 +5,9 @@ import ProcTypes::*;
 
 // Types associated with the Fetch Stage
 typedef enum {
-    Dequeue, // Consume instruction at the f2d output, if any
-    Stall, // Do not consume instruction at f2d
-    Redirect  // Redirect fetch to another PC, annulling any fetched instructions
+    DEQUEUE, // Consume instruction at the f2d output, if any
+    STALL, // Do not consume instruction at f2d
+    REDIRECT  // Redirect fetch to another PC, annulling any fetched instructions
 } FetchAction;
 
 typedef struct {
@@ -17,7 +17,7 @@ typedef struct {
 
 typedef struct {
     logic [16:0] pc;
-    logic [31:0] inst;
+    logic [31:0] instr;
     logic isValid;
 } F2D;
 
@@ -54,56 +54,97 @@ module fetch (
     output F2D f2d                    // Contains PC and requested instruction
 );
 
-    logic [31:0] fetch_pc,f2d_tp, f2d_tp1;
-    FetchAction fetch_action;
+    logic [31:0] fetch_pc;
 
-    always_comb begin
-        fetch_action = f_in.fetchAction;
-        program_mem_bus.addr = fetch_pc;
-        program_mem_bus.read_request = 1;
-        case (fetch_action)
-            Redirect: begin
-                f2d = '{pc: 'x, inst: 'x, isValid:1'b0}; // Invalid Instruction
-            end
-            default: begin
-                if (program_mem_bus.data_valid) f2d = '{pc: f2d_tp1, inst:program_mem_bus.instr, isValid:1'b1};
-                else f2d = '{pc: 'x, inst: 'x, isValid:1'b0};
-            end
-        endcase
-    end
+    // always_comb begin
+    //     fetch_action = f_in.fetchAction;
+    //     program_mem_bus.addr = fetch_pc;
+    //     program_mem_bus.read_request = 1'b1;
+    //     // case (fetch_action)
+    //     //     Redirect: begin
+    //     //         f2d = '{pc: 'x, inst: 'x, isValid:1'b0}; // Invalid Instruction
+    //     //     end
+    //     //     default: begin
+    //     //         if (program_mem_bus.data_valid) f2d = '{pc: f2d_tp1, inst:program_mem_bus.instr, isValid:1'b1};
+    //     //         else f2d = '{pc: 'x, inst: 'x, isValid:1'b0};
+    //     //     end
+    //     // endcase
+    // end
 
     always_ff @(posedge clk_in ) begin
+        // if (rst_in) begin
+        //     f2d_tp <= '{data:32'hFFFF_FFFF, isValid:1'b0};
+        //     f2d_tp1 <= '{data:32'hFFFF_FFFF, isValid:1'b0};
+        //     fetch_pc <= 32'b0;
+        // end
+        // else begin
+            // case (fetch_action)
+            //     Redirect: begin                    
+            //         fetch_pc <= f_in.redirectPC;
+            //         f2d_tp.isValid <= 1'b0;
+            //         f2d_tp1.isValid <= 1'b0;
+            //         f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0}; 
+            //     end
+            //     Stall: begin                    
+            //         f2d_tp1<= f2d_tp1;
+            //         f2d_tp <= f2d_tp;
+            //         fetch_pc <= fetch_pc;
+            //     end
+            //     Dequeue: begin
+            //         if (program_mem_bus.data_valid) begin                 
+            //             f2d_tp <= '{data:fetch_pc + 32'd32, isValid:1'b1};
+            //             f2d_tp1 <= f2d_tp;
+            //             fetch_pc <= fetch_pc + 32'd32;
+            //             if (f2d_tp1.isValid) f2d <= '{pc: f2d_tp1.data, inst: program_mem_bus.instr, isValid:1'b1};
+            //             else f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0};
+            //         end
+            //         else f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0};
+            //     end
+            //     default: begin
+            //         if (program_mem_bus.data_valid) begin                 
+            //             f2d_tp <= '{data:fetch_pc + 32'd32, isValid:1'b1};
+            //             f2d_tp1 <= f2d_tp;
+            //             fetch_pc <= fetch_pc + 32'd32;
+            //             if (f2d_tp1.isValid) f2d <= '{pc: f2d_tp1.data, inst: program_mem_bus.instr, isValid:1'b1};
+            //             else f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0};
+            //         end
+            //         else f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0};
+            //     end
+            // endcase
         if (rst_in) begin
-            f2d_tp <= 'x;
-            f2d_tp1 <= 'x;
             fetch_pc <= 32'b0;
         end
         else begin
-            case (fetch_action)
-                Redirect: begin                    
+            case (f_in.fetchAction)
+                REDIRECT: begin
+                    f2d <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid:1'b0};
                     fetch_pc <= f_in.redirectPC;
-                    f2d_tp <= 32'hFFFF_FFFF;
-                    f2d_tp1 <= 32'hFFFF_FFFF;
-                    f2d <= '{pc: 'x, inst: 'x, isValid: 1'b0};
+                    program_mem_bus.addr <= f_in.redirectPC;
+                    program_mem_bus.read_request <= 1'b1;
                 end
-                Stall: begin                    
-                    f2d_tp1 <= f2d_tp;
-                    f2d_tp <= fetch_pc;
-                    fetch_pc <= f2d_tp1;
-                end
-                Dequeue: begin                 
-                    f2d_tp <= fetch_pc + 32'd32;
-                    f2d_tp1 <= f2d_tp;
-                    fetch_pc <= fetch_pc + 32'd32;
+                // STALL: begin
+                    
+                // end
+                DEQUEUE: begin
+                    if(program_mem_bus.data_valid) begin 
+                        f2d <= '{pc: fetch_pc, instr: program_mem_bus.instr, isValid:1'b1};
+                        fetch_pc <= fetch_pc + 32'd4;
+                        program_mem_bus.addr <= fetch_pc;
+                        program_mem_bus.read_request <= 1'b1;
+                    end else f2d <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid: 1'b0};
                 end
                 default: begin
-                    f2d_tp <= fetch_pc;
-                    f2d_tp1 <= f2d_tp;
-                    if (program_mem_bus.data_valid) f2d = '{pc: f2d_tp1, inst:program_mem_bus.instr, isValid:1'b1};
-                    else f2d = '{pc: 'x, inst: 'x, isValid:1'b0};
+                    if(program_mem_bus.data_valid) begin 
+                        f2d <= '{pc: fetch_pc, instr: program_mem_bus.instr, isValid:1'b1};
+                        fetch_pc <= fetch_pc + 32'd4;
+                        program_mem_bus.addr <= fetch_pc;
+                        program_mem_bus.read_request <= 1'b1;
+                    end else f2d <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid: 1'b0};
                 end
             endcase
         end
+
+
     end
 
 endmodule 
@@ -201,6 +242,11 @@ module cpu(
     fetch read_only(.clk_in(clk_in), .rst_in(rst_in), .f_in(f_in), .program_mem_bus(program_mem_bus), .f2d(f2d));
 
     always_comb begin
+        if (!mem_bus.busy) begin
+            mem_bus.dispatch_read = 1'b0;
+            mem_bus.dispatch_write = 1'b0;
+        end
+
         cycle = cycle + 1'd1;
 
         /////////////////////
@@ -209,6 +255,7 @@ module cpu(
         dstW = 5'b0;
         dataW = 'x;
         dDataStall = 1'b0;
+
 
         if (e2w.isValid) begin
             if(e2w.dst != 5'b0) begin
@@ -266,9 +313,14 @@ module cpu(
                     else if ((eInst.memFunc == Lh) || (eInst.memFunc == Lhu) || (eInst.memFunc == Sh)) mem_bus.mem_width = mem::WORD;
                     else if ((eInst.memFunc == Lw) || (eInst.memFunc == Sw)) mem_bus.mem_width = mem::DWORD;
 
-                    if (eInst.iType == LOAD) mem_bus.dispatch_read = 1'b1;
+                    if (eInst.iType == LOAD) begin 
+                        mem_bus.dispatch_read = 1'b1;
+                        mem_bus.dispatch_write = 1'b0;
+                        mem_bus.write_data = 32'b0;
+                    end
                     else if (eInst.iType == STORE) begin
                         mem_bus.dispatch_write = 1'b1;
+                        mem_bus.dispatch_read = 1'b0;
                         mem_bus.write_data = eInst.data;
                     end
                 end
@@ -298,7 +350,7 @@ module cpu(
         hazardStall = 1'b0;
 
         if((f2d.isValid) && (!dDataStall) && (!dReqStall)) begin
-            dInst = decode(f2d.inst);
+            dInst = decode(f2d.instr);
 
             r_val1 = rf[dInst.src1];
             r_val2 = rf[dInst.src2];
@@ -325,17 +377,17 @@ module cpu(
 
         if (annul) begin 
             // f_in = '{fetchAction: Redirect, redirectPC: redirectPC};
-            f_in.fetchAction = Redirect;
+            f_in.fetchAction = REDIRECT;
             f_in.redirectPC = redirectPC;
         end
         else if ((!f2d.isValid) || hazardStall || dDataStall || dReqStall) begin
-            f_in.fetchAction = Stall;
+            f_in.fetchAction = STALL;
             f_in.redirectPC = 'x;
         //  f_in = '{fetchAction: Stall, redirectPC: 'x};
         end
         else begin
             // f_in = '{fetchAction: Dequeue, redirectPC: 'x};
-            f_in.fetchAction = Dequeue;
+            f_in.fetchAction = DEQUEUE;
             f_in.redirectPC = 'x;
         end
     end
