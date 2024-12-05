@@ -84,10 +84,12 @@ module fetch (
                     fetch_pc <= f_in.redirectPC;
                     f2d_tp <= 32'hFFFF_FFFF;
                     f2d_tp1 <= 32'hFFFF_FFFF;
+                    f2d <= '{pc: 'x, inst: 'x, isValid: 1'b0};
                 end
                 Stall: begin                    
                     f2d_tp1 <= f2d_tp;
                     f2d_tp <= fetch_pc;
+                    fetch_pc <= f2d_tp1;
                 end
                 Dequeue: begin                 
                     f2d_tp <= fetch_pc + 32'd32;
@@ -97,6 +99,8 @@ module fetch (
                 default: begin
                     f2d_tp <= fetch_pc;
                     f2d_tp1 <= f2d_tp;
+                    if (program_mem_bus.data_valid) f2d = '{pc: f2d_tp1, inst:program_mem_bus.instr, isValid:1'b1};
+                    else f2d = '{pc: 'x, inst: 'x, isValid:1'b0};
                 end
             endcase
         end
@@ -110,6 +114,43 @@ module cpu(
     memory_bus mem_bus,
     program_memory_bus program_mem_bus
 );
+
+    ila_0 your_instance_name (
+        .clk(clk_in), // input wire clk
+
+        .probe0(rf[0]), // input wire [31:0]  probe0  
+        .probe1(rf[1]), // input wire [31:0]  probe1 
+        .probe2(rf[2]), // input wire [31:0]  probe2 
+        .probe3(rf[3]), // input wire [31:0]  probe3 
+        .probe4(rf[4]), // input wire [31:0]  probe4 
+        .probe5(rf[5]), // input wire [31:0]  probe5 
+        .probe6(rf[6]), // input wire [31:0]  probe6 
+        .probe7(rf[7]), // input wire [31:0]  probe7 
+        .probe8(rf[8]), // input wire [31:0]  probe8 
+        .probe9(rf[9]), // input wire [31:0]  probe9 
+        .probe10(rf[10]), // input wire [31:0]  probe10 
+        .probe11(rf[11]), // input wire [31:0]  probe11 
+        .probe12(rf[12]), // input wire [31:0]  probe12 
+        .probe13(rf[13]), // input wire [31:0]  probe13 
+        .probe14(rf[14]), // input wire [31:0]  probe14 
+        .probe15(rf[15]), // input wire [31:0]  probe15 
+        .probe16(rf[16]), // input wire [31:0]  probe16 
+        .probe17(rf[17]), // input wire [31:0]  probe17 
+        .probe18(rf[18]), // input wire [31:0]  probe18 
+        .probe19(rf[19]), // input wire [31:0]  probe19 
+        .probe20(rf[20]), // input wire [31:0]  probe20 
+        .probe21(rf[21]), // input wire [31:0]  probe21 
+        .probe22(rf[22]), // input wire [31:0]  probe22 
+        .probe23(rf[23]), // input wire [31:0]  probe23 
+        .probe24(rf[24]), // input wire [31:0]  probe24 
+        .probe25(rf[25]), // input wire [31:0]  probe25 
+        .probe26(rf[26]), // input wire [31:0]  probe26 
+        .probe27(rf[27]), // input wire [31:0]  probe27 
+        .probe28(rf[28]), // input wire [31:0]  probe28 
+        .probe29(rf[29]), // input wire [31:0]  probe29 
+        .probe30(rf[30]), // input wire [31:0]  probe30 
+        .probe31(rf[31]) // input wire [31:0]  probe31
+    );
 
     // Peformance counters
     logic [31:0] cycle;
@@ -155,7 +196,7 @@ module cpu(
     DecodedInst dInst;
 
     // Register File
-    logic [5:0][31:0] rf;
+    logic [31:0][31:0] rf;
 
     fetch read_only(.clk_in(clk_in), .rst_in(rst_in), .f_in(f_in), .program_mem_bus(program_mem_bus), .f2d(f2d));
 
@@ -173,24 +214,24 @@ module cpu(
             if(e2w.dst != 5'b0) begin
                 if (e2w.iType == LOAD) begin
                     if(mem_bus.busy) dDataStall = 1'b1;
-                    else begin
-                        if (e2w.memFunc == Lw) rf[e2w.dst] = mem_bus.write_data;
-                        if (e2w.memFunc == Lh) rf[e2w.dst] = (mem_bus.write_data[15])? {16'hFFFF, mem_bus.write_data}: {16'h0, mem_bus.write_data}; 
-                        if (e2w.memFunc == Lhu) rf[e2w.dst] = {16'h0, mem_bus.write_data};
-                        if (e2w.memFunc == Lb) rf[e2w.dst] = (mem_bus.write_data[7])? {24'hFF_FFFF, mem_bus.write_data} : {24'h0, mem_bus.write_data};
-                        if (e2w.memFunc == Lbu) rf[e2w.dst] = {24'h0, mem_bus.write_data}; 
-                        end
+                    // else begin
+                    //     if (e2w.memFunc == Lw) rf[e2w.dst] = mem_bus.write_data;
+                    //     if (e2w.memFunc == Lh) rf[e2w.dst] = (mem_bus.write_data[15])? {16'hFFFF, mem_bus.write_data}: {16'h0, mem_bus.write_data}; 
+                    //     if (e2w.memFunc == Lhu) rf[e2w.dst] = {16'h0, mem_bus.write_data};
+                    //     if (e2w.memFunc == Lb) rf[e2w.dst] = (mem_bus.write_data[7])? {24'hFF_FFFF, mem_bus.write_data} : {24'h0, mem_bus.write_data};
+                    //     if (e2w.memFunc == Lbu) rf[e2w.dst] = {24'h0, mem_bus.write_data}; 
+                    //     end
                     end
                 end
                 // else if ((e2w_v.iType == PMUL)) begin
                 // end
                 else begin
-                    rf[e2w.dst] = e2w.data;
+                    // rf[e2w.dst] = e2w.data;
                     dataW = e2w.data;
                 end
-                dstW = e2w.dst;
+                // dstW = e2w.dst;
 
-                instrs = instrs + 1;
+                // instrs = instrs + 1;
 
                 // if (e2w.iType == Unsupported) begin //Handles unsupportd instructions
                 // end
@@ -305,6 +346,35 @@ module cpu(
             instrs <= 0;
         end
         else begin
+
+            /////////////////////
+            // Writeback Stage //
+            /////////////////////
+
+            if (e2w.isValid) begin
+                if(e2w.dst != 5'b0) begin
+                    if (e2w.iType == LOAD) begin
+                        if(!mem_bus.busy) begin
+                            if (e2w.memFunc == Lw) rf[e2w.dst] <= mem_bus.write_data;
+                            if (e2w.memFunc == Lh) rf[e2w.dst] <= (mem_bus.write_data[15])? {16'hFFFF, mem_bus.write_data}: {16'h0, mem_bus.write_data}; 
+                            if (e2w.memFunc == Lhu) rf[e2w.dst] <= {16'h0, mem_bus.write_data};
+                            if (e2w.memFunc == Lb) rf[e2w.dst] <= (mem_bus.write_data[7])? {24'hFF_FFFF, mem_bus.write_data} : {24'h0, mem_bus.write_data};
+                            if (e2w.memFunc == Lbu) rf[e2w.dst] <= {24'h0, mem_bus.write_data}; 
+                            end
+                        end
+                    end
+                    // else if ((e2w_v.iType == PMUL)) begin
+                    // end
+                    else begin
+                        rf[e2w.dst] <= e2w.data;
+                    end
+
+                    instrs <= instrs + 1;
+
+                    // if (e2w.iType == Unsupported) begin //Handles unsupportd instructions
+                    // end
+            end
+
             ///////////////////
             // Execute Stage //
             ///////////////////
