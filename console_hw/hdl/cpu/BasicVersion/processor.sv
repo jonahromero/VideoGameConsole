@@ -54,71 +54,21 @@ module fetch (
     output F2D f2d                    // Contains PC and requested instruction
 );
 
-    logic [31:0] fetch_pc;
+    logic [31:0] fetch_pc, fetch_pc_p1, fetch_pc_p2;
 
-    // always_comb begin
-    //     fetch_action = f_in.fetchAction;
-    //     program_mem_bus.addr = fetch_pc;
-    //     program_mem_bus.read_request = 1'b1;
-    //     // case (fetch_action)
-    //     //     Redirect: begin
-    //     //         f2d = '{pc: 'x, inst: 'x, isValid:1'b0}; // Invalid Instruction
-    //     //     end
-    //     //     default: begin
-    //     //         if (program_mem_bus.data_valid) f2d = '{pc: f2d_tp1, inst:program_mem_bus.instr, isValid:1'b1};
-    //     //         else f2d = '{pc: 'x, inst: 'x, isValid:1'b0};
-    //     //     end
-    //     // endcase
-    // end
 
     always_ff @(posedge clk_in ) begin
-        // if (rst_in) begin
-        //     f2d_tp <= '{data:32'hFFFF_FFFF, isValid:1'b0};
-        //     f2d_tp1 <= '{data:32'hFFFF_FFFF, isValid:1'b0};
-        //     fetch_pc <= 32'b0;
-        // end
-        // else begin
-            // case (fetch_action)
-            //     Redirect: begin                    
-            //         fetch_pc <= f_in.redirectPC;
-            //         f2d_tp.isValid <= 1'b0;
-            //         f2d_tp1.isValid <= 1'b0;
-            //         f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0}; 
-            //     end
-            //     Stall: begin                    
-            //         f2d_tp1<= f2d_tp1;
-            //         f2d_tp <= f2d_tp;
-            //         fetch_pc <= fetch_pc;
-            //     end
-            //     Dequeue: begin
-            //         if (program_mem_bus.data_valid) begin                 
-            //             f2d_tp <= '{data:fetch_pc + 32'd32, isValid:1'b1};
-            //             f2d_tp1 <= f2d_tp;
-            //             fetch_pc <= fetch_pc + 32'd32;
-            //             if (f2d_tp1.isValid) f2d <= '{pc: f2d_tp1.data, inst: program_mem_bus.instr, isValid:1'b1};
-            //             else f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0};
-            //         end
-            //         else f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0};
-            //     end
-            //     default: begin
-            //         if (program_mem_bus.data_valid) begin                 
-            //             f2d_tp <= '{data:fetch_pc + 32'd32, isValid:1'b1};
-            //             f2d_tp1 <= f2d_tp;
-            //             fetch_pc <= fetch_pc + 32'd32;
-            //             if (f2d_tp1.isValid) f2d <= '{pc: f2d_tp1.data, inst: program_mem_bus.instr, isValid:1'b1};
-            //             else f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0};
-            //         end
-            //         else f2d <= '{pc: 32'hFFFF_FFFF, inst: 32'h0000_0013, isValid: 1'b0};
-            //     end
-            // endcase
         if (rst_in) begin
             fetch_pc <= 32'b0;
+            fetch_pc_p1 <= 32'b0;
+            // fetch_pc_p2 <= 32'b0;
         end
         else begin
             case (f_in.fetchAction)
                 REDIRECT: begin
                     f2d <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid:1'b0};
                     fetch_pc <= f_in.redirectPC;
+                    fetch_pc_p1 <= 32'hFFFF_FFFF;
                     program_mem_bus.addr <= f_in.redirectPC;
                     program_mem_bus.read_request <= 1'b1;
                 end
@@ -128,29 +78,26 @@ module fetch (
                     if(program_mem_bus.data_valid) begin 
                         f2d <= '{pc: fetch_pc, instr: program_mem_bus.instr, isValid:1'b1};
                         fetch_pc <= fetch_pc;
-                    end
+                        fetch_pc_p1 <= fetch_pc;
+                    end else f2d <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid: 1'b0};
                 end
                 DEQUEUE: begin
                     if(program_mem_bus.data_valid) begin 
                         f2d <= '{pc: fetch_pc, instr: program_mem_bus.instr, isValid:1'b1};
                         fetch_pc <= fetch_pc + 32'd4;
+                        fetch_pc_p1 <= fetch_pc;
                         program_mem_bus.addr <= fetch_pc + 32'd4;
                         program_mem_bus.read_request <= 1'b1;
                     end else f2d <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid: 1'b0};
                 end
                 default: begin
-                    // if(program_mem_bus.data_valid) begin 
-                    //     f2d <= '{pc: fetch_pc, instr: program_mem_bus.instr, isValid:1'b1};
-                    //     fetch_pc <= fetch_pc + 32'd4;
-                    //     program_mem_bus.addr <= fetch_pc + 32'd4;
-                    //     program_mem_bus.read_request <= 1'b1;
-                    // end else f2d <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid: 1'b0};
                     program_mem_bus.addr <= fetch_pc;
                     program_mem_bus.read_request <= 1'b1;
                     if(program_mem_bus.data_valid) begin 
                         f2d <= '{pc: fetch_pc, instr: program_mem_bus.instr, isValid:1'b1};
                         fetch_pc <= fetch_pc;
-                    end
+                        fetch_pc_p1 <= fetch_pc;
+                    end else f2d <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid: 1'b0};
                 end
             endcase
         end
@@ -173,20 +120,20 @@ module cpu(
 
 	.probe0(rf[1]), // input wire [31:0]  probe0  
     .probe1(rf[2]), // input wire [31:0]  probe1 
-    .probe2(rf[5]), // input wire [31:0]  probe2 
+    .probe2(rst_in), // input wire [31:0]  probe2 
     .probe3(f2d.instr), // input wire [31:0]  probe3 
-    .probe4(rf[15]), // input wire [31:0]  probe4 
-    .probe5(rf[10]), // input wire [31:0]  probe5 
-    .probe6(rf[14]), // input wire [31:0]  probe6 
-    .probe7(rf[9]), // input wire [31:0]  probe7 
-	.probe8(rf[18]), // input wire [31:0]  probe8 
-	.probe9(rf[13]), // input wire [31:0]  probe9 
-	.probe10(rf[19]), // input wire [31:0]  probe10 
-	.probe11(rf[20]), // input wire [31:0]  probe11 
+    .probe4(dInst.src2), // input wire [31:0]  probe4 
+    .probe5(dInst.src1), // input wire [31:0]  probe5 
+    .probe6(dDataStall), // input wire [31:0]  probe6 
+    .probe7(dReqStall), // input wire [31:0]  probe7 
+	.probe8(mem_bus.dispatch_write), // input wire [31:0]  probe8 
+	.probe9(hazardStall), // input wire [31:0]  probe9 
+	.probe10(annul), // input wire [31:0]  probe10 
+	.probe11(e2w_tp.pc), // input wire [31:0]  probe11 
 	.probe12(eInst.data), // input wire [31:0]  probe12 
-	.probe13(e2w.data), // input wire [31:0]  probe13 
+	.probe13(d2e_tp.pc), // input wire [31:0]  probe13 
 	.probe14(f2d.pc), // input wire [31:0]  probe14 
-	.probe15(rf[8]), // input wire [31:0]  probe15 
+	.probe15(dInst.dst), // input wire [31:0]  probe15 
 	.probe16(instrs), // input wire [31:0]  probe16 
 	.probe17(cycle), // input wire [31:0]  probe17 
 	.probe18(d2e.pc), // input wire [31:0]  probe18 
@@ -246,10 +193,12 @@ module cpu(
     fetch read_only(.clk_in(clk_in), .rst_in(rst_in), .f_in(f_in), .program_mem_bus(program_mem_bus), .f2d(f2d));
 
     always_comb begin
-        if (!mem_bus.busy) begin
+
+        if (mem_bus.busy) begin 
             mem_bus.dispatch_read = 1'b0;
             mem_bus.dispatch_write = 1'b0;
         end
+
 
         /////////////////////
         // Writeback Stage //
@@ -311,6 +260,7 @@ module cpu(
                 end
                 if (mem_bus.busy) dReqStall = 1'b1;
                 else begin
+                    dReqStall = 1'b0;
                     mem_bus.addr = eInst.addr;
                     if ((eInst.memFunc == Lb) || (eInst.memFunc == Lbu) || (eInst.memFunc == Sb)) mem_bus.mem_width = mem::BYTE;
                     else if ((eInst.memFunc == Lh) || (eInst.memFunc == Lhu) || (eInst.memFunc == Sh)) mem_bus.mem_width = mem::WORD;
@@ -372,8 +322,7 @@ module cpu(
             if ((!annul) && (!hazardStall)) begin
                  d2e_tp = '{pc: f2d.pc, dInst: dInst, rVal1: r_val1, rVal2: r_val2, isValid: 1'b1};
             end else begin
-                // dInst = '{iType:Unsupported, aluFunc: NopA, brFunc: NopB, memFunc: NopM, dst:5'd0,src1:5'd0,src2:5'd0,imm:32'd0};
-                d2e_tp = '{pc: 'x, dInst: dInst, rVal1: 'x, rVal2: 'x, isValid: 1'b0};
+                d2e_tp.isValid = 1'b0;
             end
         end
 
@@ -384,18 +333,13 @@ module cpu(
 
         if (annul) begin 
             f_in = '{fetchAction: REDIRECT, redirectPC: redirectPC};
-            // f_in.fetchAction = REDIRECT;
-            // f_in.redirectPC = redirectPC;
         end
         else if ((!f2d.isValid) || hazardStall || dDataStall || dReqStall) begin
-            // f_in.fetchAction = STALL;
-            // f_in.redirectPC = 'x;
+
          f_in = '{fetchAction: STALL, redirectPC: 32'hCBCB_BCBC};
         end
         else begin
             f_in = '{fetchAction: DEQUEUE, redirectPC: 32'hFAFA_AFAF};
-            // f_in.fetchAction = DEQUEUE;
-            // f_in.redirectPC = 'x;
         end
     end
 
@@ -407,6 +351,8 @@ module cpu(
             d2e.isValid <= 1'b0;
         end
         else begin
+
+            cycle <= cycle + 1;
             
             /////////////////////
             // Writeback Stage //
@@ -431,7 +377,6 @@ module cpu(
                     end
 
                     instrs <= instrs + 1;
-                    cycle <= cycle + 1;
                     // if (e2w.iType == Unsupported) begin //Handles unsupportd instructions
                     // end
             end
@@ -441,10 +386,7 @@ module cpu(
             ///////////////////
 
             if (dReqStall) e2w.isValid <= 1'b0;
-            else begin 
-                cycle <= cycle + 1;
-                e2w <= e2w_tp;
-            end
+            else e2w <= e2w_tp;
 
             if(!dDataStall) e2w.isValid <= 1'b0;
 
@@ -452,13 +394,14 @@ module cpu(
             // Decode Stage //
             //////////////////
 
-            if (annul) d2e.isValid <= 1'b0;
-            else if(hazardStall) d2e.isValid <= 1'b0;
-            else if ((!dDataStall) && (!dReqStall)) d2e.isValid <= 1'b0;
-            else begin 
-                cycle <= cycle + 1;
-                d2e <= d2e_tp;
+            if ((f2d.isValid) && (!dDataStall) && (!dReqStall)) begin
+                if (annul) d2e.isValid <= 1'b0;
+                else if(hazardStall) d2e.isValid <= 1'b0;
+                else begin 
+                    d2e <= d2e_tp;
+                end
             end
+            else if ((!dDataStall) && (!dReqStall)) d2e.isValid <= 1'b0;
 
 
 
