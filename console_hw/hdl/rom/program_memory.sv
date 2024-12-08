@@ -111,7 +111,8 @@ module program_memory(
         .RAM_PERFORMANCE("HIGH_PERFORMANCE") // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     ) icache (
         .addra(actual_addr),
-        .dina(rom_instr_big_endian),
+        //.dina(rom_instr_big_endian),
+        .dina(rom_instr),
         .wea(rom_instr_we),
         .douta(bus.instr),
 

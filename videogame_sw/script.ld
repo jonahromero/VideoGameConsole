@@ -8,16 +8,15 @@ SECTIONS {
         entry.o(.text)
         main.o(.text)
         *(.text.*)
-        *(.text)
     } > ROM
     .data : {
-        *(.data)
-    }
+        *(.data.*)
+    } > ROM
     .rodata : {
-        *(.rodata)
-    }
+        *(.rodata.*)
+    } > ROM
     .bss : {
-        *(.bss)
+        *(.bss.*)
     }
 
     /DISCARD/ : {
