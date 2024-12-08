@@ -111,7 +111,7 @@ module simple_proc(
             counter <= counter + 1;
             case (stage)
             FETCH_DECODE: begin
-                if (counter + 1 == 2) begin
+                if (counter + 1 == 3) begin
                     stage <= EXECUTE;
                     dInstr <= decode(program_mem_bus.instr);
                     counter <= 0;
