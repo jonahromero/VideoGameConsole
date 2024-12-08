@@ -47,8 +47,10 @@ module xilinx_true_dual_port_read_first_2_clock_ram #(
   // The following code either initializes the memory values to a specified file or to all zeros to match hardware
   generate
     if (INIT_FILE != "") begin: use_init_file
-      initial
+      initial begin
+        $display("READING FILE");
         $readmemh(INIT_FILE, BRAM, 0, RAM_DEPTH-1);
+        end
     end else begin: init_bram_to_zero
       integer ram_index;
       initial
