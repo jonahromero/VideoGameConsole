@@ -73,7 +73,7 @@ package ProcTypes;
         IType iType;
         MemFunc memFunc;
         logic [4:0] dst;
-        logic[31:0]  data;
+        logic[31:0] data;
         logic[31:0] addr;
         logic[31:0] nextPc;
     } ExecInst;

@@ -439,18 +439,18 @@ module cpu(
                             if (e2w.memFunc == Lhu) rf[e2w.dst] <= {16'h0, mem_bus.read_data};
                             if (e2w.memFunc == Lb) rf[e2w.dst] <= (mem_bus.read_data[7])? {24'hFF_FFFF, mem_bus.read_data} : {24'h0, mem_bus.read_data};
                             if (e2w.memFunc == Lbu) rf[e2w.dst] <= {24'h0, mem_bus.read_data}; 
-                            end
                         end
                     end
-                    // else if ((e2w_v.iType == PMUL)) begin
-                    // end
-                    else begin
-                        rf[e2w.dst] <= e2w.data;
-                    end
+                end
+                // else if ((e2w_v.iType == PMUL)) begin
+                // end
+                else begin
+                    rf[e2w.dst] <= e2w.data;
+                end
 
-                    instrs <= instrs + 1;
-                    // if (e2w.iType == Unsupported) begin //Handles unsupportd instructions
-                    // end
+                instrs <= instrs + 1;
+                // if (e2w.iType == Unsupported) begin //Handles unsupportd instructions
+                // end
             end
 
             ///////////////////

@@ -3,7 +3,6 @@
 
 import ProcTypes::*;
 
-
 function automatic logic aluBr(input logic [31:0] a, input logic [31:0] b, input BrFunc brfunc);
     logic ret;
     case(brfunc)

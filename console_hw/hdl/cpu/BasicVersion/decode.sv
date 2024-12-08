@@ -6,14 +6,11 @@ import ProcTypes::*;
 function automatic DecodedInst decode(
     input logic [31:0] inst
 );
-  
-logic [6:0] opcode, funct7;
-logic [2:0] funct3;
-logic [4:0] dst, src1, src2;
-logic [31:0] immD32, immB32, immU32, immI32, immJ32, immS32;
-DecodedInst dInst;
-
-
+    logic [6:0] opcode, funct7;
+    logic [2:0] funct3;
+    logic [4:0] dst, src1, src2;
+    logic [31:0] immD32, immB32, immU32, immI32, immJ32, immS32;
+    DecodedInst dInst;
 
     opcode = inst[6:0];
     funct3 = inst[14:12];
