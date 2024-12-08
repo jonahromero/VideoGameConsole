@@ -323,6 +323,8 @@ module cpu(
                  d2e_tp = '{pc: f2d.pc, dInst: dInst, rVal1: r_val1, rVal2: r_val2, isValid: 1'b1};
             end else begin
                 d2e_tp.isValid = 1'b0;
+                 dInst = '{iType: Unsupported,aluFunc: NopA, brFunc: NopB, memFunc:NopM, dst:5'd0,src1:5'd0, src2:5'd0, imm:32'b0};
+                 d2e_tp = '{pc: 32'hFFFF_FFFF, dInst:dInst, rVal1: 32'b0, rVal2: 32'b0, isValid:1'b0};
             end
         end
 
@@ -393,15 +395,25 @@ module cpu(
             //////////////////
             // Decode Stage //
             //////////////////
-
-            if ((f2d.isValid) && (!dDataStall) && (!dReqStall)) begin
-                if (annul) d2e.isValid <= 1'b0;
-                else if(hazardStall) d2e.isValid <= 1'b0;
-                else begin 
-                    d2e <= d2e_tp;
-                end
-            end
-            else if ((!dDataStall) && (!dReqStall)) d2e.isValid <= 1'b0;
+            
+            d2e <= d2e_tp;
+//            if ((f2d.isValid) && (!dDataStall) && (!dReqStall)) begin
+//                if (annul) begin 
+////                    d2e.isValid <= 1'b0;
+//                      d2e <= d2e_tp;
+//                end
+//                else if(hazardStall)begin
+////                 d2e.isValid <= 1'b0;
+//                   d2e <= d2e_tp;
+//                end
+//                else begin 
+//                    d2e <= d2e_tp;
+//                end
+//            end
+//            else if ((!dDataStall) && (!dReqStall)) begin
+////             d2e.isValid <= 1'b0;
+//               d2e <= d2e_tp;
+//            end
 
 
 

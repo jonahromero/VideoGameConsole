@@ -1,0 +1,44 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../../Documents/GitHub/project_1.gen/sources_1/ip/blk_mem_gen_0/sim/blk_mem_gen_0.v" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/cw_hdmi_clk_wiz.v" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/xilinx_true_dual_port_read_first_2_clock_ram.v" \
+
+sv xil_defaultlib  \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/procTypes.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/frame_buffer.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/util/lab05_ssc.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/util/pipeline.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/decode.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/execute.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/alu.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/program_memory.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/rom_reader.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/util/seven_segment_controller.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/spi_con.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/sys_io.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_encoder.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_serializer.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/video_sig_gen.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/xilinx_single_port_ram_read_first.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/top_level.sv" \
+
+verilog xil_defaultlib  \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/clk_wiz_buffer_clk_wiz.v" \
+
+sv xil_defaultlib  \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/channel_select.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/util/divider.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi_clk_wiz.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/pixel_reconstruct.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/rgb_to_ycrcb.sv" \
+"../../../../../Documents/GitHub/VideoGameConsole/console_hw/hdl/video/video_mux.sv" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
