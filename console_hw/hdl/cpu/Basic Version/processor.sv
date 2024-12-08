@@ -111,6 +111,39 @@ module cpu(
     program_memory_bus program_mem_bus
 );
 
+<<<<<<< Updated upstream:console_hw/hdl/cpu/Basic Version/processor.sv
+=======
+//    rf24 reg_file (
+//	.clk(clk_in), // input wire clk
+
+
+//	.probe0(rf[1]), // input wire [31:0]  probe0  
+//    .probe1(rf[2]), // input wire [31:0]  probe1 
+//    .probe2(rst_in), // input wire [31:0]  probe2 
+//    .probe3(f2d.instr), // input wire [31:0]  probe3 
+//    .probe4(dInst.src2), // input wire [31:0]  probe4 
+//    .probe5(dInst.src1), // input wire [31:0]  probe5 
+//    .probe6(dDataStall), // input wire [31:0]  probe6 
+//    .probe7(dReqStall), // input wire [31:0]  probe7 
+//	.probe8(mem_bus.dispatch_write), // input wire [31:0]  probe8 
+//	.probe9(hazardStall), // input wire [31:0]  probe9 
+//	.probe10(annul), // input wire [31:0]  probe10 
+//	.probe11(e2w_tp.pc), // input wire [31:0]  probe11 
+//	.probe12(eInst.data), // input wire [31:0]  probe12 
+//	.probe13(d2e_tp.pc), // input wire [31:0]  probe13 
+//	.probe14(f2d.pc), // input wire [31:0]  probe14 
+//	.probe15(dInst.dst), // input wire [31:0]  probe15 
+//	.probe16(instrs), // input wire [31:0]  probe16 
+//	.probe17(cycle), // input wire [31:0]  probe17 
+//	.probe18(d2e.pc), // input wire [31:0]  probe18 
+//	.probe19(f_in.redirectPC), // input wire [31:0]  probe19 
+//	.probe20(r_val1), // input wire [31:0]  probe20 
+//	.probe21(r_val2), // input wire [31:0]  probe21 
+//	.probe22(e2w.dst), // input wire [31:0]  probe22 
+//	.probe23(f2d.isValid) // input wire [31:0]  probe23
+//);
+
+>>>>>>> Stashed changes:console_hw/hdl/cpu/BasicVersion/processor.sv
     // Peformance counters
     logic [31:0] cycle;
     logic [31:0] instrs;
@@ -205,6 +238,7 @@ module cpu(
 
         dstE = 5'b0;
         dataE.isValid = 1'b0;
+        dataE.data = 32'b0;
 
         dReqStall = 1'b0;
 
@@ -248,8 +282,8 @@ module cpu(
                     annul = 1'b1;
                     redirectPC = eInst.nextPc;
                 end
-            end
-        end
+            end else e2w_tp = '{pc: 32'hFFFF_FFFF, iType: Unsupported, dst: 5'd0, memFunc: NopM, data: 32'b0, isValid:1'b0};
+        end else e2w_tp = '{pc: 32'hFFFF_FFFF, iType: Unsupported, dst: 5'd0, memFunc: NopM, data: 32'b0, isValid:1'b0};
 
         //////////////////
         // Decode Stage //
@@ -274,7 +308,16 @@ module cpu(
 
             if ((!annul) && (!hazardStall)) begin
                  d2e_tp = '{pc: f2d.pc, dInst: dInst, rVal1: r_val1, rVal2: r_val2, isValid: 1'b1};
+<<<<<<< Updated upstream:console_hw/hdl/cpu/Basic Version/processor.sv
+=======
+            end else begin
+                 dInst = '{iType: Unsupported,aluFunc: NopA, brFunc: NopB, memFunc:NopM, dst:5'd0,src1:5'd0, src2:5'd0, imm:32'b0};
+                 d2e_tp = '{pc: 32'hFFFF_FFFF, dInst:dInst, rVal1: 32'b0, rVal2: 32'b0, isValid:1'b0};
+>>>>>>> Stashed changes:console_hw/hdl/cpu/BasicVersion/processor.sv
             end
+        end else begin
+                 dInst = '{iType: Unsupported,aluFunc: NopA, brFunc: NopB, memFunc:NopM, dst:5'd0,src1:5'd0, src2:5'd0, imm:32'b0};
+                 d2e_tp = '{pc: 32'hFFFF_FFFF, dInst:dInst, rVal1: 32'b0, rVal2: 32'b0, isValid:1'b0};
         end
 
 
@@ -309,19 +352,41 @@ module cpu(
             // Execute Stage //
             ///////////////////
 
-            if (dReqStall) e2w.isValid <= 1'b0;
-            else e2w <= e2w_tp;
+            e2w <= e2w_tp;
+//            if (dReqStall) e2w.isValid <= 1'b0;
+//            else e2w <= e2w_tp;
 
-            if(!dDataStall) e2w.isValid <= 1'b0;
+//            if(!dDataStall) e2w.isValid <= 1'b0;
 
             //////////////////
             // Decode Stage //
             //////////////////
 
+<<<<<<< Updated upstream:console_hw/hdl/cpu/Basic Version/processor.sv
             if (annul) d2e.isValid <= 1'b0;
             else if(hazardStall) d2e.isValid <= 1'b0;
             else if ((!dDataStall) && (!dReqStall)) d2e.isValid <= 1'b0;
             else d2e <= d2e_tp;
+=======
+            d2e <= d2e_tp;
+//            if ((f2d.isValid) && (!dDataStall) && (!dReqStall)) begin
+//                if (annul) begin 
+////                    d2e.isValid <= 1'b0;
+//                      d2e <= d2e_tp;
+//                end
+//                else if(hazardStall)begin
+////                 d2e.isValid <= 1'b0;
+//                   d2e <= d2e_tp;
+//                end
+//                else begin 
+//                    d2e <= d2e_tp;
+//                end
+//            end
+//            else if ((!dDataStall) && (!dReqStall)) begin
+////             d2e.isValid <= 1'b0;
+//               d2e <= d2e_tp;
+//            end
+>>>>>>> Stashed changes:console_hw/hdl/cpu/BasicVersion/processor.sv
 
 
 

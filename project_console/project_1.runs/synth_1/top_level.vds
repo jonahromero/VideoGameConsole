@@ -1,0 +1,707 @@
+#-----------------------------------------------------------
+# Vivado v2024.2 (64-bit)
+# SW Build 5239630 on Fri Nov 08 22:35:27 MST 2024
+# IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+# SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+# Start of session at: Sun Dec  8 07:42:32 2024
+# Process ID         : 23976
+# Current directory  : C:/Users/Kenne/project_1/project_1.runs/synth_1
+# Command line       : vivado.exe -log top_level.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source top_level.tcl
+# Log file           : C:/Users/Kenne/project_1/project_1.runs/synth_1/top_level.vds
+# Journal file       : C:/Users/Kenne/project_1/project_1.runs/synth_1\vivado.jou
+# Running On         : DESKTOP-E1HIIUJ
+# Platform           : Windows Server 2016 or Windows 10
+# Operating System   : 19045
+# Processor Detail   : Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz
+# CPU Frequency      : 3600 MHz
+# CPU Physical cores : 8
+# CPU Logical cores  : 8
+# Host memory        : 17086 MB
+# Swap memory        : 22023 MB
+# Total Virtual      : 39110 MB
+# Available Virtual  : 4280 MB
+#-----------------------------------------------------------
+source top_level.tcl -notrace
+Command: read_checkpoint -auto_incremental -incremental C:/Users/Kenne/project_1/project_1.srcs/utils_1/imports/synth_1/top_level.dcp
+INFO: [Vivado 12-5825] Read reference checkpoint from C:/Users/Kenne/project_1/project_1.srcs/utils_1/imports/synth_1/top_level.dcp for incremental synthesis
+INFO: [Vivado 12-7989] Please ensure there are no constraint changes
+Command: synth_design -top top_level -part xc7s50csga324-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7s50'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7s50'
+INFO: [Device 21-403] Loading part xc7s50csga324-1
+INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
+INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 9756
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:08 . Memory (MB): peak = 1017.504 ; gain = 465.336
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-6901] identifier 'clk_pixel' is used before its declaration [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:27]
+WARNING: [Synth 8-6901] identifier 'ram_data_out' is used before its declaration [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:162]
+WARNING: [Synth 8-11065] parameter 'TIMEOUT' becomes localparam in 'spi_con' with formal parameter declaration list [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/spi_con.sv:27]
+WARNING: [Synth 8-6901] identifier 'TOTAL_WIDTH' is used before its declaration [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/video_sig_gen.sv:16]
+WARNING: [Synth 8-6901] identifier 'TOTAL_LINES' is used before its declaration [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/video_sig_gen.sv:17]
+INFO: [Synth 8-6157] synthesizing module 'top_level' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/top_level.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'memory_bus' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:14]
+INFO: [Synth 8-6155] done synthesizing module 'memory_bus' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:14]
+INFO: [Synth 8-6157] synthesizing module 'frame_buffer_bus' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/frame_buffer.sv:5]
+INFO: [Synth 8-6155] done synthesizing module 'frame_buffer_bus' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/frame_buffer.sv:5]
+INFO: [Synth 8-6157] synthesizing module 'sys_io_bus' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/sys_io.sv:7]
+INFO: [Synth 8-6155] done synthesizing module 'sys_io_bus' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/sys_io.sv:7]
+WARNING: [Synth 8-6104] Input port 'jab_in' has an internal driver [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/top_level.sv:76]
+WARNING: [Synth 8-6104] Input port 'jab_in' has an internal driver [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/top_level.sv:77]
+INFO: [Synth 8-6157] synthesizing module 'program_memory_bus' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/program_memory.sv:2]
+INFO: [Synth 8-6155] done synthesizing module 'program_memory_bus' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/program_memory.sv:2]
+INFO: [Synth 8-6157] synthesizing module 'rom_io_bus' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/rom_reader.sv:5]
+INFO: [Synth 8-6155] done synthesizing module 'rom_io_bus' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/rom_reader.sv:5]
+WARNING: [Synth 8-6104] Input port 'pmodb' has an internal driver [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/top_level.sv:82]
+WARNING: [Synth 8-6104] Input port 'btn' has an internal driver [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/top_level.sv:82]
+INFO: [Synth 8-6157] synthesizing module 'seven_segment_controller' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/util/seven_segment_controller.sv:3]
+INFO: [Synth 8-6157] synthesizing module 'bto7s' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/util/lab05_ssc.sv:95]
+INFO: [Synth 8-6155] done synthesizing module 'bto7s' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/util/lab05_ssc.sv:95]
+INFO: [Synth 8-6155] done synthesizing module 'seven_segment_controller' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/util/seven_segment_controller.sv:3]
+INFO: [Synth 8-6157] synthesizing module 'sys_io' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/sys_io.sv:23]
+INFO: [Synth 8-6157] synthesizing module 'spi_con' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/spi_con.sv:5]
+INFO: [Synth 8-6157] synthesizing module 'pipeline' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/util/pipeline.sv:4]
+	Parameter STAGES bound to: 3 - type: integer 
+	Parameter WIDTH bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'pipeline' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/util/pipeline.sv:4]
+INFO: [Synth 8-6155] done synthesizing module 'spi_con' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/spi_con.sv:5]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/sys_io.sv:52]
+INFO: [Synth 8-6155] done synthesizing module 'sys_io' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/sys_io/sys_io.sv:23]
+INFO: [Synth 8-6157] synthesizing module 'program_memory' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/program_memory.sv:26]
+INFO: [Synth 8-6157] synthesizing module 'rom_reader' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/rom_reader.sv:18]
+	Parameter TOTAL_ADDRESSES bound to: 8192 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/rom_reader.sv:55]
+INFO: [Synth 8-6155] done synthesizing module 'rom_reader' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/rom_reader.sv:18]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/program_memory.sv:67]
+INFO: [Synth 8-6157] synthesizing module 'pipeline__parameterized0' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/util/pipeline.sv:4]
+	Parameter STAGES bound to: 2 - type: integer 
+	Parameter WIDTH bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'pipeline__parameterized0' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/util/pipeline.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/xilinx_true_dual_port_read_first_2_clock_ram.v:10]
+	Parameter RAM_WIDTH bound to: 32 - type: integer 
+	Parameter RAM_DEPTH bound to: 2048 - type: integer 
+	Parameter RAM_PERFORMANCE bound to: HIGH_PERFORMANCE - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'xilinx_true_dual_port_read_first_2_clock_ram' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/xilinx_true_dual_port_read_first_2_clock_ram.v:10]
+WARNING: [Synth 8-689] width (16) of port connection 'addra' does not match port width (11) of module 'xilinx_true_dual_port_read_first_2_clock_ram' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/program_memory.sv:113]
+WARNING: [Synth 8-689] width (32) of port connection 'addrb' does not match port width (11) of module 'xilinx_true_dual_port_read_first_2_clock_ram' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/program_memory.sv:125]
+INFO: [Synth 8-6155] done synthesizing module 'program_memory' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/program_memory.sv:26]
+WARNING: [Synth 8-6104] Input port 'btn' has an internal driver [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/top_level.sv:93]
+INFO: [Synth 8-6157] synthesizing module 'frame_buffer' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/frame_buffer.sv:47]
+INFO: [Synth 8-6157] synthesizing module 'blk_mem_gen_0' [C:/Users/Kenne/project_1/project_1.runs/synth_1/.Xil/Vivado-23976-DESKTOP-E1HIIUJ/realtime/blk_mem_gen_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'blk_mem_gen_0' (0#1) [C:/Users/Kenne/project_1/project_1.runs/synth_1/.Xil/Vivado-23976-DESKTOP-E1HIIUJ/realtime/blk_mem_gen_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'frame_buffer' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/frame_buffer.sv:47]
+INFO: [Synth 8-6157] synthesizing module 'hdmi' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:5]
+INFO: [Synth 8-6157] synthesizing module 'cw_hdmi_clk_wiz' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/cw_hdmi_clk_wiz.v:69]
+INFO: [Synth 8-6157] synthesizing module 'IBUF' [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:75825]
+INFO: [Synth 8-6155] done synthesizing module 'IBUF' (0#1) [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:75825]
+INFO: [Synth 8-6157] synthesizing module 'MMCME2_ADV' [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:84588]
+	Parameter BANDWIDTH bound to: OPTIMIZED - type: string 
+	Parameter CLKFBOUT_MULT_F bound to: 37.125000 - type: double 
+	Parameter CLKFBOUT_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKFBOUT_USE_FINE_PS bound to: FALSE - type: string 
+	Parameter CLKIN1_PERIOD bound to: 10.000000 - type: double 
+	Parameter CLKOUT0_DIVIDE_F bound to: 10.000000 - type: double 
+	Parameter CLKOUT0_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT0_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT0_USE_FINE_PS bound to: FALSE - type: string 
+	Parameter CLKOUT1_DIVIDE bound to: 2 - type: integer 
+	Parameter CLKOUT1_DUTY_CYCLE bound to: 0.500000 - type: double 
+	Parameter CLKOUT1_PHASE bound to: 0.000000 - type: double 
+	Parameter CLKOUT1_USE_FINE_PS bound to: FALSE - type: string 
+	Parameter CLKOUT4_CASCADE bound to: FALSE - type: string 
+	Parameter COMPENSATION bound to: ZHOLD - type: string 
+	Parameter DIVCLK_DIVIDE bound to: 5 - type: integer 
+	Parameter STARTUP_WAIT bound to: FALSE - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'MMCME2_ADV' (0#1) [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:84588]
+INFO: [Synth 8-6157] synthesizing module 'BUFG' [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:2676]
+INFO: [Synth 8-6155] done synthesizing module 'BUFG' (0#1) [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:2676]
+INFO: [Synth 8-6155] done synthesizing module 'cw_hdmi_clk_wiz' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/cw_hdmi_clk_wiz.v:69]
+WARNING: [Synth 8-7071] port 'locked' of module 'cw_hdmi_clk_wiz' is unconnected for instance 'wizard_hdmi' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:32]
+WARNING: [Synth 8-7023] instance 'wizard_hdmi' of module 'cw_hdmi_clk_wiz' has 5 connections declared, but only 4 given [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:32]
+INFO: [Synth 8-6157] synthesizing module 'video_sig_gen' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/video_sig_gen.sv:1]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/video_sig_gen.sv:61]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/video_sig_gen.sv:46]
+INFO: [Synth 8-6155] done synthesizing module 'video_sig_gen' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/video_sig_gen.sv:1]
+WARNING: [Synth 8-7071] port 'rst_in' of module 'pipeline' is unconnected for instance 'ps3_3' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:89]
+WARNING: [Synth 8-7023] instance 'ps3_3' of module 'pipeline' has 4 connections declared, but only 3 given [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:89]
+WARNING: [Synth 8-7071] port 'rst_in' of module 'pipeline' is unconnected for instance 'ps3_4' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:90]
+WARNING: [Synth 8-7023] instance 'ps3_4' of module 'pipeline' has 4 connections declared, but only 3 given [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:90]
+WARNING: [Synth 8-7071] port 'rst_in' of module 'pipeline' is unconnected for instance 'ps3_5' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:91]
+WARNING: [Synth 8-7023] instance 'ps3_5' of module 'pipeline' has 4 connections declared, but only 3 given [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:91]
+WARNING: [Synth 8-7071] port 'rst_in' of module 'pipeline' is unconnected for instance 'ps3_6' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:92]
+WARNING: [Synth 8-7023] instance 'ps3_6' of module 'pipeline' has 4 connections declared, but only 3 given [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:92]
+INFO: [Synth 8-6157] synthesizing module 'tmds_encoder' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_encoder.sv:49]
+INFO: [Synth 8-6157] synthesizing module 'bit_counter' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_encoder.sv:6]
+	Parameter SIZE bound to: 8 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'bit_counter' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_encoder.sv:6]
+INFO: [Synth 8-6157] synthesizing module 'tm_choice' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_encoder.sv:22]
+INFO: [Synth 8-6155] done synthesizing module 'tm_choice' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_encoder.sv:22]
+INFO: [Synth 8-6155] done synthesizing module 'tmds_encoder' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_encoder.sv:49]
+INFO: [Synth 8-6157] synthesizing module 'tmds_serializer' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_serializer.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'OSERDESE2' [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:103679]
+	Parameter DATA_RATE_OQ bound to: DDR - type: string 
+	Parameter DATA_RATE_TQ bound to: SDR - type: string 
+	Parameter DATA_WIDTH bound to: 10 - type: integer 
+	Parameter SERDES_MODE bound to: MASTER - type: string 
+	Parameter TBYTE_CTL bound to: FALSE - type: string 
+	Parameter TBYTE_SRC bound to: FALSE - type: string 
+	Parameter TRISTATE_WIDTH bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'OSERDESE2' (0#1) [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:103679]
+INFO: [Synth 8-6157] synthesizing module 'OSERDESE2__parameterized0' [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:103679]
+	Parameter DATA_RATE_OQ bound to: DDR - type: string 
+	Parameter DATA_RATE_TQ bound to: SDR - type: string 
+	Parameter DATA_WIDTH bound to: 10 - type: integer 
+	Parameter SERDES_MODE bound to: SLAVE - type: string 
+	Parameter TBYTE_CTL bound to: FALSE - type: string 
+	Parameter TBYTE_SRC bound to: FALSE - type: string 
+	Parameter TRISTATE_WIDTH bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'OSERDESE2__parameterized0' (0#1) [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:103679]
+INFO: [Synth 8-6155] done synthesizing module 'tmds_serializer' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/tmds_serializer.sv:4]
+INFO: [Synth 8-6157] synthesizing module 'OBUFDS' [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:99442]
+INFO: [Synth 8-6155] done synthesizing module 'OBUFDS' (0#1) [D:/Xilinx/Vivado/2024.2/scripts/rt/data/unisim_comp.v:99442]
+INFO: [Synth 8-6155] done synthesizing module 'hdmi' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:5]
+INFO: [Synth 8-6157] synthesizing module 'memory_system' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:53]
+INFO: [Synth 8-6157] synthesizing module 'mmio_mappings' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:34]
+INFO: [Synth 8-226] default block is never used [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:43]
+INFO: [Synth 8-6155] done synthesizing module 'mmio_mappings' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:34]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:119]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:124]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:200]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:113]
+INFO: [Synth 8-6157] synthesizing module 'xilinx_single_port_ram_read_first' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/xilinx_single_port_ram_read_first.sv:10]
+	Parameter RAM_WIDTH bound to: 8 - type: integer 
+	Parameter RAM_DEPTH bound to: 65536 - type: integer 
+	Parameter RAM_PERFORMANCE bound to: HIGH_PERFORMANCE - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'xilinx_single_port_ram_read_first' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/xilinx_single_port_ram_read_first.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'memory_system' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:53]
+WARNING: [Synth 8-689] width (14) of port connection 'debug_led' does not match port width (13) of module 'memory_system' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/top_level.sv:115]
+INFO: [Synth 8-6157] synthesizing module 'cpu' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:110]
+INFO: [Synth 8-6157] synthesizing module 'fetch' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:48]
+INFO: [Synth 8-6155] done synthesizing module 'fetch' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:48]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/decode.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'cpu' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:110]
+INFO: [Synth 8-6155] done synthesizing module 'top_level' (0#1) [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/top_level.sv:4]
+WARNING: [Synth 8-3848] Net display in module/entity program_memory does not have driver. [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/program_memory.sv:31]
+WARNING: [Synth 8-6014] Unused sequential element buffer_flag_reg was removed.  [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/frame_buffer.sv:68]
+WARNING: [Synth 8-3848] Net signal_clk in module/entity hdmi does not have driver. [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/video/hdmi.sv:14]
+WARNING: [Synth 8-3848] Net program_mem_bus\.read_request_b in module/entity memory_system does not have driver. [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/memory/memory_system.sv:62]
+WARNING: [Synth 8-6014] Unused sequential element fetch_pc_p1_reg was removed.  [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:63]
+WARNING: [Synth 8-6014] Unused sequential element cycle_reg was removed.  [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:353]
+WARNING: [Synth 8-6014] Unused sequential element instrs_reg was removed.  [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:354]
+WARNING: [Synth 8-6014] Unused sequential element e2w_reg[pc] was removed.  [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:355]
+WARNING: [Synth 8-6014] Unused sequential element d2e_reg[dInst][src1] was removed.  [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:356]
+WARNING: [Synth 8-6014] Unused sequential element d2e_reg[dInst][src2] was removed.  [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:356]
+WARNING: [Synth 8-87] always_comb on 'mem_bus\.dispatch_read_reg' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:198]
+WARNING: [Synth 8-87] always_comb on 'mem_bus\.dispatch_write_reg' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:199]
+WARNING: [Synth 8-87] always_comb on 'e2w_tp_reg[iType]' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+WARNING: [Synth 8-87] always_comb on 'e2w_tp_reg[dst]' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+WARNING: [Synth 8-87] always_comb on 'e2w_tp_reg[memFunc]' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+WARNING: [Synth 8-87] always_comb on 'e2w_tp_reg[data]' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+WARNING: [Synth 8-87] always_comb on 'e2w_tp_reg[isValid]' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+WARNING: [Synth 8-87] always_comb on 'mem_bus\.addr_reg' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:265]
+WARNING: [Synth 8-87] always_comb on 'mem_bus\.mem_width_reg' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:266]
+WARNING: [Synth 8-87] always_comb on 'mem_bus\.write_data_reg' did not result in combinational logic [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:273]
+WARNING: [Synth 8-3917] design top_level has port led[0] driven by constant 1
+WARNING: [Synth 8-3917] design top_level has port rgb0[2] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb0[1] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb0[0] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb1[2] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb1[1] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb1[0] driven by constant 0
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[31] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[30] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[29] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[28] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[27] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[26] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[25] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[24] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[23] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[22] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[21] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[20] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[19] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[18] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[17] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[16] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[15] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[14] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[13] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[12] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[11] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[10] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[9] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[8] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[7] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[6] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[5] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[4] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[3] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[2] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[1] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.addr_b[0] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[31] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[30] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[29] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[28] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[27] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[26] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[25] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[24] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[23] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[22] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[21] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[20] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[19] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[18] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[17] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[16] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[15] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[14] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[13] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[12] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[11] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[10] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[9] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[8] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[7] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[6] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[5] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[4] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[3] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[2] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[1] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.instr_b[0] in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.read_request_b in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.data_valid_b in module fetch is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[31] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[30] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[29] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[28] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[27] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[26] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[25] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[24] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[23] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[22] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[21] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[20] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[19] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port addr[18] in module mmio_mappings is either unconnected or has no load
+WARNING: [Synth 8-7129] Port program_mem_bus\.read_request_b in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port io_bus\.chip_data_raw in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port io_bus\.chip_clk_raw in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.read_clk in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[9] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[8] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[7] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[6] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[5] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[4] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[3] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[2] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[1] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.vcount[0] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.hcount[10] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.hcount[9] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.hcount[8] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.hcount[7] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.hcount[6] in module memory_system is either unconnected or has no load
+WARNING: [Synth 8-7129] Port fb_bus\.hcount[5] in module memory_system is either unconnected or has no load
+INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:13 ; elapsed = 00:00:16 . Memory (MB): peak = 1207.680 ; gain = 655.512
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:13 ; elapsed = 00:00:16 . Memory (MB): peak = 1207.680 ; gain = 655.512
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:16 . Memory (MB): peak = 1207.680 ; gain = 655.512
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.098 . Memory (MB): peak = 1207.680 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 5 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [c:/Users/Kenne/Documents/GitHub/project_1.gen/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0/blk_mem_gen_0_in_context.xdc] for cell 'm_frame_buffer/genblk1[0].frame_buffer'
+Finished Parsing XDC File [c:/Users/Kenne/Documents/GitHub/project_1.gen/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0/blk_mem_gen_0_in_context.xdc] for cell 'm_frame_buffer/genblk1[0].frame_buffer'
+Parsing XDC File [C:/Users/Kenne/project_1/project_1.srcs/constrs_1/new/dummy.xdc]
+WARNING: [Vivado 12-507] No nets matched 'm_cpu/E[0]'. [C:/Users/Kenne/project_1/project_1.srcs/constrs_1/new/dummy.xdc:1]
+Finished Parsing XDC File [C:/Users/Kenne/project_1/project_1.srcs/constrs_1/new/dummy.xdc]
+WARNING: [Project 1-498] One or more constraints failed evaluation while reading constraint file [C:/Users/Kenne/project_1/project_1.srcs/constrs_1/new/dummy.xdc] and the design contains unresolved black boxes. These constraints will be read post-synthesis (as long as their source constraint file is marked as used_in_implementation) and should be applied correctly then. You should review the constraints listed in the file [.Xil/top_level_propImpl.xdc] and check the run log file to verify that these constraints were correctly applied.
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 1289.711 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 4 instances were transformed.
+  OBUFDS => OBUFDS_DUAL_BUF (INV, OBUFDS(x2)): 4 instances
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.125 . Memory (MB): peak = 1289.711 ; gain = 0.000
+INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
+INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:24 ; elapsed = 00:00:35 . Memory (MB): peak = 1289.711 ; gain = 737.543
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7s50csga324-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:24 ; elapsed = 00:00:35 . Memory (MB): peak = 1289.711 ; gain = 737.543
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property KEEP_HIERARCHY = SOFT for m_frame_buffer/\genblk1[0].frame_buffer . (constraint file  auto generated constraint).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:24 ; elapsed = 00:00:35 . Memory (MB): peak = 1289.711 ; gain = 737.543
+---------------------------------------------------------------------------------
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'sys_io'
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'rom_reader'
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'memory_system'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 WAITING |                              001 | 00000000000000000000000000000000
+       RECEIVING_BUTTONS |                              010 | 00000000000000000000000000000001
+      RECEIVING_JOYSTICK |                              100 | 00000000000000000000000000000010
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'one-hot' in module 'sys_io'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+              LATCH_HIGH |                              000 | 00000000000000000000000000000000
+             SETUP_LATCH |                              001 | 00000000000000000000000000000001
+              HOLD_LATCH |                              010 | 00000000000000000000000000000010
+               LATCH_LOW |                              011 | 00000000000000000000000000000011
+           WAIT_FOR_DATA |                              100 | 00000000000000000000000000000100
+               NEXT_ADDR |                              101 | 00000000000000000000000000000101
+                FINISHED |                              110 | 00000000000000000000000000000110
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'rom_reader'
+INFO: [Synth 8-3971] The signal "xilinx_true_dual_port_read_first_2_clock_ram:/BRAM_reg" was recognized as a true dual port RAM template.
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+*
+                 WAITING | 00000000000000000000000000000001 | 00000000000000000000000000000001
+                READ_MEM | 00000000000000000000000000000010 | 00000000000000000000000000000010
+                 SEND_WE | 00000000000000000000000000001000 | 00000000000000000000000000001000
+               WRITE_MEM | 00000000000000000000000000000100 | 00000000000000000000000000000100
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3898] No Re-encoding of one hot register 'state_reg' in module 'memory_system'
+WARNING: [Synth 8-327] inferring latch for variable 'mem_bus\.addr_reg' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:265]
+WARNING: [Synth 8-327] inferring latch for variable 'mem_bus\.write_data_reg' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:273]
+WARNING: [Synth 8-327] inferring latch for variable 'mem_bus\.dispatch_read_reg' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:198]
+WARNING: [Synth 8-327] inferring latch for variable 'mem_bus\.dispatch_write_reg' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:199]
+WARNING: [Synth 8-327] inferring latch for variable 'mem_bus\.mem_width_reg' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:266]
+WARNING: [Synth 8-327] inferring latch for variable 'e2w_tp_reg[dst]' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+WARNING: [Synth 8-327] inferring latch for variable 'e2w_tp_reg[memFunc]' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+WARNING: [Synth 8-327] inferring latch for variable 'e2w_tp_reg[iType]' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+WARNING: [Synth 8-327] inferring latch for variable 'e2w_tp_reg[isValid]' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+WARNING: [Synth 8-327] inferring latch for variable 'e2w_tp_reg[data]' [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/cpu/BasicVersion/processor.sv:257]
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:26 ; elapsed = 00:00:38 . Memory (MB): peak = 1289.711 ; gain = 737.543
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   32 Bit       Adders := 6     
+	   2 Input   17 Bit       Adders := 1     
+	   2 Input   14 Bit       Adders := 1     
+	   2 Input   13 Bit       Adders := 1     
+	   2 Input   11 Bit       Adders := 1     
+	   2 Input   10 Bit       Adders := 1     
+	   2 Input    9 Bit       Adders := 2     
+	   2 Input    8 Bit       Adders := 2     
+	   2 Input    7 Bit       Adders := 1     
+	   2 Input    6 Bit       Adders := 2     
+	   2 Input    5 Bit       Adders := 2     
+	   5 Input    5 Bit       Adders := 3     
+	   4 Input    5 Bit       Adders := 3     
+	   2 Input    4 Bit       Adders := 5     
+	   8 Input    4 Bit       Adders := 6     
+	   2 Input    3 Bit       Adders := 2     
++---XORs : 
+	   2 Input     32 Bit         XORs := 1     
+	   2 Input      1 Bit         XORs := 39    
++---Registers : 
+	               32 Bit    Registers := 51    
+	               17 Bit    Registers := 1     
+	               16 Bit    Registers := 1     
+	               13 Bit    Registers := 2     
+	               11 Bit    Registers := 1     
+	               10 Bit    Registers := 4     
+	                9 Bit    Registers := 2     
+	                8 Bit    Registers := 14    
+	                7 Bit    Registers := 1     
+	                6 Bit    Registers := 2     
+	                5 Bit    Registers := 8     
+	                4 Bit    Registers := 2     
+	                3 Bit    Registers := 3     
+	                1 Bit    Registers := 38    
++---RAMs : 
+	             512K Bit	(65536 X 8 bit)          RAMs := 1     
+	              64K Bit	(2048 X 32 bit)          RAMs := 1     
++---Muxes : 
+	   5 Input   32 Bit        Muxes := 4     
+	   6 Input   32 Bit        Muxes := 1     
+	   2 Input   32 Bit        Muxes := 40    
+	   4 Input   32 Bit        Muxes := 3     
+	   3 Input   32 Bit        Muxes := 1     
+	   2 Input   17 Bit        Muxes := 2     
+	   4 Input   17 Bit        Muxes := 1     
+	   4 Input   13 Bit        Muxes := 1     
+	   2 Input   11 Bit        Muxes := 1     
+	   2 Input   10 Bit        Muxes := 10    
+	   4 Input   10 Bit        Muxes := 3     
+	   2 Input    9 Bit        Muxes := 2     
+	   7 Input    8 Bit        Muxes := 1     
+	   2 Input    8 Bit        Muxes := 12    
+	   6 Input    8 Bit        Muxes := 2     
+	   5 Input    8 Bit        Muxes := 1     
+	   2 Input    7 Bit        Muxes := 2     
+	   7 Input    6 Bit        Muxes := 1     
+	   2 Input    6 Bit        Muxes := 3     
+	   2 Input    5 Bit        Muxes := 20    
+	   3 Input    5 Bit        Muxes := 4     
+	   9 Input    5 Bit        Muxes := 2     
+	   7 Input    5 Bit        Muxes := 1     
+	   6 Input    5 Bit        Muxes := 2     
+	   4 Input    5 Bit        Muxes := 2     
+	   2 Input    4 Bit        Muxes := 3     
+	   3 Input    4 Bit        Muxes := 1     
+	   7 Input    4 Bit        Muxes := 1     
+	   7 Input    3 Bit        Muxes := 1     
+	   2 Input    3 Bit        Muxes := 4     
+	   4 Input    3 Bit        Muxes := 2     
+	   5 Input    3 Bit        Muxes := 1     
+	   2 Input    2 Bit        Muxes := 1     
+	   2 Input    1 Bit        Muxes := 160   
+	   3 Input    1 Bit        Muxes := 6     
+	   7 Input    1 Bit        Muxes := 9     
+	   5 Input    1 Bit        Muxes := 11    
+	   4 Input    1 Bit        Muxes := 5     
+	   6 Input    1 Bit        Muxes := 6     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 120 (col length:60)
+BRAMs: 150 (col length: RAMB18 60 RAMB36 30)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+WARNING: [Synth 8-3936] Found unconnected internal register 'reader/addr_out_reg' and it is trimmed from '16' to '13' bits. [C:/Users/Kenne/Documents/GitHub/VideoGameConsole/console_hw/hdl/rom/rom_reader.sv:87]
+WARNING: [Synth 8-3917] design top_level has port led[0] driven by constant 1
+WARNING: [Synth 8-3917] design top_level has port rgb0[2] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb0[1] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb0[0] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb1[2] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb1[1] driven by constant 0
+WARNING: [Synth 8-3917] design top_level has port rgb1[0] driven by constant 0
+WARNING: [Synth 8-6014] Unused sequential element program_mem/icache/BRAM_reg was removed. 
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[31]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[30]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[29]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[28]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[27]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[26]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[25]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[24]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[23]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[22]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[21]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[20]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[19]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.addr_reg[18]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (mem_bus\.mem_width_reg[2]) is unused and will be removed from module cpu.
+WARNING: [Synth 8-3332] Sequential element (e2w_tp_reg[iType][31]) is unused and will be removed from module cpu.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:49 ; elapsed = 00:01:01 . Memory (MB): peak = 1465.355 ; gain = 913.188
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Preliminary Mapping Report (see note below)
++------------+-----------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|Module Name | RTL Object                  | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++------------+-----------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|top_level   | program_mem/icache/BRAM_reg | 2 K x 32(READ_FIRST)   | W | R | 2 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 0      | 2      | 
+|top_level   | ms/ram/BRAM_reg             | 64 K x 8(READ_FIRST)   | W | R |                        |   |   | Port A           | 0      | 16     | 
++------------+-----------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:56 ; elapsed = 00:01:08 . Memory (MB): peak = 1465.355 ; gain = 913.188
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:56 ; elapsed = 00:01:09 . Memory (MB): peak = 1465.355 ; gain = 913.188
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Final Mapping Report
++------------+-----------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|Module Name | RTL Object                  | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++------------+-----------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|top_level   | program_mem/icache/BRAM_reg | 2 K x 32(READ_FIRST)   | W | R | 2 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 0      | 2      | 
+|top_level   | ms/ram/BRAM_reg             | 64 K x 8(READ_FIRST)   | W | R |                        |   |   | Port A           | 0      | 16     | 
++------------+-----------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:57 ; elapsed = 00:01:10 . Memory (MB): peak = 1465.355 ; gain = 913.188
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:01:03 ; elapsed = 00:01:15 . Memory (MB): peak = 1587.207 ; gain = 1035.039
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:01:03 ; elapsed = 00:01:15 . Memory (MB): peak = 1587.207 ; gain = 1035.039
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:01:03 ; elapsed = 00:01:15 . Memory (MB): peak = 1587.207 ; gain = 1035.039
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:01:03 ; elapsed = 00:01:15 . Memory (MB): peak = 1587.207 ; gain = 1035.039
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:01:03 ; elapsed = 00:01:16 . Memory (MB): peak = 1589.371 ; gain = 1037.203
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:01:03 ; elapsed = 00:01:16 . Memory (MB): peak = 1589.371 ; gain = 1037.203
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++------+--------------+----------+
+|      |BlackBox name |Instances |
++------+--------------+----------+
+|1     |blk_mem_gen_0 |         1|
++------+--------------+----------+
+
+Report Cell Usage: 
++------+------------+------+
+|      |Cell        |Count |
++------+------------+------+
+|1     |blk_mem_gen |     1|
+|2     |BUFG        |     6|
+|3     |CARRY4      |    80|
+|4     |LUT1        |    89|
+|5     |LUT2        |   183|
+|6     |LUT3        |   144|
+|7     |LUT4        |   248|
+|8     |LUT5        |   356|
+|9     |LUT6        |  1277|
+|10    |MMCME2_ADV  |     1|
+|11    |MUXF7       |    40|
+|12    |MUXF8       |     2|
+|13    |OSERDESE2   |     6|
+|15    |RAMB36E1    |    18|
+|18    |FDRE        |  1635|
+|19    |FDSE        |    44|
+|20    |LD          |    52|
+|21    |LDC         |    42|
+|22    |LDCP        |     3|
+|23    |LDP         |     3|
+|24    |IBUF        |    12|
+|25    |OBUF        |    52|
+|26    |OBUFDS      |     4|
+|27    |OBUFT       |     3|
++------+------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:01:03 ; elapsed = 00:01:16 . Memory (MB): peak = 1589.371 ; gain = 1037.203
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 373 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:47 ; elapsed = 00:01:05 . Memory (MB): peak = 1589.371 ; gain = 955.172
+Synthesis Optimization Complete : Time (s): cpu = 00:01:03 ; elapsed = 00:01:16 . Memory (MB): peak = 1589.371 ; gain = 1037.203
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.068 . Memory (MB): peak = 1594.676 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 245 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 1602.996 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 104 instances were transformed.
+  LD => LDCE: 52 instances
+  LDC => LDCE: 42 instances
+  LDCP => LDCP (GND, LDCE, LUT3(x2), VCC): 3 instances
+  LDP => LDPE: 3 instances
+  OBUFDS => OBUFDS_DUAL_BUF (INV, OBUFDS(x2)): 4 instances
+
+Synth Design complete | Checksum: c68e3acf
+INFO: [Common 17-83] Releasing license: Synthesis
+111 Infos, 188 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:01:08 ; elapsed = 00:01:27 . Memory (MB): peak = 1602.996 ; gain = 1226.160
+Write ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.014 . Memory (MB): peak = 1602.996 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'C:/Users/Kenne/project_1/project_1.runs/synth_1/top_level.dcp' has been generated.
+INFO: [Vivado 12-24828] Executing command : report_utilization -file top_level_utilization_synth.rpt -pb top_level_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Sun Dec  8 07:44:13 2024...
