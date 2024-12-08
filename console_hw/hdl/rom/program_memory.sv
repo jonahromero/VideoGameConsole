@@ -24,7 +24,7 @@ interface program_memory_bus;
 endinterface
 
 module program_memory(
-    wire logic clk_in,
+    input wire logic clk_in,
     wire logic rst_in,
     output logic sys_rst_out, // program memory will reset system when its ready
 
