@@ -117,7 +117,7 @@ module top_level
     .io_bus(io_bus.CONSUMER),
     .program_mem_bus(program_mem_bus.CONSUMER_B)
   );
-  cpu m_cpu(
+  simple_proc m_cpu(
     .rst_in(sys_rst), 
     .clk_in(clk_in),
     .mem_bus(mem_bus.CONSUMER),

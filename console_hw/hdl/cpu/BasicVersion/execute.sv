@@ -3,6 +3,7 @@
 
 import ProcTypes::*;
 
+
 function automatic logic aluBr(input logic [31:0] a, input logic [31:0] b, input BrFunc brfunc);
     logic ret;
     case(brfunc)
@@ -27,8 +28,10 @@ function automatic ExecInst execute(input DecodedInst dInst, input logic[31:0] r
     case (dInst.iType)
         AUIPC: data = (pc + imm);
         LUI: data = (imm);
-        OP, OPIMM: data = (alu(r_val1, alu_val2, dInst.aluFunc));
-        JAL, JALR: data = (pc + 4);
+        OP: data = (alu(r_val1, alu_val2, dInst.aluFunc));
+        OPIMM: data = (alu(r_val1, alu_val2, dInst.aluFunc));
+        JAL: data = (pc + 4);
+        JALR: data = (pc + 4);
         STORE: data = (r_val2);
         default: data = 32'b0;
     endcase
@@ -44,6 +47,14 @@ function automatic ExecInst execute(input DecodedInst dInst, input logic[31:0] r
 
     return '{dInst.iType, dInst.memFunc,dInst.dst, data, addr, nextPc};
 
+    // ret.iType = dInst.iType;
+    // ret.memFunc = dInst.memFunc;
+    // ret.dst = dInst.dst;
+    // ret.data = data;
+    // ret.addr = addr;
+    // ret.nextPC = nextPc;
+
+    // return ret;
 endfunction
 
 `default_nettype wire

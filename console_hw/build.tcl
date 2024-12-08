@@ -79,7 +79,7 @@ report_timing_summary -file $outputDir/post_synth_timing_summary.rpt
 report_utilization -file $outputDir/post_synth_util.rpt -hierarchical -hierarchical_depth 4
 report_timing -file $outputDir/post_synth_timing.rpt
 
-write_debug_probes -force debug_probes.ltx
+#write_debug_probes -force debug_probes.ltx
 #run optimization
 opt_design
 place_design

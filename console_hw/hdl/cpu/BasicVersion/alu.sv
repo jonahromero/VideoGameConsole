@@ -321,19 +321,25 @@ function automatic logic [31:0] addSub(
     input [31:0] val2,
     input isSub
 );
-
-    logic carryIn;
-    logic [31:0] b,data_out;
-
-    carryIn = 0;
-    b = val2;
     if (isSub) begin
-        b = ~b;
-        carryIn = 1'b1;
+        return val1 - val2;
+    end
+    else begin
+        return val1 + val2;
     end
 
-    data_out = fastAdd(val1,b,carryIn);
+//    logic carryIn;
+//    logic [31:0] b,data_out;
 
+//    carryIn = 0;
+//    b = val2;
+//    if (isSub) begin
+//        b = ~b;
+//        carryIn = 1'b1;
+//    end
+
+//    data_out = fastAdd(val1,b,carryIn);
+//    return data_out;
 endfunction
 
 function automatic logic [31:0] alu(
