@@ -45,14 +45,6 @@ function ExecInst execute(DecodedInst dInst, logic[31:0] r_val1,logic [31:0] r_v
 
     return '{dInst.iType, dInst.memFunc,dInst.dst, data, addr, nextPc};
 
-    // ret.iType = dInst.iType;
-    // ret.memFunc = dInst.memFunc;
-    // ret.dst = dInst.dst;
-    // ret.data = data;
-    // ret.addr = addr;
-    // ret.nextPC = nextPc;
-
-    // return ret;
 endfunction
 
 `default_nettype wire
