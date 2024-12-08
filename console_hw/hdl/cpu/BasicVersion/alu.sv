@@ -3,7 +3,7 @@
 
 import ProcTypes::*;
 
-function logic [31:0] barrel_rshift(
+function automatic logic [31:0] barrel_rshift(
     input [31:0] data_in,
     input  [4:0] sftSz,
     input  sft_in
@@ -23,7 +23,7 @@ function logic [31:0] barrel_rshift(
 
 endfunction
 
-function logic [31:0] sr32 (
+function automatic logic [31:0] sr32 (
     input [31:0] data_in,
     input [4:0] sftSz,
     input arith
@@ -36,7 +36,7 @@ function logic [31:0] sr32 (
     return data_out;
 endfunction
 
-function sll32 (
+function automatic sll32 (
     input [31:0] data_in,
     input [4:0] sftSz
 );
@@ -58,7 +58,7 @@ endfunction
 
 typedef enum { ArithemticRightShift, LogicalRightShift,LeftShift} ShiftType;
 
-function logic [31:0] sft32 (
+function automatic logic [31:0] sft32 (
     input [31:0] data_in,
     input [4:0] sftSz,
     input ShiftType shiftType
@@ -90,7 +90,7 @@ function logic [31:0] sft32 (
     return data_out;
 endfunction
 
-function logic [31:0] cmp32(
+function automatic logic [31:0] cmp32(
     input [31:0] val1,
     input [31:0] val2
 );
@@ -107,7 +107,7 @@ function logic [31:0] cmp32(
     return data_out;
 endfunction
 
-function logic [15:0] cmp16(
+function automatic logic [15:0] cmp16(
     input  [15:0] val1,
     input  [15:0] val2
 );
@@ -124,7 +124,7 @@ function logic [15:0] cmp16(
     return data_out;
 endfunction
 
-function logic [7:0] cmp8(
+function automatic logic [7:0] cmp8(
     input  [7:0] val1,
     input  [7:0] val2
 );
@@ -141,7 +141,7 @@ function logic [7:0] cmp8(
     return data_out;
 endfunction
 
-function logic [3:0] cmp4(
+function automatic logic [3:0] cmp4(
     input [3:0] val1,
     input [3:0] val2
 );
@@ -158,7 +158,7 @@ function logic [3:0] cmp4(
     return data_out;
 endfunction
 
-function logic [1:0] cmp2(input [1:0] val1,input [1:0] val2);
+function automatic logic [1:0] cmp2(input [1:0] val1,input [1:0] val2);
 
     logic eq, lt;
     logic [1:0] lower, upper, data_out;
@@ -172,11 +172,11 @@ function logic [1:0] cmp2(input [1:0] val1,input [1:0] val2);
     return data_out;
 endfunction
 
-function logic cmp(input val1,input val2);
+function automatic logic cmp(input val1,input val2);
     return {~(val1 ^ val2), ~val1 & val2};
 endfunction
 
-function logic[31:0] ltu32(
+function automatic logic[31:0] ltu32(
     input [31:0] val1,
     input [31:0] val2
 );
@@ -187,7 +187,7 @@ function logic[31:0] ltu32(
 
 endfunction
 
-function logic [31:0] lt32(
+function automatic logic [31:0] lt32(
     input [31:0] val1,
     input [31:0] val2,
     input isSigned
@@ -208,7 +208,7 @@ function logic [31:0] lt32(
     return data_out;
 endfunction
 
-function logic [31:0][1:0] composer32(
+function automatic logic [31:0][1:0] composer32(
     input [31:0][1:0] func
 );
 
@@ -278,7 +278,7 @@ function logic [31:0][1:0] composer32(
     return now;
 endfunction
 
-function logic [31:0] fastAdd(
+function automatic logic [31:0] fastAdd(
     input [31:0] val1,
     input [31:0] val2,
     input carryIn
@@ -316,7 +316,7 @@ function logic [31:0] fastAdd(
 
 endfunction
 
-function logic [31:0] addSub(
+function automatic logic [31:0] addSub(
     input [31:0] val1,
     input [31:0] val2,
     input isSub
@@ -336,7 +336,7 @@ function logic [31:0] addSub(
 
 endfunction
 
-function logic [31:0] alu(
+function automatic logic [31:0] alu(
     input logic [31:0] val1,
     input logic [31:0] val2,
     input AluFunc alufunc

@@ -3,7 +3,7 @@
 
 import ProcTypes::*;
 
-function DecodedInst decode(
+function automatic DecodedInst decode(
     input logic [31:0] inst
 );
   

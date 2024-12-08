@@ -50,19 +50,22 @@ module program_memory(
     logic[31:0] rom_instr;
     logic rom_instr_we;
     logic[3:0] counter;
+    
+    assign sys_rst_out = rst_in;
 
     always_ff @(posedge clk_in) begin
         if (rst_in) begin
             counter <= 0;
             rom_instr_we <= 0;
-            state <= INITIALIZING;
+            state <= WAITING;
+//            state <= INITIALIZING;
         end
         else begin
             if (rom_instr_we) begin
                 rom_instr_we <= 0;
             end
             if (sys_rst_out) begin
-                sys_rst_out <= 0;
+                //sys_rst_out <= 0;
             end
             case (state)
             INITIALIZING: begin
@@ -70,12 +73,12 @@ module program_memory(
                     rom_instr <= {rom_data, rom_instr[31:8]};
                     counter <= counter + 1;
                     if (counter + 1 == 4) begin
-                        rom_instr_we <= 1;
+//                        rom_instr_we <= 1;
                         counter <= 0;
                     end
                 end
                 if (finished_reading) begin
-                    sys_rst_out <= 1;
+                    //sys_rst_out <= 1;
                     state <= WAITING;
                 end
             end
@@ -108,7 +111,8 @@ module program_memory(
     xilinx_true_dual_port_read_first_2_clock_ram #(
         .RAM_WIDTH(32),                       // Specify RAM data width
         .RAM_DEPTH((8*1024) / 4),           // Specify RAM depth (number of entries)
-        .RAM_PERFORMANCE("HIGH_PERFORMANCE") // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
+        .RAM_PERFORMANCE("HIGH_PERFORMANCE"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
+        .INIT_FILE("program.mem")
     ) icache (
         .addra(actual_addr),
         //.dina(rom_instr_big_endian),

@@ -11,6 +11,8 @@ package ProcTypes;
 
     // AUIPC added for this lab - Add Upper Immediate to PC
     typedef enum {OP, OPIMM, BRANCH, LUI, JAL, JALR, LOAD, STORE, AUIPC, PMUL, Unsupported} IType;
+    
+    logic [31:0] NOP_INSTR = 32'h0000_0013;
 
     // Return type for Decode function
     typedef struct {

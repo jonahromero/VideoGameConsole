@@ -4,7 +4,7 @@
 import ProcTypes::*;
 
 
-function logic aluBr(logic [31:0] a, logic [31:0] b, BrFunc brfunc);
+function automatic logic aluBr(input logic [31:0] a, input logic [31:0] b, input BrFunc brfunc);
     logic ret;
     case(brfunc)
         Eq: ret = ((a == b));
@@ -18,7 +18,7 @@ function logic aluBr(logic [31:0] a, logic [31:0] b, BrFunc brfunc);
     return ret;
 endfunction
 
-function ExecInst execute(DecodedInst dInst, logic[31:0] r_val1,logic [31:0] r_val2, logic [31:0] pc);
+function automatic ExecInst execute(input DecodedInst dInst, input logic[31:0] r_val1,input logic [31:0] r_val2, input logic [31:0] pc);
     logic [31:0] imm, alu_val2,data, nextPc, addr;
     // ExecInst ret;
 
