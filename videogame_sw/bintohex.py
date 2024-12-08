@@ -68,9 +68,12 @@ def binary_to_hex_file(input_binary_path, output_text_path):
 
         # Convert binary data to a hexadecimal string
         hex_data = binary_data.hex()
+        def rev_endian(s):
+            return s[6:8] + s[4:6] + s[2:4] + s[0:2]
 
         # Split the hex string into chunks of 8 characters (representing 4 bytes)
-        hex_lines = [hex_data[i:i+8] for i in range(0, len(hex_data), 8)]
+        hex_lines = [rev_endian(hex_data[i:i+8]) for i in range(0, len(hex_data), 8)]
+        
 
         # Write the hex lines to the output text file
         with open(output_text_path, 'w') as text_file:

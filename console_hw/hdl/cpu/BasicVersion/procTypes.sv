@@ -1,5 +1,7 @@
 
 package ProcTypes;
+
+    logic [31:0] NOP_INSTR = 32'h0000_0013;
     // Alu function enumeration
     typedef enum {Add, Sub, And, Or, Xor, Slt, Sltu, Sll, Srl, Sra, NopA} AluFunc;
 

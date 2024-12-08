@@ -45,14 +45,6 @@ function automatic ExecInst execute(input DecodedInst dInst, input logic[31:0] r
 
     return '{dInst.iType, dInst.memFunc,dInst.dst, data, addr, nextPc};
 
-    // ret.iType = dInst.iType;
-    // ret.memFunc = dInst.memFunc;
-    // ret.dst = dInst.dst;
-    // ret.data = data;
-    // ret.addr = addr;
-    // ret.nextPC = nextPc;
-
-    // return ret;
 endfunction
 
 `default_nettype wire

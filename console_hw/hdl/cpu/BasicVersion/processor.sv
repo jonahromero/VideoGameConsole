@@ -116,59 +116,66 @@ module fetch (
 
     output F2D f2d_out                    // Contains PC and requested instruction
 );
+    logic[31:0] fetch_pc;
+    logic read_request[1:0];
 
+    // pipelined output
+    F2D f2d[2:0];
+    assign f2d_out = '{pc: f2d[2].pc, instr: f2d[2].instr, isValid: f2d.isValid && (f_in.fetchAction != DEQUEUE)};
 
-
-    logic [31:0] fetch_pc, fetch_pc_p1, fetch_pc_p2;
-    logic isValid1, isValid2;
-
-
-    always_ff @(posedge clk_in ) begin
+    always_ff @(posedge clk_in) begin
         if (rst_in) begin
-            fetch_pc <= 32'b0;
-            fetch_pc_p1 <= 32'b0;
-             fetch_pc_p2 <= 32'b0;
+            fetch_pc <= 0;
+            read_request[0] <= 0;
+            read_request[1] <= 0;
+            f2d[0] <= '{pc: 32'hFFFF_FFFF, instr: NOP_INSTR, isValid:1'b0};
+            f2d[1] <= '{pc: 32'hFFFF_FFFF, instr: NOP_INSTR, isValid:1'b0};
+            f2d[2] <= '{pc: 32'hFFFF_FFFF, instr: NOP_INSTR, isValid:1'b0};
         end
         else begin
+            // pipeline signals
+            for (int i = 1; i < 3; i++) {
+                pc[i] <= pc[i - 1];
+            }
+            read_request[1] <= read_request[0];
+
+            // insert default values to the pipeline
+            f2d[0] <= '{pc: 32'hFFFF_FFFF, instr: NOP_INSTR, isValid:1'b0};
+            read_request[0] <= 0; // default: no read request
+
+            // perform request
+            if (read_request[1]) begin
+                f2d[2].isValid <= 1;
+                f2d[2].instr <= program_mem_bus.instr;
+            end
             case (f_in.fetchAction)
-                REDIRECT: begin
-                    f2d_out <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid:1'b0};
-                    fetch_pc <= f_in.redirectPC;
-                    fetch_pc_p1 <= 32'hFFFF_FFFF;
-                    fetch_pc_p2 <= 32'hFFFF_FFFF;
-                    program_mem_bus.addr <= f_in.redirectPC;
-                    program_mem_bus.read_request <= 1'b1;
-                end
                 STALL: begin
                     program_mem_bus.addr <= fetch_pc;
-                    program_mem_bus.read_request <= 1'b1;
-                    if((program_mem_bus.data_valid) && (fetch_pc_p2 != 32'hFFFF_FFFF)) begin 
-                        f2d_out  <= '{pc: fetch_pc_p2, instr: program_mem_bus.instr, isValid:1'b1};
-                        fetch_pc <= fetch_pc;
-                        fetch_pc_p1 <= fetch_pc;
-                        fetch_pc_p2 <= fetch_pc_p1;
-                    end else f2d_out  <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid: 1'b0};
+                    read_request[0] <= 1'b1;
+                    f2d[0].pc <= fetch_pc;
+                end
+                REDIRECT: begin
+                    f2d[0].pc            <= f_in.redirectPC;
+                    fetch_pc             <= f_in.redirectPC;
+                    program_mem_bus.addr <= f_in.redirectPC;
+                    read_request <= 1'b1;
+                    // clear pipeline
+                    pc[1] <= '{pc: 32'hFFFF_FFFF, instr: NOP_INSTR, isValid:1'b0};
+                    pc[2] <= '{pc: 32'hFFFF_FFFF, instr: NOP_INSTR, isValid:1'b0};
                 end
                 DEQUEUE: begin
-                    if((program_mem_bus.data_valid) && (fetch_pc_p2 != 32'hFFFF_FFFF)) begin 
-                        f2d_out  <= '{pc: fetch_pc_p2, instr: program_mem_bus.instr, isValid:1'b1};
-                        fetch_pc <= fetch_pc + 32'd4;
-                        fetch_pc_p1 <= fetch_pc;
-                        fetch_pc_p2 <= fetch_pc_p1;
-                        program_mem_bus.addr <= fetch_pc + 32'd4;
-                        program_mem_bus.read_request <= 1'b1;
-                    end else f2d_out  <= '{pc: 32'hFFFF_FFFF, instr: 32'h0000_0013, isValid: 1'b0};
+                    program_mem_bus.addr <= fetch_pc;
+                    read_request <= 1'b1;
+                    f2d[0].pc <= fetch_pc;
+                    fetch_pc <= fetch_pc + 4;
                 end
                 default: begin
-                    f2d_out  <= '{pc: 32'hF5F5_F5F5, instr: 32'h0000_0013, isValid: 1'b0};
+                    f2d <= '{pc: 32'hF5F5_F5F5, instr: 32'h0000_0013, isValid: 1'b0};
                 end
             endcase
         end
-
-
     end
-
-endmodule 
+endmodule
 
 module cpu(
     input wire  rst_in,
@@ -256,12 +263,10 @@ module cpu(
     fetch read_only(.clk_in(clk_in), .rst_in(rst_in), .f_in(f_in), .program_mem_bus(program_mem_bus), .f2d_out(f2d));
 
     always_comb begin
-
         if (mem_bus.busy) begin 
             mem_bus.dispatch_read = 1'b0;
             mem_bus.dispatch_write = 1'b0;
         end
-
 
         /////////////////////
         // Writeback Stage //
@@ -400,14 +405,13 @@ module cpu(
         ///////////////////////
 
         if (annul) begin 
-            f_in = '{fetchAction: REDIRECT, redirectPC: redirectPC};
+            f_in = '{fetchAction: REDIRECT, redirectPC: redirectPC };
         end
         else if ((!f2d.isValid) || hazardStall || dDataStall || dReqStall) begin
-
-         f_in = '{fetchAction: STALL, redirectPC: 32'hCBCB_BCBC};
+            f_in = '{fetchAction: STALL,    redirectPC: 32'hCBCB_BCBC };
         end
         else begin
-            f_in = '{fetchAction: DEQUEUE, redirectPC: 32'hFAFA_AFAF};
+            f_in = '{fetchAction: DEQUEUE,  redirectPC: 32'hFAFA_AFAF };
         end
     end
 
