@@ -62,29 +62,29 @@ module memory_system (
     program_memory_bus.CONSUMER_B program_mem_bus
 );
 
-    ila_0 debugger (
-        .clk(clk_in), // input wire clk
+//    ila_0 debugger (
+//        .clk(clk_in), // input wire clk
 
-        .trig_in(rst_in),// input wire trig_in 
-        .trig_in_ack(),// output wire trig_in_ack 
-        .probe0(addr_type), // input wire [7:0]  probe0  
-        .probe1(counter), // input wire [7:0]  probe1 
-        .probe2({7'd0, ram_data_out}), // input wire [15:0]  probe2 
-        .probe3(bus.read_data), // input wire [31:0]  probe3 
-        .probe4(bus.write_data), // input wire [31:0]  probe4 
-        .probe5(data_latched), // input wire [31:0]  probe5 
-        .probe6(addr_latched), // input wire [31:0]  probe6 
-        .probe7(bus.addr[30:0]), // input wire [31:0]  probe7 // fucked up this is 30:0
+//        .trig_in(rst_in),// input wire trig_in 
+//        .trig_in_ack(),// output wire trig_in_ack 
+//        .probe0(addr_type), // input wire [7:0]  probe0  
+//        .probe1(counter), // input wire [7:0]  probe1 
+//        .probe2({7'd0, ram_data_out}), // input wire [15:0]  probe2 
+//        .probe3(bus.read_data), // input wire [31:0]  probe3 
+//        .probe4(bus.write_data), // input wire [31:0]  probe4 
+//        .probe5(data_latched), // input wire [31:0]  probe5 
+//        .probe6(addr_latched), // input wire [31:0]  probe6 
+//        .probe7(bus.addr[30:0]), // input wire [31:0]  probe7 // fucked up this is 30:0
 
-        .probe8(bus.busy), // input wire [0:0]  probe8 
-        .probe9(we), // input wire [0:0]  probe9 
-        .probe10(fb_we), // input wire [0:0]  probe10 
-        .probe11(ram_we), // input wire [0:0]  probe11 
-        .probe12(rst_in), // input wire [0:0]  probe12 
-        .probe13(bus.dispatch_write), // input wire [0:0]  probe13 
-        .probe14(bus.dispatch_read), // input wire [0:0]  probe14 
-        .probe15(ram_read_buffer) // input wire [0:0]  probe15
-    );
+//        .probe8(bus.busy), // input wire [0:0]  probe8 
+//        .probe9(we), // input wire [0:0]  probe9 
+//        .probe10(fb_we), // input wire [0:0]  probe10 
+//        .probe11(ram_we), // input wire [0:0]  probe11 
+//        .probe12(rst_in), // input wire [0:0]  probe12 
+//        .probe13(bus.dispatch_write), // input wire [0:0]  probe13 
+//        .probe14(bus.dispatch_read), // input wire [0:0]  probe14 
+//        .probe15(ram_read_buffer) // input wire [0:0]  probe15
+//    );
 
     enum {
         WAITING = 1, READ_MEM = 2, WRITE_MEM = 4, SEND_WE = 8

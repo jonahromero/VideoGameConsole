@@ -111,8 +111,7 @@ module cpu(
     program_memory_bus program_mem_bus
 );
 
-<<<<<<< Updated upstream:console_hw/hdl/cpu/Basic Version/processor.sv
-=======
+
 //    rf24 reg_file (
 //	.clk(clk_in), // input wire clk
 
@@ -143,7 +142,6 @@ module cpu(
 //	.probe23(f2d.isValid) // input wire [31:0]  probe23
 //);
 
->>>>>>> Stashed changes:console_hw/hdl/cpu/BasicVersion/processor.sv
     // Peformance counters
     logic [31:0] cycle;
     logic [31:0] instrs;
@@ -193,7 +191,6 @@ module cpu(
     fetch read_only(.clk_in(clk_in), .rst_in(rst_in), .f_in(f_in), .program_mem_bus(program_mem_bus), .f2d(f2d));
 
     always_comb begin
-        cycle = cycle + 1'd1;
 
         /////////////////////
         // Writeback Stage //
@@ -308,12 +305,9 @@ module cpu(
 
             if ((!annul) && (!hazardStall)) begin
                  d2e_tp = '{pc: f2d.pc, dInst: dInst, rVal1: r_val1, rVal2: r_val2, isValid: 1'b1};
-<<<<<<< Updated upstream:console_hw/hdl/cpu/Basic Version/processor.sv
-=======
             end else begin
                  dInst = '{iType: Unsupported,aluFunc: NopA, brFunc: NopB, memFunc:NopM, dst:5'd0,src1:5'd0, src2:5'd0, imm:32'b0};
                  d2e_tp = '{pc: 32'hFFFF_FFFF, dInst:dInst, rVal1: 32'b0, rVal2: 32'b0, isValid:1'b0};
->>>>>>> Stashed changes:console_hw/hdl/cpu/BasicVersion/processor.sv
             end
         end else begin
                  dInst = '{iType: Unsupported,aluFunc: NopA, brFunc: NopB, memFunc:NopM, dst:5'd0,src1:5'd0, src2:5'd0, imm:32'b0};
@@ -326,19 +320,19 @@ module cpu(
         ///////////////////////
 
         if (annul) begin 
-            // f_in = '{fetchAction: Redirect, redirectPC: redirectPC};
-            f_in.fetchAction = Redirect;
-            f_in.redirectPC = redirectPC;
+             f_in = '{fetchAction: Redirect, redirectPC: redirectPC};
+//            f_in.fetchAction = Redirect;
+//            f_in.redirectPC = redirectPC;
         end
         else if ((!f2d.isValid) || hazardStall || dDataStall || dReqStall) begin
-            f_in.fetchAction = Stall;
-            f_in.redirectPC = 'x;
-        //  f_in = '{fetchAction: Stall, redirectPC: 'x};
+//            f_in.fetchAction = Stall;
+//            f_in.redirectPC = 'x;
+          f_in = '{fetchAction: Stall, redirectPC: 'x};
         end
         else begin
-            // f_in = '{fetchAction: Dequeue, redirectPC: 'x};
-            f_in.fetchAction = Dequeue;
-            f_in.redirectPC = 'x;
+             f_in = '{fetchAction: Dequeue, redirectPC: 'x};
+//            f_in.fetchAction = Dequeue;
+//            f_in.redirectPC = 'x;
         end
     end
 
@@ -348,6 +342,7 @@ module cpu(
             instrs <= 0;
         end
         else begin
+            cycle <= cycle + 1;
             ///////////////////
             // Execute Stage //
             ///////////////////
@@ -361,13 +356,7 @@ module cpu(
             //////////////////
             // Decode Stage //
             //////////////////
-
-<<<<<<< Updated upstream:console_hw/hdl/cpu/Basic Version/processor.sv
-            if (annul) d2e.isValid <= 1'b0;
-            else if(hazardStall) d2e.isValid <= 1'b0;
-            else if ((!dDataStall) && (!dReqStall)) d2e.isValid <= 1'b0;
-            else d2e <= d2e_tp;
-=======
+            
             d2e <= d2e_tp;
 //            if ((f2d.isValid) && (!dDataStall) && (!dReqStall)) begin
 //                if (annul) begin 
@@ -386,7 +375,6 @@ module cpu(
 ////             d2e.isValid <= 1'b0;
 //               d2e <= d2e_tp;
 //            end
->>>>>>> Stashed changes:console_hw/hdl/cpu/BasicVersion/processor.sv
 
 
 
