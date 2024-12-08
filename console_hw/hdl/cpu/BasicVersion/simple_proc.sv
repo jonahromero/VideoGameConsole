@@ -126,6 +126,7 @@ module simple_proc(
                     stage <= WRITEBACK;
                     if (eInstr.iType == STORE || eInstr.iType == LOAD) begin
                         mem_bus.addr <= eInstr.addr;
+
                         case (eInstr.memFunc)
                             Lw: mem_bus.mem_width <= mem::DWORD;
                             Lh: mem_bus.mem_width <= mem::WORD;
@@ -161,7 +162,14 @@ module simple_proc(
                         regfile[eInstr.dst] <= mem_bus.read_data;
                     end
                     else begin
-                        regfile[eInstr.dst] <= eInstr.data;
+                        case (eInstr.memFunc)
+                            Lw:  regfile[eInstr.dst] <= mem_bus.read_data;
+                            Lh:  regfile[eInstr.dst] <= (mem_bus.read_data[15])? {16'hFFFF, mem_bus.read_data}: {16'h0, mem_bus.read_data}; 
+                            Lhu: regfile[eInstr.dst] <= {16'h0, mem_bus.read_data};
+                            Lb:  regfile[eInstr.dst] <= (mem_bus.read_data[7])? {24'hFF_FFFF, mem_bus.read_data} : {24'h0, mem_bus.read_data};
+                            Lbu: regfile[eInstr.dst] <= {24'h0, mem_bus.read_data};
+                            default: regfile[eInstr.dst] <= eInstr.data;
+                        endcase
                     end
                     // update pc
                     pc <= eInstr.nextPc;
