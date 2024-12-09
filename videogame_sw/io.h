@@ -18,11 +18,12 @@ enum {
 typedef uint8_t button_mask_t;
 
 typedef struct {
-	button_mask_t buttons;
+	button_mask_t _prev_button_state;
+	button_mask_t buttons_pressed;
 	uint8_t xtilt, ytilt;
 } controller_t;
 
-controller_t get_controller_input();
+void update_controller(controller_t * controller);
 void draw_pixel(uint16_t rgb, pos_t pos);
 void swap_frame_buffer();
 

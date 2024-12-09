@@ -60,7 +60,7 @@ typedef struct {
 
 void update(game_t * game) {
   const int PLAYER_SPEED = 4;
-  game->controller = get_controller_input();
+  update_controller(&game->controller);
   if (game->controller.xtilt < TILT_IDLE - 2) {
     if (game->cursor.x >  PLAYER_SPEED) game->cursor.x -= PLAYER_SPEED;
     else game->cursor.x = 0;
@@ -78,13 +78,13 @@ void update(game_t * game) {
     else game->cursor.y = MMIO__FRAME_BUFFER_HEIGHT - 1;
   }
 
-  if (game->controller.buttons & BUTTON_A) {
+  if (game->controller.buttons_pressed & BUTTON_A) {
     game->color_idx = BLACK;
   }
-  else if (game->controller.buttons & BUTTON_Y) {
+  else if (game->controller.buttons_pressed & BUTTON_Y) {
     game->color_idx = (game->color_idx + 1) % TOTAL_COLORS; 
   }
-  else if (game->controller.buttons & BUTTON_RB) {
+  else if (game->controller.buttons_pressed & BUTTON_RB) {
     game->canvas.pixels[game->cursor.y/4][game->cursor.x/4] = game->color_pallette[game->color_idx];
   }
 }
@@ -97,7 +97,6 @@ void render(game_t * game) {
     }
   }
   // draw cursor
-  draw_pixel(game->color_pallette[game->color_idx], game->cursor);
   uint8_t cursor_bitmap[4][4] = {
     { 0, 1, 1, 0},
     { 1, 1, 1, 1},
@@ -115,6 +114,7 @@ void render(game_t * game) {
       }
     }
   }
+  draw_pixel(game->color_pallette[game->color_idx], game->cursor);
   swap_frame_buffer();
 }
 

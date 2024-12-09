@@ -2,12 +2,12 @@
 #include "mmio.h"
 #include "io.h"
 
-controller_t get_controller_input() {
-    controller_t result;
-    result.xtilt   = *(MMIO__CTLR_BASE_ADDR + MMIO__CTLR_JOYSTICK_X_OFFSET);
-    result.ytilt   = *(MMIO__CTLR_BASE_ADDR + MMIO__CTLR_JOYSTICK_Y_OFFSET);
-    result.buttons = *(MMIO__CTLR_BASE_ADDR + MMIO__CTLR_BUTTONS_OFFSET);
-    return result;
+void update_controller(controller_t * controller) {
+    controller->xtilt   = *(MMIO__CTLR_BASE_ADDR + MMIO__CTLR_JOYSTICK_X_OFFSET);
+    controller->ytilt   = *(MMIO__CTLR_BASE_ADDR + MMIO__CTLR_JOYSTICK_Y_OFFSET);
+    button_mask_t new_button_state = *(MMIO__CTLR_BASE_ADDR + MMIO__CTLR_BUTTONS_OFFSET);
+    controller->buttons_pressed = ~controller->_prev_button_state & new_button_state;
+    controller->_prev_button_state = new_button_state;
 }
 
 // WE HAVE FULL 1280x720 access
