@@ -26,7 +26,7 @@ typedef struct {
 void update_controller(controller_t * controller);
 
 // MMIO: Frame buffer
-#define RGB_TO_565(r, g, b) ((uint16_t)((r<<11) | ((g & ((1<<6)-1))<<5) | (b&((1<<5)-1))))
+#define RGB_TO_565(r, g, b) ((uint16_t)(((r>>3)<<11) | (((g>>2) & ((1<<6)-1))<<5) | ((b>>3)&((1<<5)-1))))
 void draw_pixel(uint16_t rgb, pos_t pos);
 void swap_frame_buffer();
 
