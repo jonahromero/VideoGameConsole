@@ -105,7 +105,8 @@ module memory_system (
     mem::addr_type_t addr_type;
 
     mmio_mappings mmio(
-        .addr(addr_latched),
+        // if incoming request, change this immediately
+        .addr((bus.dispatch_read || bus.dispatch_write) ? bus.addr : addr_latched),
         .addr_type(addr_type),
         .real_addr(real_addr)
     );
@@ -130,10 +131,10 @@ module memory_system (
     };
 
     // Write enables for memory sub-systems
-    logic we, ram_we, fb_we;
+    logic ram_we, fb_we;
     always_comb begin
-        ram_we = we && (addr_type == mem::RAM);
-        fb_we =  we && (addr_type == mem::FB);
+        fb_we =  bus.dispatch_write && (addr_type == mem::FB) && 
+        (!bus.busy || bus.dispatch_read || bus.dispatch_write); // make sure we dont write frame buffer while we're busy
     end
 
     // Helper for counting cycles
@@ -170,7 +171,12 @@ module memory_system (
                     state <= READ_MEM;
                 end
                 else if (bus.dispatch_write) begin
-                    state <= SEND_WE;
+                    if (addr_type == mem::RAM) begin
+                        state <= SEND_WE;
+                    end
+                    else begin
+                        state <= WAITING;
+                    end
                 end
             end
             READ_MEM: begin
@@ -181,13 +187,13 @@ module memory_system (
                         state <= WAITING;
                     end
                     mem::FB : begin
-                        if (counter + 1 == 4) begin // wait 4 cycles
+                        if (counter + 1 == 3) begin // wait 4 cycles
                             bus.read_data <= fb_bus.debug_read;
                             state <= WAITING;
                         end
                     end
                     mem::RAM : begin
-                        if (counter + 1 == 4) begin // wait 2 cycles
+                        if (counter + 1 == 3) begin // wait 2 cycles
                             counter <= 0;
                             if (bytes_to_send != 1) begin
                                 bytes_to_send <= bytes_to_send - 1;
@@ -202,20 +208,11 @@ module memory_system (
                         end
                     end
                     mem::ROM : begin
-                        if (counter + 1 == 4) begin // wait 2 cycles
+                        if (counter + 1 == 3) begin // wait 2 cycles
                             // the program instruction ram reads 4 byte instructions,
                             // ignoring the bottom 2 bits, so we offset based on address
                             // we also dont have to worry about partials, since riscv requires aligned access
                             bus.read_data <= (program_mem_bus.instr_b >> (8 * real_addr[1:0]));
-                            //bus.read_data <= real_addr + 256;
-                            //bus.read_data <= 32'hFF_FF;
-                            //debug_led <= real_addr;
-                            // if (real_addr < 64) begin
-                            //     bus.read_data <= 32'h00_1F;
-                            // end
-                            // else begin
-                            //     bus.read_data <= 32'hF8_00; //(program_mem_bus.instr_b >> (8 * real_addr[1:0]));
-                            // end
                             state <= WAITING;
                         end
                     end
@@ -230,15 +227,15 @@ module memory_system (
                 endcase
             end
             SEND_WE : begin
-                we <= 1;
+                ram_we <= 1;
                 state <= WRITE_MEM;
             end
             WRITE_MEM: begin
                 counter <= counter + 1;
                 case (addr_type)
                     mem::RAM: begin
-                        if (counter == 3) begin // wait 2 cycles
-                            counter <= 0;
+                        //if (counter == 3) begin // wait 2 cycles
+                        //    counter <= 0;
                             if (bytes_to_send != 1) begin
                                 bytes_to_send <= bytes_to_send - 1;
                                 data_latched  <= (data_latched >> 8);
@@ -248,7 +245,7 @@ module memory_system (
                             else begin
                                 state <= WAITING;
                             end
-                        end
+                        //end
                     end
                     mem::IO:      state <= WAITING;
                     mem::FB:      state <= WAITING;
@@ -257,8 +254,8 @@ module memory_system (
                 endcase
             end
             endcase
-            if (we) begin
-                we <= 0;
+            if (ram_we) begin
+                ram_we <= 0;
             end
         end
     end
@@ -275,7 +272,7 @@ module memory_system (
         fb_bus.write_clk = clk_in;
         fb_bus.write_addr = real_addr;
         // mem width implicitly word size
-        fb_bus.write_data = data_latched[15:0];
+        fb_bus.write_data = bus.write_data[15:0];
 
         fb_bus.write_enable = fb_we && (real_addr != FB_SWAP_ADDR);
         fb_bus.swap_buffer  = fb_we && (real_addr == FB_SWAP_ADDR);

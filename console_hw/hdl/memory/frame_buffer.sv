@@ -72,14 +72,14 @@ module frame_buffer
 
     always_comb begin
         read_addr = ((bus.hcount>>2)) + hdmi_const::FB_WIDTH*(bus.vcount>>2); // TODO - Violate timing?
-        blk_we[0] = bus.write_enable;//buffer_flag && bus.write_enable;
-        //blk_we[1] = !buffer_flag  && bus.write_enable;
+        blk_we[0] = buffer_flag && bus.write_enable;
+        blk_we[1] = !buffer_flag  && bus.write_enable;
 
         //frame_buff_raw = bus.hcount[2:0] < 4 ? 16'h6690 : 16'hFFFF;
 
         if (buffer_flag) begin
-            frame_buff_raw = blk_data_out[0]; // TODO- this should be 1, but have them write and read same one for testing
-            bus.debug_read =  blk_data_debug_out[0];
+            frame_buff_raw = blk_data_out[1]; // TODO- this should be 1, but have them write and read same one for testing
+            bus.debug_read =  blk_data_debug_out[1];
         end
         else begin
             frame_buff_raw = blk_data_out[0];
@@ -92,7 +92,7 @@ module frame_buffer
 
     // 2 cycles
     generate
-        for (genvar i = 0; i < 1; i++) begin
+        for (genvar i = 0; i < 2; i++) begin
             blk_mem_gen_0 frame_buffer(
                 .clka(bus.write_clk),
                 .addra(bus.write_addr >> 1), //pixels are stored using this math
