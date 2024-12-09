@@ -176,6 +176,15 @@ module simple_proc(
                     pc <= eInstr.nextPc;
                     counter <= 0;
                     stage <= FETCH_DECODE;
+                    // reset MISC
+//                    dInstr <= 0;
+//                    dInstr <= 0;
+//                    dInstr <= 0;
+//                    dInstr <= 0;
+                    
+//                    eInstr.iType <= Unsupported;
+//                    eInstr.iType <= 0;
+//                    eInstr.iType <= 0;
                 end
             end
             endcase
