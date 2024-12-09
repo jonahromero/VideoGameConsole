@@ -89,6 +89,11 @@ game_t create_game() {
 }
 
 void main() {
+  draw_pixel(RGB_TO_565(255, 255, 255),(pos_t){0,0});
+  draw_pixel(RGB_TO_565(255, 255, 255),(pos_t){0,1});
+  draw_pixel(RGB_TO_565(255, 255, 255),(pos_t){0,4});
+  draw_pixel(RGB_TO_565(255, 255, 255),(pos_t){1,3});
+  return;
   game_t game = create_game();
   while (true) {
     update(&game);
