@@ -9,6 +9,7 @@
 typedef uint8_t byte_t;
 typedef uint16_t word_t;
 typedef uint32_t dword_t;
+typedef uint64_t size_t;
 
 typedef struct {
   int16_t x, y;

@@ -15,7 +15,7 @@ OBJS := \
 
 
 LINKER_SCRIPT := script.ld
-CC_FLAGS += -fno-common -nostdlib -march=rv32i -mabi=ilp32
+CC_FLAGS += -fno-common -nostdlib -march=rv32i -mabi=ilp32 -fno-builtin-memcpy
 
 ifdef DEBUG
 	CC_FLAGS += -O0

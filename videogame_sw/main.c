@@ -10,6 +10,12 @@
 #define CANVAS_WIDTH (MMIO__FRAME_BUFFER_WIDTH / 4)
 #define CANVAS_HEIGHT (MMIO__FRAME_BUFFER_HEIGHT / 4)
 
+void memcpy(void *dest, const void *src, size_t n) {
+	for (int i = 0; i < n; i++) {
+		((uint8_t*)dest)[i] = ((uint8_t*)src)[i];
+	}
+}
+
 enum color_enum_t {
   WHITE,
   BLACK,
