@@ -63,15 +63,19 @@ void update(game_t * game) {
   game->controller = get_controller_input();
   if (game->controller.xtilt < TILT_IDLE - 2) {
     if (game->cursor.x >  PLAYER_SPEED) game->cursor.x -= PLAYER_SPEED;
+    else game->cursor.x = 0;
   }
   else if (game->controller.xtilt > TILT_IDLE + 2) {
     if (game->cursor.x + PLAYER_SPEED < MMIO__FRAME_BUFFER_WIDTH) game->cursor.x += PLAYER_SPEED;
+    else game->cursor.x = MMIO__FRAME_BUFFER_WIDTH - 1;
   }
   if (game->controller.ytilt > TILT_IDLE + 2) {
     if (game->cursor.y > PLAYER_SPEED) game->cursor.y -= PLAYER_SPEED;
+    else game->cursor.y = 0;
   }
   else if (game->controller.ytilt < TILT_IDLE - 2) {
     if (game->cursor.y +  PLAYER_SPEED < MMIO__FRAME_BUFFER_HEIGHT) game->cursor.y += PLAYER_SPEED;
+    else game->cursor.y = MMIO__FRAME_BUFFER_HEIGHT - 1;
   }
 
   if (game->controller.buttons & BUTTON_A) {
@@ -94,18 +98,21 @@ void render(game_t * game) {
   }
   // draw cursor
   draw_pixel(game->color_pallette[game->color_idx], game->cursor);
-  pos_t cursor_adj[4] = {
-    (pos_t) { game->cursor.x, game->cursor.y + 1 },
-    (pos_t) { game->cursor.x, game->cursor.y - 1 },
-    (pos_t) { game->cursor.x + 1, game->cursor.y },
-    (pos_t) { game->cursor.x - 1, game->cursor.y },
+  uint8_t cursor_bitmap[4][4] = {
+    { 0, 1, 1, 0},
+    { 1, 1, 1, 1},
+    { 1, 1, 1, 1},
+    { 0, 1, 1, 0},
   };
-  for (int i = 0; i < 4; i++) {
-    if (cursor_adj[i].x < MMIO__FRAME_BUFFER_WIDTH &&
-        cursor_adj[i].x > 0 && cursor_adj[i].y > 0 &&
-        cursor_adj[i].y < MMIO__FRAME_BUFFER_HEIGHT)
-    {
-      draw_pixel(game->color_pallette[WHITE], cursor_adj[i]);
+  for (int y = 0; y < 4; y++) {
+    for (int x = 0; x < 4; x++) {
+      pos_t pos = {x - 2, y - 2};
+      if (pos.x < MMIO__FRAME_BUFFER_WIDTH &&
+          pos.x > 0 && pos.y > 0 && cursor_bitmap[y][x] && 
+          pos.y < MMIO__FRAME_BUFFER_HEIGHT)
+      {
+        draw_pixel(game->color_pallette[WHITE], pos);
+      }
     }
   }
   swap_frame_buffer();
@@ -120,17 +127,10 @@ game_t create_game() {
   game.color_pallette[RED]   = RGB_TO_565(255, 0, 0);
   game.color_pallette[GREEN] = RGB_TO_565(0, 255, 0);
   game.color_pallette[BLUE]  = RGB_TO_565(0, 0, 255);
-  // debug color
-  game.canvas.pixels[0][1] =  RGB_TO_565(255, 255, 255);
   return game;
 }
 
 void main() {
-  draw_pixel(RGB_TO_565(255, 0, 0),(pos_t){0, 0});
-  draw_pixel(RGB_TO_565(0, 255, 0),(pos_t){MMIO__FRAME_BUFFER_WIDTH - 1, 0});
-  draw_pixel(RGB_TO_565(0, 0, 255),(pos_t){0, MMIO__FRAME_BUFFER_HEIGHT - 1});
-  draw_pixel(RGB_TO_565(140, 52, 235),(pos_t){MMIO__FRAME_BUFFER_WIDTH - 1, MMIO__FRAME_BUFFER_HEIGHT - 1});
-  
   game_t game = create_game();
   while (true) {
     update(&game);
