@@ -59,18 +59,19 @@ typedef struct {
 } game_t; 
 
 void update(game_t * game) {
+  const int PLAYER_SPEED = 4;
   game->controller = get_controller_input();
   if (game->controller.xtilt < TILT_IDLE - 2) {
-    if (game->cursor.x != 0) game->cursor.x -= 1;
+    if (game->cursor.x >  PLAYER_SPEED) game->cursor.x -= PLAYER_SPEED;
   }
   else if (game->controller.xtilt > TILT_IDLE + 2) {
-    if (game->cursor.x != MMIO__FRAME_BUFFER_WIDTH) game->cursor.x += 1;
+    if (game->cursor.x + PLAYER_SPEED < MMIO__FRAME_BUFFER_WIDTH) game->cursor.x += PLAYER_SPEED;
   }
   if (game->controller.ytilt > TILT_IDLE + 2) {
-    if (game->cursor.y != 0) game->cursor.y -= 1;
+    if (game->cursor.y > PLAYER_SPEED) game->cursor.y -= PLAYER_SPEED;
   }
   else if (game->controller.ytilt < TILT_IDLE - 2) {
-    if (game->cursor.y != MMIO__FRAME_BUFFER_HEIGHT) game->cursor.y += 1;
+    if (game->cursor.y +  PLAYER_SPEED < MMIO__FRAME_BUFFER_HEIGHT) game->cursor.y += PLAYER_SPEED;
   }
 
   if (game->controller.buttons & BUTTON_A) {
@@ -80,7 +81,7 @@ void update(game_t * game) {
     game->color_idx = (game->color_idx + 1) % TOTAL_COLORS; 
   }
   else if (game->controller.buttons & BUTTON_RB) {
-    game->canvas.pixels[game->cursor.y][game->cursor.x] = game->color_pallette[game->color_idx];
+    game->canvas.pixels[game->cursor.y/4][game->cursor.x/4] = game->color_pallette[game->color_idx];
   }
 }
 
@@ -100,9 +101,9 @@ void render(game_t * game) {
     (pos_t) { game->cursor.x - 1, game->cursor.y },
   };
   for (int i = 0; i < 4; i++) {
-    //if (cursor_adj[i].x < MMIO__FRAME_BUFFER_WIDTH &&
-    //    cursor_adj[i].x > 0 && cursor_adj[i].y > 0 &&
-    //    cursor_adj[i].y < MMIO__FRAME_BUFFER_HEIGHT)
+    if (cursor_adj[i].x < MMIO__FRAME_BUFFER_WIDTH &&
+        cursor_adj[i].x > 0 && cursor_adj[i].y > 0 &&
+        cursor_adj[i].y < MMIO__FRAME_BUFFER_HEIGHT)
     {
       draw_pixel(game->color_pallette[WHITE], cursor_adj[i]);
     }
@@ -129,10 +130,7 @@ void main() {
   draw_pixel(RGB_TO_565(0, 255, 0),(pos_t){MMIO__FRAME_BUFFER_WIDTH - 1, 0});
   draw_pixel(RGB_TO_565(0, 0, 255),(pos_t){0, MMIO__FRAME_BUFFER_HEIGHT - 1});
   draw_pixel(RGB_TO_565(140, 52, 235),(pos_t){MMIO__FRAME_BUFFER_WIDTH - 1, MMIO__FRAME_BUFFER_HEIGHT - 1});
-  // random
-  draw_pixel(RGB_TO_565(235, 52, 168),(pos_t){1280-1, 720-1});
-  while(1) {}
-  return;
+  
   game_t game = create_game();
   while (true) {
     update(&game);
