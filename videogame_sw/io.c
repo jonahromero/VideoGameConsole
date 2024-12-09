@@ -10,6 +10,7 @@ controller_t get_controller_input() {
     return result;
 }
 
+// WE HAVE FULL 1280x720 access
 void draw_pixel(uint16_t rgb, pos_t pos) {
     volatile uint16_t* fb_addr = (void*)MMIO__FRAME_BUFFER_START_ADDR;
     fb_addr += pos.x + pos.y * MMIO__FRAME_BUFFER_WIDTH;

@@ -86,9 +86,9 @@ void update(game_t * game) {
 
 void render(game_t * game) {
   // draw canvas
-  for (uint16_t y = 0; y < CANVAS_HEIGHT; y++) {
-    for (uint16_t x = 0; x < CANVAS_WIDTH; x++) {
-      draw_pixel(game->canvas.pixels[y][x],(pos_t){x, y});
+  for (uint16_t y = 0; y < CANVAS_HEIGHT * 4; y++) {
+    for (uint16_t x = 0; x < CANVAS_WIDTH * 4; x++) {
+      draw_pixel(game->canvas.pixels[y / 4][x / 4],(pos_t){x, y});
     }
   }
   // draw cursor
