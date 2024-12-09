@@ -125,7 +125,14 @@ game_t create_game() {
 }
 
 void main() {
-  draw_pixel(RGB_TO_565(255, 255, 255),(pos_t){MMIO__FRAME_BUFFER_WIDTH - 1, MMIO__FRAME_BUFFER_HEIGHT - 1});
+  draw_pixel(RGB_TO_565(255, 0, 0),(pos_t){0, 0});
+  draw_pixel(RGB_TO_565(0, 255, 0),(pos_t){MMIO__FRAME_BUFFER_WIDTH - 1, 0});
+  draw_pixel(RGB_TO_565(0, 0, 255),(pos_t){0, MMIO__FRAME_BUFFER_HEIGHT - 1});
+  draw_pixel(RGB_TO_565(140, 52, 235),(pos_t){MMIO__FRAME_BUFFER_WIDTH - 1, MMIO__FRAME_BUFFER_HEIGHT - 1});
+  // random
+  draw_pixel(RGB_TO_565(235, 52, 168),(pos_t){1280-1, 720-1});
+  while(1) {}
+  return;
   game_t game = create_game();
   while (true) {
     update(&game);
