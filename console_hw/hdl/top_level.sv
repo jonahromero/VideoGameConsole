@@ -111,6 +111,7 @@ module top_level
   );
   memory_system ms(
     .rst_in(sys_rst), .clk_in(clk_in),
+    .debug_display(val_to_display),
     .bus(mem_bus.MEMORY_SYSTEM),
     .debug_led(led[15:2]),
     .fb_bus(fb_bus.WRITE),

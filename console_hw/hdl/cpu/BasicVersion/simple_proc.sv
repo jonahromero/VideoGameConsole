@@ -165,10 +165,12 @@ module simple_proc(
                     else if (eInstr.dst != 0) begin
                         case (eInstr.memFunc)
                             Lw:  regfile[eInstr.dst] <= mem_bus.read_data;
-                            Lh:  regfile[eInstr.dst] <= (mem_bus.read_data[15])? {16'hFFFF, mem_bus.read_data}: {16'h0, mem_bus.read_data}; 
-                            Lhu: regfile[eInstr.dst] <= {16'h0, mem_bus.read_data};
-                            Lb:  regfile[eInstr.dst] <= (mem_bus.read_data[7])? {24'hFF_FFFF, mem_bus.read_data} : {24'h0, mem_bus.read_data};
-                            Lbu: regfile[eInstr.dst] <= {24'h0, mem_bus.read_data};
+                            
+                            Lh:  regfile[eInstr.dst] <= (mem_bus.read_data[15])? {16'hFF_FF, mem_bus.read_data[15:0] }: {16'h00_00, mem_bus.read_data[15:0] }; 
+                            Lhu: regfile[eInstr.dst] <= { 16'h00_00, mem_bus.read_data[15:0] };
+                            
+                            Lb:  regfile[eInstr.dst] <= (mem_bus.read_data[7])? {24'hFF_FF_FF, mem_bus.read_data[7:0] }: {24'h00_00_00, mem_bus.read_data[7:0] }; 
+                            Lbu: regfile[eInstr.dst] <= {24'h00_00_00, mem_bus.read_data[7:0]};
                             default: regfile[eInstr.dst] <= eInstr.data;
                         endcase
                     end

@@ -58,6 +58,7 @@ module memory_system (
     input wire rst_in,
 
     output logic[12:0] debug_led,
+    input wire[31:0] debug_display,
 
     memory_bus.MEMORY_SYSTEM bus,
     frame_buffer_bus.WRITE fb_bus,
@@ -112,12 +113,21 @@ module memory_system (
     // io bus helpers
     logic[31:0] io_read_data;
     // TODO - PLEASE REMOVE THIS ALWAYS FALSE
-    assign io_read_data = (real_addr < 4) ? {
+    logic debug;
+    assign debug = 1;
+    assign io_read_data = (debug ?  32'h00_09_07_00 : ((real_addr < 4) ? {
         8'h00,
         io_bus.controller.joystick_x,
         io_bus.controller.joystick_y,
         io_bus.controller.buttons
-    } >> 8 * (real_addr) /*adjust for addr offset*/ : 32'h00_FF_FF_FF;
+    } : 32'h00_00_00_00 )) >> 8 * (real_addr) /*adjust for addr offset*/;
+    
+    assign debug_display = {
+        8'h00,
+        io_bus.controller.joystick_x,
+        io_bus.controller.joystick_y,
+        io_bus.controller.buttons
+    };
 
     // Write enables for memory sub-systems
     logic we, ram_we, fb_we;

@@ -90,7 +90,7 @@ module program_memory(
 
     // reading/writing to memory
     logic[15:0] actual_addr;
-    assign display = bus.instr;
+    
     assign actual_addr = (state == INITIALIZING ? rom_addr : bus.addr) >> 2;
     logic[31:0] rom_instr_big_endian;
     always_comb begin
