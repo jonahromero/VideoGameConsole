@@ -23,7 +23,6 @@ void draw_sprite_one_color(uint8_t* bitmap, uint8_t color, pos_t pos, dim_t dim)
     for (int y = 0; y < dim.height; y++) {
         for (int x = 0; x < dim.width; x++) {
             uint8_t bitmap_value = *(bitmap + x + y * dim.width);
-            bitmap_value = 1;
             if (bitmap_value) {
                 pos_t pix_pos = (pos_t){
                     .x = x + pos.x,
