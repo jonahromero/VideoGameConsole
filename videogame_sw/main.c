@@ -119,11 +119,13 @@ game_t create_game() {
   game.color_pallette[RED]   = RGB_TO_565(255, 0, 0);
   game.color_pallette[GREEN] = RGB_TO_565(0, 255, 0);
   game.color_pallette[BLUE]  = RGB_TO_565(0, 0, 255);
+  // debug color
+  game.canvas.pixels[0][1] =  RGB_TO_565(255, 255, 255);
   return game;
 }
 
 void main() {
-  draw_pixel(RGB_TO_565(255, 255, 255),(pos_t){1,3});
+  draw_pixel(RGB_TO_565(255, 255, 255),(pos_t){MMIO__FRAME_BUFFER_WIDTH - 1, MMIO__FRAME_BUFFER_HEIGHT - 1});
   game_t game = create_game();
   while (true) {
     update(&game);
