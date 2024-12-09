@@ -194,13 +194,14 @@ void render(game_t * game) {
     int row = (i/8), col = (i%8);
     uint8_t sq_color = (row + col) % 2 == 0 ? GRAY : WHITE;
     pos_t sq_pos = {
-      R_BOARD_LEFT + col * R_SQ_SIZE,
-      R_BOARD_TOP + row * R_SQ_SIZE,
+      0
+      //R_BOARD_LEFT + col * R_SQ_SIZE,
+      //R_BOARD_TOP + row * R_SQ_SIZE,
     };
     draw_sprite_one_color(sq_sprite, sq_color, sq_pos, (dim_t) {20, 20});
     draw_sprite_one_color(sprite, sq_color, (pos_t) {
       sq_pos.x + 5, sq_pos.y + 5
-    }, (dim_t) {20, 20});
+    }, (dim_t) {15, 15});
   }
 }
 

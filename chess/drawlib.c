@@ -28,7 +28,7 @@ void draw_sprite_one_color(uint8_t* bitmap, uint8_t color, pos_t pos, dim_t dim)
                     .x = x + pos.x,
                     .y = y + pos.y
                 };
-                draw_pixel(get_color_value(color), pix_pos);
+                draw_pixel(RGB_TO_565(255, 255, 255)/*get_color_value(color)*/, pix_pos);
             }
         }
     }
