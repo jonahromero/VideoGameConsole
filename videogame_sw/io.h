@@ -4,7 +4,7 @@
 #define TILT_IDLE 8
 
 // controller specifics
-enum button_id_enum_t {
+enum {
 	BUTTON_A 	 = 1 << 0,
 	BUTTON_B 	 = 1 << 1,
 	BUTTON_X 	 = 1 << 2,
@@ -15,10 +15,10 @@ enum button_id_enum_t {
 	BUTTON_START = 1 << 7,
 };
 
-typedef uint8_t button_id;
+typedef uint8_t button_mask_t;
 
 typedef struct {
-	button_id buttons;
+	button_mask_t buttons;
 	uint8_t xtilt, ytilt;
 } controller_t;
 

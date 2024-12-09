@@ -11,8 +11,7 @@ typedef uint16_t word_t;
 typedef uint32_t dword_t;
 
 typedef struct {
-  word_t x, y;
+  int16_t x, y;
 } pos_t;
-
 
 #endif
