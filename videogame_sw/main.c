@@ -55,12 +55,11 @@ void update(game_t * game) {
     game->color_idx = (game->color_idx + 1) % TOTAL_COLORS; 
   }
   else if (game->controller.buttons | BUTTON_RB) {
-    game->canvas.pixels[game->cursor.y/4][game->cursor.x/4] = game->color_pallette[game->color_idx];
+    game->canvas.pixels[game->cursor.y][game->cursor.x] = game->color_pallette[game->color_idx];
   }
 }
 
 void render(game_t * game) {
-  // we dont need to clear everything, since canvas will cover everything anyway at each frame
   // draw canvas
   for (uint16_t y = 0; y < CANVAS_HEIGHT * 4; y++) {
     for (uint16_t x = 0; x < CANVAS_WIDTH * 4; x++) {
@@ -69,25 +68,18 @@ void render(game_t * game) {
   }
   // draw cursor
   draw_pixel(game->color_pallette[game->color_idx], game->cursor);
-  uint8_t cursor_bitmap[4][4] = {
-    { 0, 1, 1, 0 },
-    { 1, 1, 1, 1 },
-    { 1, 1, 1, 1 },
-    { 0, 1, 1, 0 },
+  pos_t cursor_adj[4] = {
+    (pos_t) { game->cursor.x, game->cursor.y + 1 },
+    (pos_t) { game->cursor.x, game->cursor.y - 1 },
+    (pos_t) { game->cursor.x + 1, game->cursor.y },
+    (pos_t) { game->cursor.x - 1, game->cursor.y },
   };
-  // even though the cursor is a 4x4 bitmap, it only takes up a single pixel.
-  // when you draw with it, we want the 2x2 pixel to be under the cursor, so
-  // we cursor offset is (2,2)
-  for (int y = 0; y < 4; y++) {
-    for (int x = 0; x < 4; x++) {
-      int real_x = x - 2;
-      int real_y = y - 2;
-      if (cursor_bitmap[y][x] && real_x > 0 && real_y > 0 &&
-          real_x < MMIO__FRAME_BUFFER_WIDTH &&
-          real_y < MMIO__FRAME_BUFFER_HEIGHT)
-      {
-        draw_pixel(game->color_pallette[WHITE], (pos_t){real_x, real_y});
-      }
+  for (int i = 0; i < 4; i++) {
+    if (cursor_adj[i].x < MMIO__FRAME_BUFFER_WIDTH &&
+        cursor_adj[i].x > 0 && cursor_adj[i].y > 0 &&
+        cursor_adj[i].y < MMIO__FRAME_BUFFER_HEIGHT)
+    {
+      draw_pixel(game->color_pallette[WHITE], cursor_adj[i]);
     }
   }
   swap_frame_buffer();
@@ -106,6 +98,7 @@ game_t create_game() {
 }
 
 void main() {
+  draw_pixel(RGB_TO_565(255, 255, 255),(pos_t){1,3});
   game_t game = create_game();
   while (true) {
     update(&game);
