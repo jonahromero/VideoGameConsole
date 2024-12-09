@@ -51,7 +51,7 @@ void update(game_t * game) {
     if (game->cursor.y != 0) game->cursor.y -= 1;
   }
   else if (game->controller.ytilt > TILT_IDLE + 2) {
-    if (game->cursor.y != MMIO__FRAME_BUFFER_WIDTH) game->cursor.y += 1;
+    if (game->cursor.y != MMIO__FRAME_BUFFER_HEIGHT) game->cursor.y += 1;
   }
 
   if (game->controller.buttons | BUTTON_A) {
