@@ -34,12 +34,15 @@ endinterface : memory_bus
 module mmio_mappings(
     input wire[31:0] addr,
     output mem::addr_type_t addr_type,
-    output logic[15:0] real_addr
+    output logic[27:0] real_addr
 );
     logic[1:0] mem_sel;
+    logic[1:0] unused;
     always_comb begin
-        mem_sel = addr[17:16];
-        real_addr = addr[15:0];
+        // final addr: MX_XX_XX_XX
+        unused = addr[31:30];
+        mem_sel = addr[29:28]; // top nibble
+        real_addr = addr[27:0]; // XX_XX_XX
         case (mem_sel) 
             0: addr_type = mem::ROM;
             1: addr_type = mem::RAM;
@@ -97,7 +100,7 @@ module memory_system (
     logic[2:0] bytes_to_send;
 
     // MMIO outputs. These are derived from addr_latched and can be used however.
-    logic[15:0] real_addr; // Lower byte of addr_latched, but used in all sub-memory-systems since theyre <64kb
+    logic[27:0] real_addr; // Lower byte of addr_latched, but used in all sub-memory-systems since theyre <64kb
     mem::addr_type_t addr_type;
 
     mmio_mappings mmio(
@@ -256,7 +259,7 @@ module memory_system (
     end
 
     // Frame Buffer. Two-cycle read and one-cycle write
-    parameter FB_SWAP_ADDR = 16'hFF_FF;
+    parameter FB_SWAP_ADDR = 28'hF_FF_FF_FF;
     always_comb begin
         fb_bus.write_clk = clk_in;
         fb_bus.write_addr = real_addr;

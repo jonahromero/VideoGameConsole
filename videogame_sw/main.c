@@ -6,8 +6,8 @@
 // being careful to not unintentionally use any globals, because id rather not access untested mmio rom
 #define TOTAL_COLORS 5
 #define RGB_TO_565(r, g, b) ((r<<11) | ((g & ((1<<6)-1))<<5) | (b&((1<<5)-1)))
-#define CANVAS_WIDTH MMIO__FRAME_BUFFER_WIDTH
-#define CANVAS_HEIGHT MMIO__FRAME_BUFFER_HEIGHT
+#define CANVAS_WIDTH (MMIO__FRAME_BUFFER_WIDTH / 4)
+#define CANVAS_HEIGHT (MMIO__FRAME_BUFFER_HEIGHT / 4)
 
 enum color_enum_t {
   WHITE,

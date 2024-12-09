@@ -50,7 +50,7 @@ module frame_buffer
     parameter VCOUNT_HEIGHT = 720,
     parameter FB_WIDTH = 320,
     parameter FB_HEIGHT = 180,
-    localparam FB_SIZE = $clog2(FB_WIDTH*FB_HEIGHT)
+    localparam FB_SIZE = $clog2(FB_WIDTH*FB_HEIGHT*2)
 )
 (
     input wire rst_in,
