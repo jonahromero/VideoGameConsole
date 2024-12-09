@@ -2,26 +2,29 @@
 
 `default_nettype none
 
-interface frame_buffer_bus# (
-    parameter VCOUNT_WIDTH = 1280,
-    parameter VCOUNT_HEIGHT = 720,
-    parameter FB_WIDTH = 320,
-    parameter FB_HEIGHT = 180,
-    localparam FB_SIZE = $clog2(FB_WIDTH*FB_HEIGHT)
-)();
+// all of these are in terms of words, since a pixel is 16 bits
+package hdmi_const;
+    parameter VCOUNT_WIDTH = 1280;
+    parameter VCOUNT_HEIGHT = 720;
+    parameter FB_WIDTH = 320;
+    parameter FB_HEIGHT = 180;
+    parameter FB_SIZE = $clog2(FB_WIDTH*FB_HEIGHT);
+endpackage
+
+interface frame_buffer_bus();
 
     logic write_clk;
     logic read_clk;
 
     // writing to frame buffer
     logic[15:0] write_data; // 565 format rgb input
-    logic[FB_SIZE-1:0] write_addr; // an address within 320x180
+    logic[2*hdmi_const::FB_SIZE-1:0] write_addr; // an address within 320x180
     logic write_enable; // single pulse write
     logic [15:0] debug_read;
 
     // reading to frame buffer
-    logic[$clog2(VCOUNT_HEIGHT)-1:0] vcount;
-    logic[$clog2(VCOUNT_WIDTH)-1:0] hcount;
+    logic[$clog2(hdmi_const::VCOUNT_HEIGHT)-1:0] vcount;
+    logic[$clog2(hdmi_const::VCOUNT_WIDTH)-1:0] hcount;
     logic [7:0] red, green, blue;
 
     logic swap_buffer; // single pulse signal that tells us to swap frame buffers
@@ -44,14 +47,7 @@ endinterface
 // However, on write, it acts like a 180x320 buffer.
 // Internally uses two frame buffers, that can be swapped. This means you never
 // write to the same frame buffer that someone else is reading from
-module frame_buffer 
-#(
-    parameter VCOUNT_WIDTH = 1280,
-    parameter VCOUNT_HEIGHT = 720,
-    parameter FB_WIDTH = 320,
-    parameter FB_HEIGHT = 180,
-    localparam FB_SIZE = $clog2(FB_WIDTH*FB_HEIGHT*2)
-)
+module frame_buffer
 (
     input wire rst_in,
     frame_buffer_bus.FRAME_BUFFER bus
@@ -61,7 +57,7 @@ module frame_buffer
     logic[15:0] blk_data_out[1:0];
     logic[15:0] blk_data_debug_out[1:0];
     logic[15:0] frame_buff_raw;
-    logic [FB_SIZE-1:0] read_addr;
+    logic [hdmi_const::FB_SIZE-1:0] read_addr;
 
     always_ff @(posedge bus.write_clk) begin
         if (rst_in) begin
@@ -75,7 +71,7 @@ module frame_buffer
     end
 
     always_comb begin
-        read_addr = ((bus.hcount>>2)) + FB_WIDTH*(bus.vcount>>2); // TODO - Violate timing?
+        read_addr = ((bus.hcount>>2)) + hdmi_const::FB_WIDTH*(bus.vcount>>2); // TODO - Violate timing?
         blk_we[0] = bus.write_enable;//buffer_flag && bus.write_enable;
         //blk_we[1] = !buffer_flag  && bus.write_enable;
 

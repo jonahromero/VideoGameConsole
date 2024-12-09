@@ -141,15 +141,11 @@ module simple_proc(
                         endcase
                     end
                     if (eInstr.iType == STORE) begin
-                        if (!mem_bus.busy) begin
-                            mem_bus.dispatch_write <= 1;
-                            mem_bus.write_data <= eInstr.data;
-                        end
+                        mem_bus.dispatch_write <= 1;
+                        mem_bus.write_data <= eInstr.data;
                     end
                     else if (eInstr.iType == LOAD) begin
-                        if (!mem_bus.busy) begin
-                            mem_bus.dispatch_read <= 1;
-                        end
+                        mem_bus.dispatch_read <= 1;
                     end
                 end
             end
@@ -159,10 +155,6 @@ module simple_proc(
                 end
                 else begin
                     if (eInstr.iType == LOAD) begin
-                        regfile[eInstr.dst] <= mem_bus.read_data;
-                    end
-                    // if instr isnt the zero register
-                    else if (eInstr.dst != 0) begin
                         case (eInstr.memFunc)
                             Lw:  regfile[eInstr.dst] <= mem_bus.read_data;
                             
@@ -171,8 +163,12 @@ module simple_proc(
                             
                             Lb:  regfile[eInstr.dst] <= (mem_bus.read_data[7])? {24'hFF_FF_FF, mem_bus.read_data[7:0] }: {24'h00_00_00, mem_bus.read_data[7:0] }; 
                             Lbu: regfile[eInstr.dst] <= {24'h00_00_00, mem_bus.read_data[7:0]};
-                            default: regfile[eInstr.dst] <= eInstr.data;
+                            default: regfile[eInstr.dst] <= 32'h45_45_45_45; // shouldnt happen
                         endcase
+                    end
+                    // if instr isnt the zero register
+                    else if (eInstr.dst != 0) begin
+                        regfile[eInstr.dst] <= eInstr.data;
                     end
                     // update pc
                     pc <= eInstr.nextPc;

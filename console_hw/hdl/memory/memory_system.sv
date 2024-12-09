@@ -114,8 +114,8 @@ module memory_system (
     logic[31:0] io_read_data;
     // TODO - PLEASE REMOVE THIS ALWAYS FALSE
     logic debug;
-    assign debug = 1;
-    assign io_read_data = (debug ?  32'h00_09_07_00 : ((real_addr < 4) ? {
+    assign debug = 0;
+    assign io_read_data = (debug ?  32'h00_09_07_02 : ((real_addr < 4) ? {
         8'h00,
         io_bus.controller.joystick_x,
         io_bus.controller.joystick_y,
