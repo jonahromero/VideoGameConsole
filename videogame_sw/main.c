@@ -16,7 +16,23 @@ void memcpy(void *dest, const void *src, size_t n) {
 	}
 }
 int __modsi3(int a, int b) {
-    return a % b;
+    if (b == 0) {
+        // You might want to handle this differently, but let's just return 0 here.
+        return 0;
+    }
+
+    // Record sign and make both a and b positive
+    int neg = 0;
+    if (a < 0) { a = -a; neg = !neg; }
+    if (b < 0) { b = -b; neg = !neg; }
+
+    // Subtract b until what's left is less than b
+    while (a >= b) {
+        a -= b;
+    }
+
+    // If remainder should be negative, flip sign
+    return neg ? -a : a;
 }
 
 enum color_enum_t {
