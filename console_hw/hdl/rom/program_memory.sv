@@ -90,6 +90,7 @@ module program_memory(
 
     // reading/writing to memory
     logic[15:0] actual_addr;
+    assign display = bus.instr;
     assign actual_addr = (state == INITIALIZING ? rom_addr : bus.addr) >> 2;
     logic[31:0] rom_instr_big_endian;
     always_comb begin
@@ -112,7 +113,7 @@ module program_memory(
         .RAM_WIDTH(32),                       // Specify RAM data width
         .RAM_DEPTH((8*1024) / 4),           // Specify RAM depth (number of entries)
         .RAM_PERFORMANCE("HIGH_PERFORMANCE"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
-        .INIT_FILE("program2.mem")
+        .INIT_FILE("program.mem")
     ) icache (
         .addra(actual_addr),
         //.dina(rom_instr_big_endian),

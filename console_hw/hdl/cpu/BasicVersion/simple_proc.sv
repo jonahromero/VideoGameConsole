@@ -162,7 +162,7 @@ module simple_proc(
                         regfile[eInstr.dst] <= mem_bus.read_data;
                     end
                     // if instr isnt the zero register
-                    else if (einstr.dst != 0) begin
+                    else if (eInstr.dst != 0) begin
                         case (eInstr.memFunc)
                             Lw:  regfile[eInstr.dst] <= mem_bus.read_data;
                             Lh:  regfile[eInstr.dst] <= (mem_bus.read_data[15])? {16'hFFFF, mem_bus.read_data}: {16'h0, mem_bus.read_data}; 

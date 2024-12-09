@@ -111,12 +111,13 @@ module memory_system (
     
     // io bus helpers
     logic[31:0] io_read_data;
-    assign io_read_data = real_addr < 4 ? {
+    // TODO - PLEASE REMOVE THIS ALWAYS FALSE
+    assign io_read_data = (real_addr < 4) ? {
         8'h00,
         io_bus.controller.joystick_x,
         io_bus.controller.joystick_y,
         io_bus.controller.buttons
-    } >> 8 * (real_addr) /*adjust for addr offset*/ : 32'hF0F055F0;
+    } >> 8 * (real_addr) /*adjust for addr offset*/ : 32'h00_FF_FF_FF;
 
     // Write enables for memory sub-systems
     logic we, ram_we, fb_we;
@@ -182,7 +183,7 @@ module memory_system (
                                 bytes_to_send <= bytes_to_send - 1;
                             end
                             else begin
-                                bus.read_data <= ({ram_data_out, ram_read_buffer[31:8] } >> (4 - mem_width_latched));
+                                bus.read_data <= ({ram_data_out, ram_read_buffer[31:8] } >> (8 * (4 - mem_width_latched)));
                                 state <= WAITING;
                             end
 

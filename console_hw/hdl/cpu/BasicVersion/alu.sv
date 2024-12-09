@@ -63,31 +63,40 @@ function automatic logic [31:0] sft32 (
     input [4:0] sftSz,
     input ShiftType shiftType
 );
-
-    logic reverse, sft_in;
-    logic [31:0] m_in, reversed_in, shift_out, data_out;
+    if (shiftType == ArithemticRightShift) begin
+        return data_in >>> sftSz;
+    end
+    else if (shiftType == LogicalRightShift) begin
+        return data_in >> sftSz;
+    end
+    else begin // LeftShift
+        return data_in << sftSz;
+    end
+    
+//    logic reverse, sft_in;
+//    logic [31:0] m_in, reversed_in, shift_out, data_out;
 
     
-    m_in = data_in;
-    reverse = 1'b0;
-    sft_in = 1'b0;
-    if (shiftType == ArithemticRightShift) sft_in = data_in[31];
-    else if (shiftType == LeftShift) begin
-        reverse = 1'b1;
-            for (int i = 0; i < 32; i=i+1) begin
-                reversed_in[i] = data_in[31-i];
-            end
-    end
+//    m_in = data_in;
+//    reverse = 1'b0;
+//    sft_in = 1'b0;
+//    if (shiftType == ArithemticRightShift) sft_in = data_in[31];
+//    else if (shiftType == LeftShift) begin
+//        reverse = 1'b1;
+//            for (int i = 0; i < 32; i=i+1) begin
+//                reversed_in[i] = data_in[31-i];
+//            end
+//    end
 
-    shift_out = barrel_rshift(m_in,sftSz,sft_in);
+//    shift_out = barrel_rshift(m_in,sftSz,sft_in);
 
-    if(reverse) begin
-        for (int i = 0; i < 32; i=i+1) begin
-            data_out[i] = shift_out[31-i];
-        end
-    end else data_out = shift_out;
+//    if(reverse) begin
+//        for (int i = 0; i < 32; i=i+1) begin
+//            data_out[i] = shift_out[31-i];
+//        end
+//    end else data_out = shift_out;
 
-    return data_out;
+//    return data_out;
 endfunction
 
 function automatic logic [31:0] cmp32(
@@ -192,20 +201,25 @@ function automatic logic [31:0] lt32(
     input [31:0] val2,
     input isSigned
 );
-
-    logic [31:0] a, b, data_out;
-
-    a = val1;
-    b = val2;
-
-    if(isSigned) begin
-        a[31] = ~a[31];
-        b[31] = ~b[31];
+    if (isSigned) begin
+        return $signed(val1) < $signed(val2);
     end
+    else begin
+        return val1 < val2;
+    end
+//    logic [31:0] a, b, data_out;
 
-    data_out = ltu32(a,b);
+//    a = val1;
+//    b = val2;
 
-    return data_out;
+//    if(isSigned) begin
+//        a[31] = ~a[31];
+//        b[31] = ~b[31];
+//    end
+
+//    data_out = ltu32(a,b);
+
+//    return data_out;
 endfunction
 
 function automatic logic [31:0][1:0] composer32(

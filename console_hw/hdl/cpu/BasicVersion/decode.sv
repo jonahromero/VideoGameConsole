@@ -98,7 +98,7 @@ function automatic DecodedInst decode(
         end
         7'b1100011: begin                   //opBranch
             dInst.iType = BRANCH;
-            dInst.dst = dst;
+            //dInst.dst = dst;
             dInst.src1 = src1;
             dInst.src2 = src2;
             dInst.imm = immB32;
