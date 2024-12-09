@@ -19,7 +19,7 @@ typedef uint8_t button_mask_t;
 
 typedef struct {
 	button_mask_t _prev_button_state;
-	button_mask_t buttons_pressed;
+	button_mask_t buttons_pressed, buttons_held;
 	uint8_t xtilt, ytilt;
 } controller_t;
 

@@ -6,6 +6,7 @@ void update_controller(controller_t * controller) {
     controller->xtilt   = *(MMIO__CTLR_BASE_ADDR + MMIO__CTLR_JOYSTICK_X_OFFSET);
     controller->ytilt   = *(MMIO__CTLR_BASE_ADDR + MMIO__CTLR_JOYSTICK_Y_OFFSET);
     button_mask_t new_button_state = *(MMIO__CTLR_BASE_ADDR + MMIO__CTLR_BUTTONS_OFFSET);
+    controller->buttons_held = new_button_state; 
     controller->buttons_pressed = ~controller->_prev_button_state & new_button_state;
     controller->_prev_button_state = new_button_state;
 }

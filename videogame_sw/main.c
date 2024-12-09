@@ -84,7 +84,7 @@ void update(game_t * game) {
   else if (game->controller.buttons_pressed & BUTTON_Y) {
     game->color_idx = (game->color_idx + 1) % TOTAL_COLORS; 
   }
-  else if (game->controller.buttons_pressed & BUTTON_RB) {
+  else if (game->controller.buttons_held & BUTTON_RB) {
     game->canvas.pixels[game->cursor.y/4][game->cursor.x/4] = game->color_pallette[game->color_idx];
   }
 }
