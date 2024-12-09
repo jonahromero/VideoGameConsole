@@ -67,9 +67,9 @@ void update(game_t * game) {
 
 void render(game_t * game) {
   // draw canvas
-  for (uint16_t y = 0; y < CANVAS_HEIGHT * 4; y++) {
-    for (uint16_t x = 0; x < CANVAS_WIDTH * 4; x++) {
-      draw_pixel(game->canvas.pixels[y/4][x/4],(pos_t){x, y});
+  for (uint16_t y = 0; y < CANVAS_HEIGHT; y++) {
+    for (uint16_t x = 0; x < CANVAS_WIDTH; x++) {
+      draw_pixel(game->canvas.pixels[y][x],(pos_t){x, y});
     }
   }
   // draw cursor
@@ -81,9 +81,9 @@ void render(game_t * game) {
     (pos_t) { game->cursor.x - 1, game->cursor.y },
   };
   for (int i = 0; i < 4; i++) {
-    if (cursor_adj[i].x < MMIO__FRAME_BUFFER_WIDTH &&
-        cursor_adj[i].x > 0 && cursor_adj[i].y > 0 &&
-        cursor_adj[i].y < MMIO__FRAME_BUFFER_HEIGHT)
+    //if (cursor_adj[i].x < MMIO__FRAME_BUFFER_WIDTH &&
+    //    cursor_adj[i].x > 0 && cursor_adj[i].y > 0 &&
+    //    cursor_adj[i].y < MMIO__FRAME_BUFFER_HEIGHT)
     {
       draw_pixel(game->color_pallette[WHITE], cursor_adj[i]);
     }
