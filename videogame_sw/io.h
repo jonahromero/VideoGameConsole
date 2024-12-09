@@ -5,14 +5,14 @@
 
 // controller specifics
 enum {
-	BUTTON_A 	 = 1 << 0,
-	BUTTON_B 	 = 1 << 1,
-	BUTTON_X 	 = 1 << 2,
+	BUTTON_START = 1 << 0,
+	BUTTON_RB	 = 1 << 1,
+	BUTTON_LB	 = 1 << 2,
 	BUTTON_Y 	 = 1 << 3,
-	BUTTON_LB 	 = 1 << 4,
-	BUTTON_RB 	 = 1 << 5,
-	BUTTON_BACK  = 1 << 6,
-	BUTTON_START = 1 << 7,
+	BUTTON_X  	 = 1 << 4,
+	BUTTON_B 	 = 1 << 5,
+	BUTTON_A 	 = 1 << 6,
+	BUTTON_SELET = 1 << 7,
 };
 
 typedef uint8_t button_mask_t;

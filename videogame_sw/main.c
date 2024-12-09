@@ -47,10 +47,10 @@ void update(game_t * game) {
   else if (game->controller.xtilt > TILT_IDLE + 2) {
     if (game->cursor.x != MMIO__FRAME_BUFFER_WIDTH) game->cursor.x += 1;
   }
-  if (game->controller.ytilt < TILT_IDLE - 2) {
+  if (game->controller.ytilt > TILT_IDLE + 2) {
     if (game->cursor.y != 0) game->cursor.y -= 1;
   }
-  else if (game->controller.ytilt > TILT_IDLE + 2) {
+  else if (game->controller.ytilt < TILT_IDLE - 2) {
     if (game->cursor.y != MMIO__FRAME_BUFFER_HEIGHT) game->cursor.y += 1;
   }
 
