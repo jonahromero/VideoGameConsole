@@ -106,7 +106,7 @@ void render(game_t * game) {
   };
   for (int y = 0; y < 4; y++) {
     for (int x = 0; x < 4; x++) {
-      pos_t pos = {game->cursor.x + x - 2, game->cursor.x + y - 2};
+      pos_t pos = {game->cursor.x + x - 2, game->cursor.y + y - 2};
       if (pos.x < MMIO__FRAME_BUFFER_WIDTH &&
           pos.x > 0 && pos.y > 0 && cursor_bitmap[y][x] && 
           pos.y < MMIO__FRAME_BUFFER_HEIGHT)
