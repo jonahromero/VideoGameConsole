@@ -15,6 +15,9 @@ void memcpy(void *dest, const void *src, size_t n) {
 		((uint8_t*)dest)[i] = ((uint8_t*)src)[i];
 	}
 }
+int __modsi3(int a, int b) {
+    return a % b;
+}
 
 enum color_enum_t {
   WHITE,
@@ -54,13 +57,13 @@ void update(game_t * game) {
     if (game->cursor.y != MMIO__FRAME_BUFFER_HEIGHT) game->cursor.y += 1;
   }
 
-  if (game->controller.buttons | BUTTON_A) {
+  if (game->controller.buttons & BUTTON_A) {
     game->color_idx = BLACK;
   }
-  else if (game->controller.buttons | BUTTON_Y) {
+  else if (game->controller.buttons & BUTTON_Y) {
     game->color_idx = (game->color_idx + 1) % TOTAL_COLORS; 
   }
-  else if (game->controller.buttons | BUTTON_RB) {
+  else if (game->controller.buttons & BUTTON_RB) {
     game->canvas.pixels[game->cursor.y][game->cursor.x] = game->color_pallette[game->color_idx];
   }
 }
