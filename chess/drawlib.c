@@ -4,7 +4,7 @@
 
 uint16_t get_color_value(uint8_t type);
 
-void draw_sprite(uint8_t* colors, pos_t pos, dim_t dim) {
+void draw_sprite(uint8_t const* colors, pos_t pos, dim_t dim) {
   for (int y = 0; y < dim.height; y++) {
     for (int x = 0; x < dim.width; x++) {
       uint8_t color = *(colors + x + y * dim.width);
@@ -19,7 +19,7 @@ void draw_sprite(uint8_t* colors, pos_t pos, dim_t dim) {
   }
 }
 
-void draw_sprite_one_color(uint8_t* bitmap, uint8_t color, pos_t pos, dim_t dim) {
+void draw_sprite_one_color(uint8_t const* bitmap, uint8_t color, pos_t pos, dim_t dim) {
     for (int y = 0; y < dim.height; y++) {
         for (int x = 0; x < dim.width; x++) {
             uint8_t bitmap_value = *(bitmap + x + y * dim.width);
@@ -28,7 +28,7 @@ void draw_sprite_one_color(uint8_t* bitmap, uint8_t color, pos_t pos, dim_t dim)
                     .x = x + pos.x,
                     .y = y + pos.y
                 };
-                draw_pixel(RGB_TO_565(255, 255, 255)/*get_color_value(color)*/, pix_pos);
+                draw_pixel(get_color_value(color), pix_pos);
             }
         }
     }

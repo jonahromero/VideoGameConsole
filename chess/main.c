@@ -182,19 +182,18 @@ void render(game_t * game) {
   // draw the board
   for (int i = 0; i < 64; i++) {
     piece_t * piece = &game->chess.board[i];
-    uint8_t * sprite = piece_sprites[piece->type];
+    uint8_t const* sprite = piece_sprites[piece->type];
     uint8_t piece_color = piece->color == WHITEP ? WHITE : BLACK;
     int row = (i/8), col = (i%8);
     uint8_t sq_color = (row + col) % 2 == 0 ? GRAY : WHITE;
     pos_t sq_pos = {
-      //0
       R_BOARD_LEFT + col * R_SQ_SIZE,
       R_BOARD_TOP + row * R_SQ_SIZE,
     };
     draw_sprite_one_color(sq_sprite, sq_color, sq_pos, (dim_t) {20, 20});
-    //draw_sprite_one_color(sprite, sq_color, (pos_t) {
-    //  sq_pos.x + 5, sq_pos.y + 5
-    //}, (dim_t) {15, 15});
+    draw_sprite_one_color(sprite, sq_color, (pos_t) {
+      sq_pos.x + 5, sq_pos.y + 5
+    }, (dim_t) {15, 15});
   }
 }
 
