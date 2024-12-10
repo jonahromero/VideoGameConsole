@@ -14,6 +14,7 @@ enum {
   TAN,
   AQUA,
   GRAY,
+  TEAL,
 };
 
 uint16_t get_color_value(uint8_t type);
