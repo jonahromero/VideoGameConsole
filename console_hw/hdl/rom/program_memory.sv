@@ -113,7 +113,7 @@ module program_memory(
         .RAM_WIDTH(32),                       // Specify RAM data width
         .RAM_DEPTH((8*1024) / 4),           // Specify RAM depth (number of entries)
         .RAM_PERFORMANCE("HIGH_PERFORMANCE"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
-        .INIT_FILE("program.mem")
+        .INIT_FILE("program_chess.mem")
     ) icache (
         .addra(actual_addr),
         //.dina(rom_instr_big_endian),
