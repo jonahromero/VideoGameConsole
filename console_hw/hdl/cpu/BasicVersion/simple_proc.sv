@@ -35,7 +35,9 @@ module simple_proc(
     input wire  rst_in,
     input wire clk_in,
     memory_bus mem_bus,
-    program_memory_bus program_mem_bus
+    program_memory_bus program_mem_bus,
+    
+    output logic [31:0] reg_file [31:0] 
 );
     // helper for counting cycles
     logic[5:0] counter;
@@ -53,47 +55,48 @@ module simple_proc(
 
     always_comb begin
         program_mem_bus.addr = pc;
+        reg_file = regfile;
     end
     
     // DEBUGGING
-    logic[31:0] s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
-    logic[31:0] t0, t1, t2, t3, t4, t5, t6;
-    logic[31:0] a0, a1, a2, a3, a4, a5, a6, a7;
-    logic[31:0] tp, gp, sp, ra, zero;
-    always_comb begin
-        zero = regfile[0];
-        ra = regfile[1];
-        sp = regfile[2];
-        gp = regfile[3];
-        tp = regfile[4];
-        t0 = regfile[5];
-        t1 = regfile[6];
-        t2 = regfile[7];
-        s0 = regfile[8];
-        s1 = regfile[9];
-        a0 = regfile[10];
-        a1 = regfile[11];
-        a2 = regfile[12];
-        a3 = regfile[13];
-        a4 = regfile[14];
-        a5 = regfile[15];
-        a6 = regfile[16];
-        a7 = regfile[17];
-        s2 = regfile[18];
-        s3 = regfile[19];
-        s4 = regfile[20];
-        s5 = regfile[21];
-        s6 = regfile[22];
-        s7 = regfile[23];
-        s8 = regfile[24];
-        s9 = regfile[25];
-        s10 = regfile[26];
-        s11 = regfile[27];
-        t3 = regfile[28];
-        t4 = regfile[29];
-        t5 = regfile[30];
-        t6 = regfile[31];
-    end
+//    logic[31:0] s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
+//    logic[31:0] t0, t1, t2, t3, t4, t5, t6;
+//    logic[31:0] a0, a1, a2, a3, a4, a5, a6, a7;
+//    logic[31:0] tp, gp, sp, ra, zero;
+//    always_comb begin
+//        zero = regfile[0];
+//        ra = regfile[1];
+//        sp = regfile[2];
+//        gp = regfile[3];
+//        tp = regfile[4];
+//        t0 = regfile[5];
+//        t1 = regfile[6];
+//        t2 = regfile[7];
+//        s0 = regfile[8];
+//        s1 = regfile[9];
+//        a0 = regfile[10];
+//        a1 = regfile[11];
+//        a2 = regfile[12];
+//        a3 = regfile[13];
+//        a4 = regfile[14];
+//        a5 = regfile[15];
+//        a6 = regfile[16];
+//        a7 = regfile[17];
+//        s2 = regfile[18];
+//        s3 = regfile[19];
+//        s4 = regfile[20];
+//        s5 = regfile[21];
+//        s6 = regfile[22];
+//        s7 = regfile[23];
+//        s8 = regfile[24];
+//        s9 = regfile[25];
+//        s10 = regfile[26];
+//        s11 = regfile[27];
+//        t3 = regfile[28];
+//        t4 = regfile[29];
+//        t5 = regfile[30];
+//        t6 = regfile[31];
+//    end
     
 
     always_ff @ (posedge clk_in) begin
@@ -128,16 +131,16 @@ module simple_proc(
                         mem_bus.addr <= eInstr.addr;
 
                         case (eInstr.memFunc)
-                            Lw: mem_bus.mem_width <= mem::DWORD;
-                            Lh: mem_bus.mem_width <= mem::WORD;
-                            Lhu: mem_bus.mem_width <= mem::WORD;
-                            Lb: mem_bus.mem_width <= mem::BYTE;
-                            Lbu: mem_bus.mem_width <= mem::BYTE;
+                            LW: mem_bus.mem_width <= mem::DWORD;
+                            LH: mem_bus.mem_width <= mem::WORD;
+                            LHU: mem_bus.mem_width <= mem::WORD;
+                            LB: mem_bus.mem_width <= mem::BYTE;
+                            LBU: mem_bus.mem_width <= mem::BYTE;
                             // TODO - sign extension
-                            Sw: mem_bus.mem_width <= mem::DWORD;
-                            Sh: mem_bus.mem_width <= mem::WORD;
-                            Sb: mem_bus.mem_width <= mem::BYTE;
-                            NopM:;
+                            SW: mem_bus.mem_width <= mem::DWORD;
+                            SH: mem_bus.mem_width <= mem::WORD;
+                            SB: mem_bus.mem_width <= mem::BYTE;
+                            NOPM:;
                         endcase
                     end
                     if (eInstr.iType == STORE) begin
@@ -156,13 +159,13 @@ module simple_proc(
                 else begin
                     if (eInstr.iType == LOAD) begin
                         case (eInstr.memFunc)
-                            Lw:  regfile[eInstr.dst] <= mem_bus.read_data;
+                            LW:  regfile[eInstr.dst] <= mem_bus.read_data;
                             
-                            Lh:  regfile[eInstr.dst] <= (mem_bus.read_data[15])? {16'hFF_FF, mem_bus.read_data[15:0] }: {16'h00_00, mem_bus.read_data[15:0] }; 
-                            Lhu: regfile[eInstr.dst] <= { 16'h00_00, mem_bus.read_data[15:0] };
+                            LH:  regfile[eInstr.dst] <= (mem_bus.read_data[15])? {16'hFF_FF, mem_bus.read_data[15:0] }: {16'h00_00, mem_bus.read_data[15:0] }; 
+                            LHU: regfile[eInstr.dst] <= { 16'h00_00, mem_bus.read_data[15:0] };
                             
-                            Lb:  regfile[eInstr.dst] <= (mem_bus.read_data[7])? {24'hFF_FF_FF, mem_bus.read_data[7:0] }: {24'h00_00_00, mem_bus.read_data[7:0] }; 
-                            Lbu: regfile[eInstr.dst] <= {24'h00_00_00, mem_bus.read_data[7:0]};
+                            LB:  regfile[eInstr.dst] <= (mem_bus.read_data[7])? {24'hFF_FF_FF, mem_bus.read_data[7:0] }: {24'h00_00_00, mem_bus.read_data[7:0] }; 
+                            LBU: regfile[eInstr.dst] <= {24'h00_00_00, mem_bus.read_data[7:0]};
                             default: regfile[eInstr.dst] <= 32'h45_45_45_45; // shouldnt happen
                         endcase
                     end

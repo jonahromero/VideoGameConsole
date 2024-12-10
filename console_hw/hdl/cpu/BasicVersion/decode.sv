@@ -29,7 +29,7 @@ function automatic DecodedInst decode(
     immS32 = inst[31]? {20'hF_FFFF, inst[31:25], inst[11:7]} : {20'h0,inst[31:25], inst[11:7]};
 
 
-    dInst = '{Unsupported,NopA,NopB,NopM,5'd0,5'd0,5'd0,immD32};
+    dInst = '{UNSUPPORTED,NOPA,NOPB,NOPM,5'd0,5'd0,5'd0,immD32};
 
     case (opcode)
         7'b0010111: begin                   // AUIPC
@@ -48,21 +48,21 @@ function automatic DecodedInst decode(
             dInst.imm = immI32;
             dInst.dst = dst;
             case (funct3)
-                fnAND : dInst.aluFunc = And; 
-                fnOR  : dInst.aluFunc = Or; 
-                fnXOR : dInst.aluFunc = Xor; 
-                fnADD : dInst.aluFunc = Add; 
-                fnSLT : dInst.aluFunc = Slt; 
-                fnSLTU: dInst.aluFunc = Sltu; 
+                fnAND : dInst.aluFunc = AND; 
+                fnOR  : dInst.aluFunc = OR; 
+                fnXOR : dInst.aluFunc = XOR; 
+                fnADD : dInst.aluFunc = ADD; 
+                fnSLT : dInst.aluFunc = SLT; 
+                fnSLTU: dInst.aluFunc = SLTU; 
                 fnSLL : case (funct7)
-                    7'b0000000: dInst.aluFunc = Sll;
-                    default:    dInst.iType = Unsupported;
+                    7'b0000000: dInst.aluFunc = SLL;
+                    default:    dInst.iType = UNSUPPORTED;
                 endcase
                 fnSR  :
                     case(funct7)
-                        7'b0000000: dInst.aluFunc = Srl;
-                        7'b0100000: dInst.aluFunc = Sra;
-                        default: dInst.iType = Unsupported;
+                        7'b0000000: dInst.aluFunc = SRL;
+                        7'b0100000: dInst.aluFunc = SRA;
+                        default: dInst.iType = UNSUPPORTED;
                     endcase
             endcase
         end
@@ -74,43 +74,42 @@ function automatic DecodedInst decode(
 
             case(funct7)
                 7'b0000000: case(funct3)
-                    fnADD: dInst.aluFunc = Add;
-                    fnSLL: dInst.aluFunc = Sll;
-                    fnSLT: dInst.aluFunc = Slt;
-                    fnSLTU: dInst.aluFunc = Sltu;
-                    fnXOR: dInst.aluFunc = Xor;
-                    fnSR: dInst.aluFunc = Srl;
-                    fnOR: dInst.aluFunc = Or;
-                    fnAND: dInst.aluFunc = And;
-                    default: dInst.iType = Unsupported;
+                    fnADD: dInst.aluFunc = ADD;
+                    fnSLL: dInst.aluFunc = SLL;
+                    fnSLT: dInst.aluFunc = SLT;
+                    fnSLTU: dInst.aluFunc = SLTU;
+                    fnXOR: dInst.aluFunc = XOR;
+                    fnSR: dInst.aluFunc = SRL;
+                    fnOR: dInst.aluFunc = OR;
+                    fnAND: dInst.aluFunc = AND;
+                    default: dInst.iType = UNSUPPORTED;
                 endcase
                 7'b0100000: case(funct3)
-                    fnADD: dInst.aluFunc = Sub;
-                    fnSR: dInst.aluFunc = Sra;
-                    default: dInst.iType = Unsupported;
+                    fnADD: dInst.aluFunc = SUB;
+                    fnSR: dInst.aluFunc = SRA;
+                    default: dInst.iType = UNSUPPORTED;
                 endcase
                 7'b0000001: case(funct3)
                         fnSLL: dInst.iType = PMUL;
-                        default: dInst.iType = Unsupported;
+                        default: dInst.iType = UNSUPPORTED;
                     endcase
-                default: dInst.iType = Unsupported;
+                default: dInst.iType = UNSUPPORTED;
             endcase
         end
         7'b1100011: begin                   //opBranch
             dInst.iType = BRANCH;
-            //dInst.dst = dst;
             dInst.src1 = src1;
             dInst.src2 = src2;
             dInst.imm = immB32;
 
             case(funct3)
-                fnBEQ: dInst.brFunc = Eq;
-                fnBNE: dInst.brFunc = Neq;
-                fnBLT: dInst.brFunc = Lt;
-                fnBGE: dInst.brFunc = Ge;
-                fnBLTU: dInst.brFunc = Ltu;
-                fnBGEU: dInst.brFunc = GeU; 
-                default: dInst.iType = Unsupported;
+                fnBEQ: dInst.brFunc = EQ;
+                fnBNE: dInst.brFunc = NEQ;
+                fnBLT: dInst.brFunc = LT;
+                fnBGE: dInst.brFunc = GE;
+                fnBLTU: dInst.brFunc = LTU;
+                fnBGEU: dInst.brFunc = GEU; 
+                default: dInst.iType = UNSUPPORTED;
             endcase
 
         end
@@ -126,28 +125,27 @@ function automatic DecodedInst decode(
             dInst.imm = immI32;
 
             case(funct3)
-                fnLW: dInst.memFunc = Lw;
-                fnLB: dInst.memFunc = Lb;
-                fnLH: dInst.memFunc = Lh;
-                fnLBU: dInst.memFunc = Lbu;
-                fnLHU: dInst.memFunc = Lhu;
-                default: dInst.iType = Unsupported;
+                fnLW: dInst.memFunc = LW;
+                fnLB: dInst.memFunc = LB;
+                fnLH: dInst.memFunc = LH;
+                fnLBU: dInst.memFunc = LBU;
+                fnLHU: dInst.memFunc = LHU;
+                default: dInst.iType = UNSUPPORTED;
             endcase
 
         end
         7'b0100011: begin                   //opStore
 
             dInst.iType = STORE;
-            dInst.dst = 5'd0;
             dInst.src1 = src1;
             dInst.src2 =  src2;
             dInst.imm = immS32;
 
             case(funct3)
-                fnSW: dInst.memFunc = Sw;
-                fnSH: dInst.memFunc = Sh;
-                fnSB: dInst.memFunc = Sb;
-                default: dInst.iType = Unsupported;
+                fnSW: dInst.memFunc = SW;
+                fnSH: dInst.memFunc = SH;
+                fnSB: dInst.memFunc = SB;
+                default: dInst.iType = UNSUPPORTED;
             endcase
 
         end
@@ -159,11 +157,11 @@ function automatic DecodedInst decode(
 
             case(funct3)
                 fnJALR: dInst.iType = JALR;
-                default: dInst.iType = Unsupported;
+                default: dInst.iType = UNSUPPORTED;
             endcase
 
         end
-        default: dInst.iType = Unsupported;
+        default: dInst.iType = UNSUPPORTED;
     endcase
 
 

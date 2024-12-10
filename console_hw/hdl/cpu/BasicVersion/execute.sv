@@ -7,12 +7,12 @@ import ProcTypes::*;
 function automatic logic aluBr(input logic [31:0] a, input logic [31:0] b, input BrFunc brfunc);
     logic ret;
     case(brfunc)
-        Eq: ret = ((a == b));
-        Neq: ret =((a != b));
-        Lt: ret = ($signed(a) < $signed(b));
-        Ltu: ret = ((a < b));
-        Ge: ret = ($signed(a) >= $signed(b));
-        GeU: ret = ((a >= b));
+        EQ: ret = ((a == b));
+        NEQ: ret =((a != b));
+        LT: ret = ($signed(a) < $signed(b));
+        LTU: ret = ((a < b));
+        GE: ret = ($signed(a) >= $signed(b));
+        GEU: ret = ((a >= b));
         default: ret =1'b0;
     endcase
     return ret;
@@ -46,15 +46,6 @@ function automatic ExecInst execute(input DecodedInst dInst, input logic[31:0] r
     addr = r_val1 + imm;
 
     return '{dInst.iType, dInst.memFunc,dInst.dst, data, addr, nextPc};
-
-    // ret.iType = dInst.iType;
-    // ret.memFunc = dInst.memFunc;
-    // ret.dst = dInst.dst;
-    // ret.data = data;
-    // ret.addr = addr;
-    // ret.nextPC = nextPc;
-
-    // return ret;
 endfunction
 
 `default_nettype wire

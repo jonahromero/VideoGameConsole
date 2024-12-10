@@ -107,6 +107,7 @@ module top_level
     .hdmi_tx_n,
     .hdmi_clk_p, 
     .hdmi_clk_n,
+    .sw,
     .bus(fb_bus.READ)
   );
   memory_system ms(
