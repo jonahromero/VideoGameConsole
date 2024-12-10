@@ -51,21 +51,22 @@ module program_memory(
     logic rom_instr_we;
     logic[3:0] counter;
     
-    assign sys_rst_out = rst_in;
+    //assign sys_rst_out = rst_in;
 
     always_ff @(posedge clk_in) begin
         if (rst_in) begin
             counter <= 0;
             rom_instr_we <= 0;
-            state <= WAITING;
-//            state <= INITIALIZING;
+            //state <= WAITING;
+            state <= INITIALIZING;
+            sys_rst_out <= 0;
         end
         else begin
             if (rom_instr_we) begin
                 rom_instr_we <= 0;
             end
             if (sys_rst_out) begin
-                //sys_rst_out <= 0;
+                sys_rst_out <= 0;
             end
             case (state)
             INITIALIZING: begin
@@ -73,12 +74,12 @@ module program_memory(
                     rom_instr <= {rom_data, rom_instr[31:8]};
                     counter <= counter + 1;
                     if (counter + 1 == 4) begin
-//                        rom_instr_we <= 1;
+                        rom_instr_we <= 1;
                         counter <= 0;
                     end
                 end
                 if (finished_reading) begin
-                    //sys_rst_out <= 1;
+                    sys_rst_out <= 1;
                     state <= WAITING;
                 end
             end
