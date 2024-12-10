@@ -11,6 +11,7 @@ enum {
   GREEN,
   BLUE ,
   BROWN,
+  STEEL,
   TAN,
   AQUA,
   GRAY,

@@ -42,6 +42,7 @@ uint16_t get_color_value(uint8_t type) {
     [RED]   = RGB_TO_565(255, 0, 0),
     [GREEN] = RGB_TO_565(0, 255, 0),
     [BLUE]  = RGB_TO_565(0, 0, 255),
+    [STEEL] = RGB_TO_565(168, 185, 191),
     [BROWN] = RGB_TO_565(240, 153, 60),
     [TAN] = RGB_TO_565(245, 208, 169),
     [AQUA] = RGB_TO_565(169, 245, 231),

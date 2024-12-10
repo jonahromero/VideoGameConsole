@@ -48,11 +48,11 @@ int __modsi3(int a, int b) {
 #define BOARD_HEIGHT 8
 
 enum _piece_type_t {
-  NONE,
-  KNIGHT,
-  BISHOP,
+  NONE = 0,
   KING,
   QUEEN,
+  BISHOP,
+  KNIGHT,
   ROOK,
   PAWN,
 };
@@ -60,8 +60,6 @@ enum _piece_color_t {
   BLACKP,
   WHITEP
 };
-
-#include "sprites.h"
 
 typedef uint8_t square_t;
 static square_t INVALID_SQ = -1;
@@ -128,6 +126,9 @@ square_t get_current_sq(pos_t pos) {
   return pos.x + pos.y * BOARD_WIDTH;
 }
 
+
+#include "sprites.h"
+
 void update(game_t * game) {
   const int PLAYER_SPEED = 3;
   update_controller(&game->controller);
@@ -166,7 +167,7 @@ void render(game_t * game) {
   // draw the board
   for (int i = 0; i < 64; i++) {
     piece_t * piece = &game->chess.board[i];
-    uint8_t const* piece_sprite = piece_sprites[piece->type];
+    uint8_t const* piece_sprite = get_piece_sprite(*piece);
     uint8_t piece_color = piece->color == WHITEP ? WHITE : BLACK;
     int row = (i/8), col = (i%8);
     uint8_t sq_color = (row + col) % 2 == 0 ? GRAY : WHITE;
@@ -175,12 +176,12 @@ void render(game_t * game) {
       R_BOARD_TOP + row * R_SQ_SIZE,
     };
     // square
-    if (game->sq_from != INVALID_SQ) sq_color = TEAL;
+    if (game->sq_from != INVALID_SQ && i == game->sq_from) sq_color = TEAL;
     draw_sprite_one_color(sq_sprite, sq_color, sq_pos, (dim_t) {20, 20});
     // piece
-    draw_sprite_one_color(piece_sprite, piece_color, (pos_t) {
-      sq_pos.x + 5, sq_pos.y + 5
-    }, (dim_t) {15, 15});
+    draw_sprite(piece_sprite, (pos_t) {
+      sq_pos.x + 2, sq_pos.y + 2
+    }, (dim_t) {16, 16});
   }
   // draw cursor
   uint8_t cursor_bitmap[3][3] = {
