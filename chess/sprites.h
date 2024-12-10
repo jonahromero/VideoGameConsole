@@ -257,5 +257,5 @@ const uint8_t sq_sprite[400]= {
 };
 
 uint8_t const* get_piece_sprite(piece_t piece) {
-  return piece_sprites[piece.color * 8 + (piece.type-1)];
+  return piece_sprites[piece.color * 6 + (piece.type-1)];
 }

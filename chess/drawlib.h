@@ -16,6 +16,7 @@ enum {
   AQUA,
   GRAY,
   TEAL,
+  BONE,
 };
 
 uint16_t get_color_value(uint8_t type);

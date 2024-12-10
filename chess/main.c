@@ -170,7 +170,7 @@ void render(game_t * game) {
     uint8_t const* piece_sprite = get_piece_sprite(*piece);
     uint8_t piece_color = piece->color == WHITEP ? WHITE : BLACK;
     int row = (i/8), col = (i%8);
-    uint8_t sq_color = (row + col) % 2 == 0 ? GRAY : WHITE;
+    uint8_t sq_color = (row + col) % 2 == 0 ? GRAY : BONE;
     pos_t sq_pos = {
       R_BOARD_LEFT + col * R_SQ_SIZE,
       R_BOARD_TOP + row * R_SQ_SIZE,

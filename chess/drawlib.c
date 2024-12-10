@@ -47,7 +47,8 @@ uint16_t get_color_value(uint8_t type) {
     [TAN] = RGB_TO_565(245, 208, 169),
     [AQUA] = RGB_TO_565(169, 245, 231),
     [GRAY] = RGB_TO_565(158, 158, 158),
-    [TEAL] = RGB_TO_565(128, 255, 189)
+    [TEAL] = RGB_TO_565(128, 255, 189),
+    [BONE] = RGB_TO_565(217, 221, 222)
   };
   return values[type];
 }
