@@ -34,6 +34,7 @@ import ProcTypes::*;
 module simple_proc(
     input wire  rst_in,
     input wire clk_in,
+    input wire [15:0] sw,
     memory_bus mem_bus,
     program_memory_bus program_mem_bus,
     
@@ -52,6 +53,7 @@ module simple_proc(
 
     logic[31:0] pc;
     logic[31:0] regfile[31:0];
+    logic old_sw2;
 
     always_comb begin
         program_mem_bus.addr = pc;
@@ -118,6 +120,7 @@ module simple_proc(
                     stage <= EXECUTE;
                     dInstr <= decode(program_mem_bus.instr);
                     counter <= 0;
+                    old_sw2 <= sw[2];
                 end
             end
             EXECUTE: begin
@@ -176,16 +179,13 @@ module simple_proc(
                     // update pc
                     pc <= eInstr.nextPc;
                     counter <= 0;
-                    stage <= FETCH_DECODE;
-                    // reset MISC
-//                    dInstr <= 0;
-//                    dInstr <= 0;
-//                    dInstr <= 0;
-//                    dInstr <= 0;
                     
-//                    eInstr.iType <= Unsupported;
-//                    eInstr.iType <= 0;
-//                    eInstr.iType <= 0;
+                    if(sw[0]) begin
+                        if (old_sw2 != sw[2]) begin 
+                            stage <= FETCH_DECODE;
+                            old_sw2 <= sw[2];
+                        end
+                    end else stage <= FETCH_DECODE;
                 end
             end
             endcase

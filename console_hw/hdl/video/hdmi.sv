@@ -6,6 +6,7 @@ module hdmi(
    input wire clk_100mhz,
    input wire rst_in,
    input wire [15:0] sw,
+   input wire [31:0] reg_file [31:0],
 
    output logic new_clk_100mhz,
    output logic [2:0]  hdmi_tx_p, //hdmi output signals (positives) (blue, green, red)
@@ -62,57 +63,68 @@ module hdmi(
   // rgb output values
   logic [7:0]          red,green,blue;
 
-  logic video_state;
-  logic [6:0][4:0] bit_map;
-  logic [3:0] bit_map_col, bit_map_row;
-  ascii_tbl regTbl (.ascii_idx(8'h30), .ascii_map(bit_map));
-  typedef enum {GAME, ASCII} drw_state;
-  drw_state draw;
+  video_renderer vr(
+      .clk_in(clk_pixel),
+      .rst_in(rst_in),
+      .hcount_hdmi,
+      .vcount_hdmi,
+      .reg_file,
+      .debug_mode(sw[1]),
+      .red,
+      .green,
+      .blue,
+      .bus
+  );
 
-  always_ff @( posedge clk_pixel ) begin 
-      if(rst_in) begin
-            bit_map_col <= 3'd0;
-            bit_map_row <= 3'd0;
-            video_state <= 1'b0;
-      end else begin
-            if (draw == ASCII) begin
-                  if ((bit_map_row == 4'd13) && (bit_map_col == 4'd9)) begin
-                        bit_map_row <= 3'd0;
-                        bit_map_col <= 3'd0;
-                  end else if (bit_map_col == 4'd9) begin
-                        bit_map_row <= bit_map_row + 1;
-                        bit_map_col <= 3'd0;
-                  end else begin
-                      bit_map_col <= bit_map_col + 3'd1; 
-                  end
-            end 
+//   logic [6:0][4:0] bit_map;
+//   logic [3:0] bit_map_col, bit_map_row;
+//   ascii_tbl regTbl (.ascii_idx(8'h30), .ascii_map(bit_map));
+//   typedef enum {GAME, ASCII} drw_state;
+//   drw_state draw;
 
-      end
-  end
+//   always_ff @( posedge clk_pixel ) begin 
+//       if(rst_in) begin
+//             bit_map_col <= 3'd0;
+//             bit_map_row <= 3'd0;
+//       end else begin
+//             if (draw == ASCII) begin
+//                   if ((bit_map_row == 4'd13) && (bit_map_col == 4'd9)) begin
+//                         bit_map_row <= 3'd0;
+//                         bit_map_col <= 3'd0;
+//                   end else if (bit_map_col == 4'd9) begin
+//                         bit_map_row <= bit_map_row + 1;
+//                         bit_map_col <= 3'd0;
+//                   end else begin
+//                       bit_map_col <= bit_map_col + 3'd1; 
+//                   end
+//             end 
+
+//       end
+//   end
   
-  always_comb begin
-    if (sw[1] && (hcount_hdmi >= 300 && hcount_hdmi < 310) && (vcount_hdmi >= 300 && vcount_hdmi < 314)) draw = ASCII;
-    else if ((bit_map_row == 4'd13) && (bit_map_col == 4'd9)) draw = GAME;
-    else draw = GAME;
-    if((draw == ASCII)) begin
-        if (bit_map[bit_map_row >> 1][bit_map_col >> 1]) begin
-            red = 8'hFF;
-            green = 8'hFF;
-            blue = 8'hFF;
-        end else begin
-            red = 8'h00;
-            green = 8'h00;
-            blue = 8'h00;
-        end
-    end else begin
-        red = bus.red; 
-        green = bus.green; 
-        blue = bus.blue; 
-    end 
-    bus.vcount = vcount_hdmi; // TODO- REMOVE indexes
-    bus.hcount = hcount_hdmi;
-    bus.read_clk = clk_pixel;
-   end
+//   always_comb begin
+//     if (sw[1] && (hcount_hdmi >= 300 && hcount_hdmi < 310) && (vcount_hdmi >= 300 && vcount_hdmi < 314)) draw = ASCII;
+//     else if ((bit_map_row == 4'd13) && (bit_map_col == 4'd9)) draw = GAME;
+//     else draw = GAME;
+//     if((draw == ASCII)) begin
+//         if (bit_map[bit_map_row >> 1][bit_map_col >> 1]) begin
+//             red = 8'hFF;
+//             green = 8'hFF;
+//             blue = 8'hFF;
+//         end else begin
+//             red = 8'h00;
+//             green = 8'h00;
+//             blue = 8'h00;
+//         end
+//     end else begin
+//         red = bus.red; 
+//         green = bus.green; 
+//         blue = bus.blue; 
+//     end 
+//     bus.vcount = vcount_hdmi; // TODO- REMOVE indexes
+//     bus.hcount = hcount_hdmi;
+//     bus.read_clk = clk_pixel;
+//    end
 
    // read bus values
 //       always_comb begin

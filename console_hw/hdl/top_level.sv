@@ -30,6 +30,7 @@ module top_level
   assign rgb0 = 0;
   assign rgb1 = 0;
   logic clk_in;
+  logic [31:0] reg_file [31:0];
 
   // DEBUGGING
   // DEBUGGING SPI
@@ -108,6 +109,7 @@ module top_level
     .hdmi_clk_p, 
     .hdmi_clk_n,
     .sw,
+    .reg_file,
     .bus(fb_bus.READ)
   );
   memory_system ms(
@@ -122,8 +124,10 @@ module top_level
   simple_proc m_cpu(
     .rst_in(sys_rst), 
     .clk_in(clk_in),
+    .sw,
     .mem_bus(mem_bus.CONSUMER),
-    .program_mem_bus(program_mem_bus.CONSUMER_A)
+    .program_mem_bus(program_mem_bus.CONSUMER_A),
+    .reg_file
   );
 
 endmodule // top_level

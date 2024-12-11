@@ -4,11 +4,26 @@
 module ascii_tbl(
     input wire [7:0] ascii_idx,
     
-    output logic [6:0][4:0] ascii_map
+    output logic [6:0][4:0] ascii_map_out
 );
 
+    logic [6:0][4:0] ascii_map;
 always_comb begin
+    for (int i = 0; i < 7; i=i+1) begin
+        for (int j = 0; j < 5; j=j+1) begin
+            ascii_map_out[i][j] = ascii_map[i][4-j];
+        end
+    end
     case (ascii_idx)
+        8'h20: begin // Space
+            ascii_map[0] = 5'd0;
+            ascii_map[1] = 5'd0;
+            ascii_map[2] = 5'd0;
+            ascii_map[3] = 5'd0;
+            ascii_map[4] = 5'd0;
+            ascii_map[5] = 5'd0;
+            ascii_map[6] = 5'd0;
+        end
         8'h21: begin // Exclamation mark
             ascii_map[0] = 5'b00100;
             ascii_map[1] = 5'b00100;
@@ -360,6 +375,15 @@ always_comb begin
             ascii_map[5] = 5'b10000;
             ascii_map[6] = 5'b11111;
         end
+        8'h5F: begin // _
+            ascii_map[0] = 5'b00000;
+            ascii_map[1] = 5'b00000;
+            ascii_map[2] = 5'b00000;
+            ascii_map[3] = 5'b00000;
+            ascii_map[4] = 5'b00000;
+            ascii_map[5] = 5'b00000;
+            ascii_map[6] = 5'b11111;
+        end
         8'h61: begin // a
             ascii_map[0] = 5'b00000;
             ascii_map[1] = 5'b00000;
@@ -594,7 +618,7 @@ always_comb begin
             ascii_map[5] = 5'b01000;
             ascii_map[6] = 5'b11111;
         end
-        default: begin // Blank or Space
+        default: begin // Space
             ascii_map[0] = 5'd0;
             ascii_map[1] = 5'd0;
             ascii_map[2] = 5'd0;

@@ -90,7 +90,14 @@ function automatic DecodedInst decode(
                     default: dInst.iType = UNSUPPORTED;
                 endcase
                 7'b0000001: case(funct3)
-                        fnSLL: dInst.iType = PMUL;
+                        3'd0: dInst.aluFunc = MUL;
+                        3'd1: dInst.aluFunc = MULH;
+                        3'd2: dInst.aluFunc = MULHSU;
+                        3'd3: dInst.aluFunc = MULHU;
+                        3'd4: dInst.aluFunc = DIV;
+                        3'd5: dInst.aluFunc = DIVU;
+                        3'd6: dInst.aluFunc = REM;
+                        3'd7: dInst.aluFunc = REMU;
                         default: dInst.iType = UNSUPPORTED;
                     endcase
                 default: dInst.iType = UNSUPPORTED;

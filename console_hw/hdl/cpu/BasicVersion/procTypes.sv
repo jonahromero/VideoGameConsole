@@ -2,7 +2,7 @@
 package ProcTypes;
 
     // Alu function enumeration
-    typedef enum {ADD, SUB, AND, OR, XOR, SLT, SLTU, SLL, SRL, SRA, NOPA} AluFunc;
+    typedef enum {ADD, SUB, AND, OR, XOR, SLT, SLTU, SLL, SRL, SRA,MUL,MULH, MULHSU, MULHU,DIV, DIVU, REM, REMU, NOPA} AluFunc;
 
     // Branch function enumeration
     typedef enum { EQ,NEQ,LT,LTU,GE,GEU,NOPB} BrFunc;
@@ -11,7 +11,7 @@ package ProcTypes;
     typedef enum { LW, LH, LHU, LB, LBU, SW, SH, SB, NOPM} MemFunc;
 
     // AUIPC added for this lab - Add Upper Immediate to PC
-    typedef enum {OP, OPIMM, BRANCH, LUI, JAL, JALR, LOAD, STORE, AUIPC, PMUL, UNSUPPORTED} IType;
+    typedef enum {OP, OPIMM, BRANCH, LUI, JAL, JALR, LOAD, STORE, AUIPC, UNSUPPORTED} IType;
     
     logic [31:0] NOP_INSTR = 32'h0000_0013;
 
