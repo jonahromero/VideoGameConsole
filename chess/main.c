@@ -155,7 +155,7 @@ void update(game_t * game) {
   }
   else if (game->controller.buttons_pressed & BUTTON_Y) {
     square_t sq_to = get_current_sq(game->cursor);
-    if (sq_to != INVALID_SQ && game->sq_from != INVALID_SQ) {
+    if (sq_to != INVALID_SQ && game->sq_from != INVALID_SQ && chess->board[game->sq_from].type != NONE) {
       chess->board[sq_to] = chess->board[game->sq_from];
       chess->board[game->sq_from].type = NONE;
       game->sq_from = INVALID_SQ;
