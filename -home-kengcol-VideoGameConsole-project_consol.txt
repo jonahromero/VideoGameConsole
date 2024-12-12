@@ -1,0 +1,9 @@
+/home/kengcol/VideoGameConsole/project_console
+/home/kengcol/VideoGameConsole/project_console/project_1.cache
+/home/kengcol/VideoGameConsole/project_console/project_1.hw
+/home/kengcol/VideoGameConsole/project_console/project_1.ip_user_files
+/home/kengcol/VideoGameConsole/project_console/project_1.runs
+/home/kengcol/VideoGameConsole/project_console/project_1.sim
+/home/kengcol/VideoGameConsole/project_console/project_1.srcs
+/home/kengcol/VideoGameConsole/project_console/divider.sv
+/home/kengcol/VideoGameConsole/project_console/project_1.xpr

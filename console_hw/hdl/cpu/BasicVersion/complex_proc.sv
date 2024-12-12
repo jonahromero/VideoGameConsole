@@ -31,6 +31,48 @@ ExecInstr
 
 import ProcTypes::*;
 
+// Types associated with the Fetch Stage
+typedef enum {
+    DEQUEUE, // Consume instruction at the f2d output, if any
+    STALL, // Do not consume instruction at f2d
+    REDIRECT  // Redirect fetch to another PC, annulling any fetched instructions
+} FetchAction;
+
+typedef struct {
+    FetchAction fetchAction;
+    logic [31:0] redirectPC;  // PC to fetch from, used only if fetchAction is Redirect
+} FetchInput;
+
+typedef struct {
+    logic [16:0] pc;
+    logic [31:0] instr;
+    logic isValid;
+} F2D;
+
+typedef struct {
+    logic [31:0] pc;
+    DecodedInst dInst;
+    logic [31:0] rVal1;
+    logic [31:0] rVal2;
+    logic isValid;
+    // Add anything you need
+} D2E;
+
+typedef struct {
+    logic[31:0] pc;
+    IType iType;
+    logic[4:0] dst;
+    MemFunc memFunc;
+    logic[31:0] data;
+    logic isValid;
+    // Add anything you need
+} E2W;
+
+typedef struct {
+    logic [31:0] data;
+    logic isValid;
+} Maybe;
+
 module simple_proc(
     input wire  rst_in,
     input wire clk_in,
@@ -38,8 +80,7 @@ module simple_proc(
     memory_bus mem_bus,
     program_memory_bus program_mem_bus,
     
-    output logic [31:0] reg_file [31:0],
-    output logic [31:0] pc_out 
+    output logic [31:0] reg_file [31:0] 
 );
     // helper for counting cycles
     logic[5:0] counter;
@@ -52,7 +93,7 @@ module simple_proc(
     DecodedInst dInstr;
     ExecInst eInstr;
 
-    logic[31:0] pc, pc_out;
+    logic[31:0] pc, product, quotient, remainder;
     logic[31:0] regfile[31:0];
     logic old_sw2;
 
@@ -102,6 +143,29 @@ module simple_proc(
 //    end
 
     
+    mult32 m1 (
+    .clk_in, 
+    .rst_in, 
+    .a(regfile[dInstr.src1]), 
+    .b(regfile[dInstr.src2]), 
+    .alufunc(dInstr.aluFunc),
+    .data_out(product));
+    
+    // Divider Interaction Logic
+    logic div_valid_out, div_valid_in, div_error, div_busy;
+    
+    divider4 d1 (
+    .clk_in,
+    .rst_in,
+    .dividend_in(regfile[dInstr.src1]),
+    .divisor_in(regfile[dInstr.src2]),
+    .data_valid_in(div_valid_in),
+    .quotient_out(quotient),
+    .remainder_out(remainder),
+    .data_valid_out(div_valid_out),
+    .error_out(div_error),
+    .busy_out(div_busy)
+    );
 
     always_ff @ (posedge clk_in) begin
         if (rst_in) begin
@@ -113,6 +177,7 @@ module simple_proc(
                 regfile[i] <= 0;
             end
             pc <= 0;
+            div_valid_in <= 1'b0;
         end
         else begin
             counter <= counter + 1;
@@ -128,8 +193,11 @@ module simple_proc(
             EXECUTE: begin
                 eInstr <= execute(dInstr, regfile[dInstr.src1], regfile[dInstr.src2], pc);
                 stage <= MEM;
+                if (dInstr.aluFunc == DIV || dInstr.aluFunc == DIVU || dInstr.aluFunc == REM || dInstr.aluFunc == REMU) div_valid_in <= 1'b1;
             end
             MEM: begin
+                if(dInstr.aluFunc == MUL || dInstr.aluFunc == MULH || dInstr.aluFunc == MULHU || dInstr.aluFunc == MULHSU) eInstr.data <= product;
+                if(div_valid_in) div_valid_in <= 1'b0;
                 if (!mem_bus.busy) begin
                     stage <= WRITEBACK;
                     if (eInstr.iType == STORE || eInstr.iType == LOAD) begin

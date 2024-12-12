@@ -6,6 +6,7 @@ module video_renderer(
     input wire rst_in,
     input wire [10:0] hcount_hdmi,
     input wire [9:0]  vcount_hdmi,
+    input wire [31:0] pc_in,
     input wire [31:0] reg_file [31:0],
     input wire debug_mode,
 
@@ -52,7 +53,7 @@ module video_renderer(
         if (h_idx >= 5 && h_idx < 16) val_idx = h_idx;
         else val_idx =  5'd16;
         half_byte = '{data: 'x, isValid:1'b0};
-        if (debug_mode && (v_idx < 31) && (h_idx < 16)) draw = ASCII; 
+        if (debug_mode && (v_idx < 32) && (h_idx < 16)) draw = ASCII; 
         else draw = GAME;
         if ((draw == ASCII)) begin   
             if(busy) begin
@@ -66,11 +67,11 @@ module video_renderer(
                         green = 8'h00;
                         blue = 8'h00;
                     end
-                    end else begin
-                        red = 8'h00;
-                        green = 8'h00;
-                        blue = 8'h00;
-                    end
+                end else begin
+                    red = 8'h00;
+                    green = 8'h00;
+                    blue = 8'h00;
+                end
             end else if (symbolic_idx < 5) begin
                 case (v_idx)
                 5'd0: begin
@@ -302,6 +303,13 @@ module video_renderer(
                         3'd4: chr_idx = 8'h3A;
                         default: chr_idx = 8'h20;
                     endcase
+                // 5'd32:
+                //     case (symbolic_idx)
+                //         3'd2: chr_idx = 8'h70;
+                //         3'd3: chr_idx = 8'h63;
+                //         3'd4: chr_idx = 8'h3A;
+                //         default: chr_idx = 8'h20;
+                //     endcase
                 default: ;
                 endcase
             end else if (val_idx < 16) begin

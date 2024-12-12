@@ -7,6 +7,7 @@ module hdmi(
    input wire rst_in,
    input wire [15:0] sw,
    input wire [31:0] reg_file [31:0],
+   input wire [31:0] pc_in,
 
    output logic new_clk_100mhz,
    output logic [2:0]  hdmi_tx_p, //hdmi output signals (positives) (blue, green, red)
@@ -69,6 +70,7 @@ module hdmi(
       .hcount_hdmi,
       .vcount_hdmi,
       .reg_file,
+      .pc_in,
       .debug_mode(sw[1]),
       .red,
       .green,

@@ -51,39 +51,6 @@ function automatic logic [31:0] addSub(
 
 endfunction
 
-
-function automatic logic [31:0] mult32(
-    input [31:0] a,
-    input [31:0] b,
-    input AluFunc alufunc
-);
-
-    logic [63:0] data_out;
-
-    case (alufunc)
-        MUL: begin
-            data_out = $signed(a) * $signed(b);
-            return data_out[31:0];
-        end
-        MULH: begin
-            data_out = $signed(a) * $signed(b);
-            return data_out[63:32];
-        end
-        MULHU: begin
-            data_out = a * b;
-            return data_out[63:32];
-        end
-        MULH: begin
-            if (a[31]) begin
-                data_out = ~(~(a -1'b1;) * b) + 1'b1;
-            end else data_out = a * b;
-            return data_out[63:32];
-        end
-        default: return 32'b0;
-    endcase
-
-endfunction
-
 function automatic logic [31:0] alu(
     input logic [31:0] val1,
     input logic [31:0] val2,
@@ -116,7 +83,6 @@ function automatic logic [31:0] alu(
             else shiftType = LeftShift;
             data_out = sft32(val1,sftSz,shiftType);
         end
-        MUL,MULH,MULHU,MULHSU: data_out = mult32(val1,val2,alufunc);
         default: data_out = 'x;
     endcase
     
